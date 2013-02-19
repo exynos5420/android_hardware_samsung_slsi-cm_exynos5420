@@ -177,7 +177,7 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
             bpr = ALIGN(w, 16)* bpp;
             vstride = ALIGN(h, 16);
         } else {
-            bpr = ALIGN(w*bpp, 16);
+            bpr = ALIGN(w*bpp, 64);
             vstride = h;
         }
         if (vstride < h + 2)
