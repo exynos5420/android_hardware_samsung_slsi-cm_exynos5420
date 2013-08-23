@@ -144,16 +144,6 @@ static int gralloc_unmap(gralloc_module_t const* module, buffer_handle_t handle)
 
 /*****************************************************************************/
 
-int grallocMap(gralloc_module_t const* module, private_handle_t *hnd)
-{
-    return gralloc_map(module, hnd);
-}
-
-int grallocUnmap(gralloc_module_t const* module, private_handle_t *hnd)
-{
-    return gralloc_unmap(module, hnd);
-}
-
 int getIonFd(gralloc_module_t const *module)
 {
     private_module_t* m = const_cast<private_module_t*>(reinterpret_cast<const private_module_t*>(module));
@@ -169,11 +159,8 @@ static pthread_mutex_t sMapLock = PTHREAD_MUTEX_INITIALIZER;
 int gralloc_register_buffer(gralloc_module_t const* module,
                             buffer_handle_t handle)
 {
-    int err;
     if (private_handle_t::validate(handle) < 0)
         return -EINVAL;
-
-    err = gralloc_map(module, handle);
 
     private_handle_t* hnd = (private_handle_t*)handle;
     ALOGV("%s: base %p %d %d %d %d\n", __func__, hnd->base, hnd->size,
@@ -194,7 +181,7 @@ int gralloc_register_buffer(gralloc_module_t const* module,
             ALOGE("error importing handle2 %d %x\n", hnd->fd2, hnd->format);
     }
 
-    return err;
+    return ret;
 }
 
 int gralloc_unregister_buffer(gralloc_module_t const* module,
