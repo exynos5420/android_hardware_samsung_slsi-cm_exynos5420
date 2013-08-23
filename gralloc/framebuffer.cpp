@@ -40,7 +40,10 @@
 #endif
 
 #include "gralloc_priv.h"
-#include "gr.h"
+
+inline size_t roundUpToPageSize(size_t x) {
+    return (x + (PAGE_SIZE-1)) & ~(PAGE_SIZE-1);
+}
 
 /*****************************************************************************/
 

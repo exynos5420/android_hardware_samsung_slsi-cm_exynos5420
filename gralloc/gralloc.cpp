@@ -42,7 +42,6 @@
 
 #include "gralloc_priv.h"
 #include "exynos_format.h"
-#include "gr.h"
 
 #define ION_HEAP_EXYNOS_CONTIG_MASK     (1 << 4)
 #define ION_EXYNOS_FIMD_VIDEO_MASK  (1 << 28)
@@ -380,8 +379,8 @@ static int gralloc_free(alloc_device_t* dev,
     private_handle_t const* hnd = reinterpret_cast<private_handle_t const*>(handle);
     gralloc_module_t* module = reinterpret_cast<gralloc_module_t*>(
                                                                    dev->common.module);
-    if (hnd->base)
-        grallocUnmap(module, const_cast<private_handle_t*>(hnd));
+
+    gralloc_unregister_buffer(module, hnd);
 
     close(hnd->fd);
     if (hnd->fd1 >= 0)
