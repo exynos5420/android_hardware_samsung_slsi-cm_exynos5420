@@ -141,6 +141,13 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
     int bpp = 0, vstride, fd, err;
     unsigned int heap_mask = _select_heap(usage);
 
+    if (format == HAL_PIXEL_FORMAT_RGBA_8888 && (usage & GRALLOC_USAGE_HW_FB)) {
+        ALOGW_IF(usage & (GRALLOC_USAGE_SW_READ_MASK |
+                GRALLOC_USAGE_SW_WRITE_MASK),
+                "framebuffer target should not have SW usage bits; ignoring");
+        format = HAL_PIXEL_FORMAT_BGRA_8888;
+    }
+
     switch (format) {
         case HAL_PIXEL_FORMAT_RGBA_8888:
         case HAL_PIXEL_FORMAT_RGBX_8888:
