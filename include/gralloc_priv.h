@@ -33,6 +33,7 @@
 
 struct private_module_t;
 struct private_handle_t;
+typedef int ion_user_handle_t;
 
 struct private_module_t {
     gralloc_module_t base;
@@ -94,9 +95,9 @@ struct private_handle_t {
     void    *base;
     void    *base1;
     void    *base2;
-    struct ion_handle *handle;
-    struct ion_handle *handle1;
-    struct ion_handle *handle2;
+    ion_user_handle_t handle;
+    ion_user_handle_t handle1;
+    ion_user_handle_t handle2;
 
 #ifdef __cplusplus
     static const int sNumFds = 3;
