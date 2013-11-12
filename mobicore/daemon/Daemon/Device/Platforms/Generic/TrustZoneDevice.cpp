@@ -259,9 +259,10 @@ void TrustZoneDevice::notify(
 
     // Notify MobiCore about new data
 
-notification_t notification = { sessionId :
-                                    sessionId, payload : 0
-                                  };
+    notification_t notification = {
+        .sessionId = sessionId,
+        .payload = 0
+    };
 
     nq->putNotification(&notification);
     //IMPROVEMENT-2012-03-07-maneaval What happens when/if nsiq fails?
