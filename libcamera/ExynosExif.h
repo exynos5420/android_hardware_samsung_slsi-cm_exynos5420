@@ -163,7 +163,7 @@ typedef enum {
 #define EXIF_DEF_COLOR_SPACE        1
 #define EXIF_DEF_INTEROPERABILITY  (0)
 #define EXIF_DEF_EXPOSURE_MODE      EXIF_EXPOSURE_AUTO
-#define EXIF_DEF_APEX_DEN          (100)
+#define EXIF_DEF_APEX_DEN           10
 
 #define EXIF_DEF_COMPRESSION        6
 #define EXIF_DEF_RESOLUTION_NUM     72

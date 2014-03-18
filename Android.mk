@@ -19,7 +19,8 @@ exynos5420_dirs := \
 	gralloc \
 	mobicore \
 	libhwjpeg \
-	libcamera
+	libcamera \
+	libextcamera
 
 include $(call all-named-subdir-makefiles,$(exynos5420_dirs))
 

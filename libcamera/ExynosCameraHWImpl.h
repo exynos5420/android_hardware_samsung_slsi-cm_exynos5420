@@ -36,7 +36,6 @@
 #include "ExynosCamera.h"
 #include "ExynosCameraVDis.h"
 #include "ExynosCameraList.h"
-#include "ExynosCameraAutoTimer.h"
 
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -53,37 +52,41 @@
 #define GRALLOC_LOCK_FOR_CAMERA \
     (GRALLOC_USAGE_SW_READ_OFTEN)
 
-#define  JPEG_INPUT_COLOR_FMT            (V4L2_PIX_FMT_YUYV)
+//#define CAPTURE_DELAY
 
-#define  NUM_OF_PREVIEW_BUF              (NUM_PREVIEW_BUFFERS)
-#define  NUM_OF_VIDEO_BUF                (8)
-#define  NUM_OF_PICTURE_BUF              (NUM_PICTURE_BUFFERS)
-#define  NUM_OF_FLASH_BUF                (3)
-#define  NUM_OF_DEQUEUED_BUFFER          (3)
-#define  NUM_OF_DETECTED_FACES           (16)
+#define  JPEG_INPUT_COLOR_FMT           (V4L2_PIX_FMT_YUYV)
+
+#define  NUM_OF_PREVIEW_BUF             (NUM_PREVIEW_BUFFERS)
+#define  NUM_OF_VIDEO_BUF               (8)
+#define  NUM_OF_PICTURE_BUF             (NUM_PICTURE_BUFFERS)
+#define  NUM_OF_FLASH_BUF                 (3)
+#define  NUM_OF_DEQUEUED_BUFFER         (3)
+#define  NUM_OF_DETECTED_FACES          (16)
 #define  NUM_OF_DETECTED_FACES_THRESHOLD (0)
 
-//#define  CHECK_TIME_START_PREVIEW
-//#define  CHECK_TIME_SHOT2SHOT
 //#define  CHECK_TIME_PREVIEW
 //#define  CHECK_TIME_RECORDING
-#define  CHECK_TIME_FRAME_DURATION       (10)
+#define  CHECK_TIME_FRAME_DURATION      (10)
 
-#define TRY_THREAD_STATUS_PREVIEW        (0)
-#define TRY_THREAD_STATUS_ISP            (1)
-#define TRY_THREAD_STATUS_SENSOR         (2)
-#define TRY_THREAD_STATUS_BAYER          (3)
+#define TRY_THREAD_STATUS_PREVIEW (0)
+#define TRY_THREAD_STATUS_ISP (1)
+#define TRY_THREAD_STATUS_SENSOR (2)
+#define TRY_THREAD_STATUS_BAYER (3)
 
 #ifdef SCALABLE_SENSOR
-#define SCALABLE_SENSOR_THRESHOLD        (10)
+#define SCALABLE_SENSOR_THRESHOLD (10)
 #endif
 
-#define START_PREVIEW_WATING_TIME        (5000)    /* 5msec */
+#define START_PREVIEW_WATING_TIME           (5000) /* 5msec */
 #define START_PREVIEW_TOTAL_WATING_TIME  (5000000) /* 5000msec */
 
-#define ON_SERVICE                       (0)
-#define ON_HAL                           (1)
-#define ON_DRIVER                        (2)
+#define ON_SERVICE              (0)
+#define ON_HAL                  (1)
+#define ON_DRIVER               (2)
+
+#ifdef CAPTURE_DELAY
+int capture_delay = 0;
+#endif
 
 #define ERR_THREADHOLD 30
 #define CHECK_THREADHOLD(cnt) \
@@ -148,46 +151,60 @@ private:
 
 private:
 #ifdef START_HW_THREAD_ENABLE
-    class StartThreadMain : public Thread {
+    class StartCameraHwThreadA : public Thread {
         ExynosCameraHWImpl *mHardware;
     public:
-        StartThreadMain(ExynosCameraHWImpl *hw): Thread(false), mHardware(hw) { }
+        StartCameraHwThreadA(ExynosCameraHWImpl *hw): Thread(false), mHardware(hw) { }
         virtual void onFirstRef() {
-            run("CameraStartThreadMain", PRIORITY_DEFAULT);
+            run("CameraStartThreadA", PRIORITY_DEFAULT);
         }
         virtual bool threadLoop() {
-            mHardware->m_startThreadFuncMain();
+            mHardware->startCameraHwThreadFuncA();
             return true;
         }
     };
 
-    class StartThreadReprocessing : public Thread {
+    class StartCameraHwThreadB : public Thread {
         ExynosCameraHWImpl *mHardware;
     public:
-        StartThreadReprocessing(ExynosCameraHWImpl *hw): Thread(false), mHardware(hw) { }
+        StartCameraHwThreadB(ExynosCameraHWImpl *hw): Thread(false), mHardware(hw) { }
         virtual void onFirstRef() {
-            run("CameraStartThreadReprocessing", PRIORITY_DEFAULT);
+            run("CameraStartThreadB", PRIORITY_DEFAULT);
         }
         virtual bool threadLoop() {
-            mHardware->m_startThreadFuncReprocessing();
+            mHardware->startCameraHwThreadFuncB();
             return true;
         }
     };
 
-    class StartThreadBufAlloc : public Thread {
+    class StartCameraHwThreadC : public Thread {
         ExynosCameraHWImpl *mHardware;
     public:
-        StartThreadBufAlloc(ExynosCameraHWImpl *hw): Thread(false), mHardware(hw) { }
+        StartCameraHwThreadC(ExynosCameraHWImpl *hw): Thread(false), mHardware(hw) { }
         virtual void onFirstRef() {
-            run("CameraStartThreadBufAlloc", PRIORITY_DEFAULT);
+            run("CameraStartThreadC", PRIORITY_DEFAULT);
         }
         virtual bool threadLoop() {
-            mHardware->m_startThreadFuncBufAlloc();
+            mHardware->startCameraHwThreadFuncC();
             return true;
         }
     };
 #endif
 
+    class PreviewThread : public Thread {
+        ExynosCameraHWImpl *mHardware;
+    public:
+        PreviewThread(ExynosCameraHWImpl *hw):
+        Thread(false),
+        mHardware(hw) { }
+        //virtual void onFirstRef() {
+        //    run("CameraPreviewThread", PRIORITY_DEFAULT);
+        //}
+        virtual bool threadLoop() {
+            mHardware->m_previewThreadFuncWrapper();
+            return false;
+        }
+    };
     class VideoThread : public Thread {
         ExynosCameraHWImpl *mHardware;
     public:
@@ -215,21 +232,63 @@ private:
         }
     };
 
+    class SensorThreadLpzsl : public Thread {
+        ExynosCameraHWImpl *mHardware;
+    public:
+        SensorThreadLpzsl(ExynosCameraHWImpl *hw):
+        Thread(false),
+        mHardware(hw) { }
+        //virtual void onFirstRef() {
+        //    run("CameraSensorThreadLpzsl", PRIORITY_DEFAULT);
+        //}
+        virtual bool threadLoop () {
+            mHardware->m_sensorThreadFuncWrapLpzsl();
+            return false;
+        }
+    };
+
+    class ISPThread : public Thread {
+        ExynosCameraHWImpl *mHardware;
+    public:
+        ISPThread(ExynosCameraHWImpl *hw): Thread(false), mHardware(hw) { }
+        //virtual void onFirstRef() {
+        //    run("CameraISPThread", PRIORITY_DEFAULT);
+        //}
+        virtual bool threadLoop() {
+            mHardware->m_ispThreadFunc();
+            return true;
+        }
+    };
+
     class AutoFocusThread : public Thread {
         ExynosCameraHWImpl *mHardware;
     public:
         AutoFocusThread(ExynosCameraHWImpl *hw): Thread(false), mHardware(hw) { }
-        virtual void onFirstRef() {
-            /* run("CameraAutoFocusThread", PRIORITY_DEFAULT); */
-        }
+        //virtual void onFirstRef() {
+        //    run("CameraAutoFocusThread", PRIORITY_DEFAULT);
+        //}
         virtual bool threadLoop() {
             mHardware->m_autoFocusThreadFunc();
             return false;
         }
     };
 
-    typedef bool (ExynosCameraHWImpl::*thread_loop)(void);
+    class SensorThread : public Thread {
+        ExynosCameraHWImpl *mHardware;
+    public:
+        SensorThread(ExynosCameraHWImpl *hw):
+        Thread(false),
+        mHardware(hw) { }
+        //virtual void onFirstRef() {
+        //    run("CameraSensorThread", PRIORITY_DEFAULT);
+        //}
+        virtual bool threadLoop () {
+            mHardware->m_sensorThreadFuncWrap();
+            return false;
+        }
+    };
 
+    typedef bool (ExynosCameraHWImpl::*thread_loop)(void);
     class CameraThread : public Thread {
         ExynosCameraHWImpl *mHardware;
         thread_loop mThreadLoop;
@@ -255,14 +314,10 @@ private:
         virtual status_t run(const char* name = 0,
             int32_t priority = PRIORITY_DEFAULT,
             size_t stack = 0) {
-
-            ALOGD("DEBUG(%s):Thread(%s) start running", __func__, name);
-
             memset(&mTimeStart, 0, sizeof(mTimeStart));
             memset(&mTimeStop, 0, sizeof(mTimeStop));
             memset(&mName, 0, sizeof(mName));
             memcpy(mName, name, strlen(name) + 1);
-
             return Thread::run(name, priority, stack);
         }
 
@@ -291,7 +346,11 @@ private:
         }
     };
 
+
+
 private:
+    char    m_antiBanding[10];
+
     bool        m_initSecCamera(int cameraId);
     void        m_initDefaultParameters(int cameraId);
 
@@ -300,25 +359,26 @@ private:
 
     status_t    m_startSensor();
     void        m_stopSensor();
-    bool        m_sensorThreadFuncWrap(void);
     bool        m_sensorThreadFuncM2M(void);
     bool        m_sensorThreadFuncOTF(void);
+    bool        m_sensorThreadFuncWrap(void);
 
-    status_t    m_startSensorReprocessing();
-    void        m_stopSensorReprocessing();
-    bool        m_sensorThreadFuncReprocessing(void);
+    status_t    m_startSensorLpzsl();
+    void        m_stopSensorLpzsl();
+    bool        m_sensorThreadFuncLpzsl(void);
+    bool        m_sensorThreadFuncWrapLpzsl(void);
 
 #ifdef START_HW_THREAD_ENABLE
-    bool        m_startThreadFuncMain(void);
-    bool        m_startThreadFuncReprocessing(void);
-    bool        m_startThreadFuncBufAlloc(void);
+    bool        startCameraHwThreadFuncA(void);
+    bool        startCameraHwThreadFuncB(void);
+    bool        startCameraHwThreadFuncC(void);
 #endif
-
-    void        m_releaseBuffer(void);
-    bool        m_getPreviewCallbackBuffer(void);
-    bool        m_startCameraHw(void);
+    void        releaseBuffer(void);
+    bool        getPreviewCallbackBuffer(void);
+    bool        startCameraHw(void);
     bool        m_startPreviewInternal(void);
     void        m_stopPreviewInternal(void);
+    bool        m_previewThreadFuncWrapper(void);
     bool        m_previewThreadFunc(void);
 
     bool        m_doPreviewToCallbackFunc(ExynosBuffer previewBuf, ExynosBuffer *callbackBuf, bool useCSC);
@@ -331,6 +391,7 @@ private:
 
     bool        m_startPictureInternal(void);
     bool        m_stopPictureInternal(void);
+
     bool        m_pictureThreadFunc(void);
 
     int         m_saveJpeg(unsigned char *real_jpeg, int jpeg_size);
@@ -355,11 +416,9 @@ private:
                              int dwVideoHeight, void *pJPEG,
                              int *pdwJPEGSize, void *pVideo,
                              int *pdwVideoSize);
-
     void        m_setSkipFrame(int frame);
     int         m_getSkipFrame();
     void        m_decSkipFrame();
-
     bool        m_isSupportedPreviewSize(const int width, const int height);
     bool        m_isSupportedPictureSize(const int width, const int height) const;
     bool        m_isSupportedVideoSize(const int width, const int height) const;
@@ -376,8 +435,8 @@ private:
     bool        m_subBracketsStr2Ints(int num, char *str, int *arr);
     int         m_calibratePosition(int w, int new_w, int x);
 
-    bool        m_startPictureInternalReprocessing(void);
-    bool        m_stopPictureInternalReprocessing(void);
+    bool        m_startPictureInternalLpzsl(void);
+    bool        m_stopPictureInternalLpzsl(void);
     void        m_checkPreviewTime(void);
     void        m_checkRecordingTime(void);
 
@@ -411,7 +470,6 @@ private:
     bool        m_checkScalableSate(enum SCALABLE_SENSOR_SIZE sizeMode);
     bool        m_checkAndWaitScalableSate(enum SCALABLE_SENSOR_SIZE sizeMode);
 #endif
-
 private:
     enum MODE {
         MODE_PREVIEW = 0,
@@ -428,49 +486,48 @@ private:
     };
 
 #ifdef START_HW_THREAD_ENABLE
-    sp<StartThreadMain>      m_startThreadMain;
-    sp<StartThreadReprocessing>     m_startThreadReprocessing;
-    sp<StartThreadBufAlloc>  m_startThreadBufAlloc;
+    sp<StartCameraHwThreadA>      m_startCameraHwThreadA;
+    sp<StartCameraHwThreadB>      m_startCameraHwThreadB;
+    sp<StartCameraHwThreadC>      m_startCameraHwThreadC;
 #endif
-
     sp<CameraThread>    m_previewThread;
     sp<VideoThread>     m_videoThread;
     sp<AutoFocusThread> m_autoFocusThread;
     sp<PictureThread>   m_pictureThread;
     sp<CameraThread>    m_sensorThread;
-    sp<CameraThread>    m_sensorThreadReprocessing;
-    sp<CameraThread>    m_ispThread;
+    sp<CameraThread>    m_sensorThreadLpzsl;
+    sp<CameraThread> m_ispThread;
 
 #ifdef START_HW_THREAD_ENABLE
-    mutable Mutex       m_startThreadMainLock;
-    mutable Condition   m_startThreadMainCondition;
-    bool                m_startThreadMainRunning;
-    bool                m_exitStartThreadMain;
-    bool                m_errorExistInStartThreadMain;
+    mutable Mutex       m_startCameraHwThreadLockA;
+    mutable Condition   m_startCameraHwThreadConditionA;
+    bool                m_startCameraHwThreadRunA;
+    bool                m_exitStartCameraHwThreadA;
+    bool                m_ErrorExistInCameraHwThreadA;
 
-    mutable Mutex       m_startThreadMainFinishLock;
-    mutable Condition   m_startThreadMainFinishCondition;
+    mutable Mutex       m_startCameraHwThreadFinishLockA;
+    mutable Condition   m_startCameraHwThreadFinishConditionA;
 
-    mutable Mutex       m_startThreadReprocessingLock;
-    mutable Condition   m_startThreadReprocessingCondition;
-    bool                m_startThreadReprocessingRunning;
-    bool                m_exitStartThreadReprocessing;
-    bool                m_errorExistInStartThreadReprocessing;
+    mutable Mutex       m_startCameraHwThreadLockB;
+    mutable Condition   m_startCameraHwThreadConditionB;
+    bool                m_startCameraHwThreadRunningB;
+    bool                m_exitStartCameraHwThreadB;
+    bool                m_ErrorExistInCameraHwThreadB;
 
-    mutable Mutex       m_startThreadReprocessingFinishLock;
-    mutable Condition   m_startThreadReprocessingFinishCondition;
-    bool                m_startThreadReprocessingFinished;
-    bool                m_startThreadReprocessingFinishWaiting;
+    mutable Mutex       m_startCameraHwThreadFinishLockB;
+    mutable Condition   m_startCameraHwThreadFinishConditionB;
+    bool                m_CameraHwThreadFinishedB;
+    bool                m_CameraHwThreadFinishWaitingB;
 
-    mutable Mutex       m_startThreadBufAllocLock;
-    mutable Condition   m_startThreadBufAllocCondition;
-    bool                m_exitStartThreadBufAlloc;
-    bool                m_errorExistInStartThreadBufAlloc;
+    mutable Mutex       m_startCameraHwThreadLockC;
+    mutable Condition   m_startCameraHwThreadConditionC;
+    bool                m_exitStartCameraHwThreadC;
+    bool                m_ErrorExistInCameraHwThreadC;
 
-    mutable Mutex       m_startThreadBufAllocFinishLock;
-    mutable Condition   m_startThreadBufAllocFinishCondition;
-    bool                m_startThreadBufAllocFinished;
-    bool                m_startThreadBufAllocWaiting;
+    mutable Mutex       m_initCameraBufferAllocFinishLock;
+    mutable Condition   m_initCameraBufferAllocFinishCondition;
+    bool                m_CameraBufferAllocFinished;
+    bool                m_CameraBufferAllocWaiting;
 #endif
 
     /* used by auto focus thread to block until it's told to run */
@@ -480,15 +537,18 @@ private:
 
     mutable Mutex       m_ispLock;
     mutable Condition   m_ispCondition;
-    bool                m_exitIspThread;
+    bool        m_exitIspThread;
 
     /* used by preview thread to block until it's told to run */
     mutable Mutex       m_previewLock;
-
+    mutable Mutex       m_previewStopLock;
+    mutable Condition   m_previewCondition;
+    mutable Condition   m_previewStoppedCondition;
 #ifdef USE_CAMERA_ESD_RESET
             bool        m_sensorESDReset;
 #endif
             bool        m_previewRunning;
+            bool        m_exitPreviewThread;
             bool        m_previewStartDeferred;
     unsigned int        m_startComplete;
 
@@ -500,10 +560,17 @@ private:
 
     mutable Mutex       m_sensorStopLock;
     mutable Mutex       m_sensorLock;
+    mutable Condition   m_sensorCondition;
+    mutable Condition   m_sensorStoppedCondition;
     bool                m_sensorRunning;
+    bool                m_exitSensorThread;
 
-    mutable Mutex       m_sensorLockReprocessing;
-    bool                m_sensorRunningReprocessing;
+    mutable Mutex       m_sensorStopLockLpzsl;
+    mutable Mutex       m_sensorLockLpzsl;
+    mutable Condition   m_sensorConditionLpzsl;
+    mutable Condition   m_sensorStoppedConditionLpzsl;
+    bool                m_sensorRunningLpzsl;
+    bool                m_exitSensorThreadLpzsl;
 
     void               *m_grallocVirtAddr[NUM_OF_PREVIEW_BUF];
     int                 m_matchedGrallocIndex[NUM_OF_PREVIEW_BUF];
@@ -512,7 +579,6 @@ private:
 
     ExynosBuffer        m_sharedBayerBuffer;
     ExynosBuffer        m_sharedISPBuffer;
-
     mutable Mutex       m_pictureLock;
     mutable Condition   m_pictureCondition;
             bool        m_pictureRunning;
@@ -539,6 +605,9 @@ private:
     mutable Mutex       m_stateLock;
 
     CameraParameters    m_params;
+    CameraParameters    m_internalParams;
+
+    int                 m_numOfCamera;
 
     camera_memory_t    *m_previewCallbackHeap[NUM_OF_PREVIEW_BUF];
 
@@ -592,9 +661,6 @@ private:
     int                 m_availableRecordingFrameCnt;
     Mutex               m_recordingFrameMutex;
 
-    DurationTimer       m_startPreviewTimer;
-    DurationTimer       m_shot2ShotTimer;
-
     DurationTimer       m_previewTimer;
     long long           m_previewTimerTime[CHECK_TIME_FRAME_DURATION];
     int                 m_previewTimerIndex;
@@ -623,9 +689,12 @@ private:
 
     camera_device_t *m_halDevice;
     static gralloc_module_t const* m_grallocHal;
-
-    static Mutex g_is3a0Mutex;
-    static Mutex g_is3a1Mutex;
+#ifdef MULTI_INSTANCE_CHECK
+    static int multi_instance_check;
+#endif
+    static Mutex isCh0Mutex;
+    static Mutex is3aaMutex;
+    static int isp_check;
 
     int isp_input_count;
     int isp_last_frame_cnt;
@@ -638,11 +707,9 @@ private:
     int tryThreadStatus;
     bool leaderOff;
 #endif
-
 #ifdef DYNAMIC_BAYER_BACK_REC
     bool isDqSensor;
 #endif
-
 #ifdef SCALABLE_SENSOR
 #ifndef DYNAMIC_BAYER_BACK_REC
     bool isDqSensor;
@@ -652,7 +719,6 @@ private:
 #endif
 
     bool         m_forceAELock;
-    char         m_antiBanding[10];
 };
 
 }; // namespace android

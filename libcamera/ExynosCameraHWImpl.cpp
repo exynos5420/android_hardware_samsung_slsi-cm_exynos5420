@@ -27,8 +27,8 @@
 #define VIDEO_COMMENT_MARKER_L          (0xFFBF)
 #define VIDEO_COMMENT_MARKER_LENGTH     (4)
 #define JPEG_EOI_MARKER                 (0xFFD9)
-#define HIBYTE(x)                       (((x) >> 8) & 0xFF)
-#define LOBYTE(x)                       ((x) & 0xFF)
+#define HIBYTE(x) (((x) >> 8) & 0xFF)
+#define LOBYTE(x) ((x) & 0xFF)
 
 /*TODO: This values will be changed */
 #define BACK_CAMERA_AUTO_FOCUS_DISTANCES_STR       "0.10,1.20,Infinity"
@@ -40,13 +40,11 @@
 #define BACK_CAMERA_FOCUS_DISTANCE_INFINITY        "Infinity"
 #define FRONT_CAMERA_FOCUS_DISTANCE_INFINITY       "Infinity"
 
-#define PREVIEW_GSC_NODE_NUM                      (4)
-#define PICTURE_GSC_NODE_NUM                      (1)
-#define VIDEO_GSC_NODE_NUM                        (4)
+#define PREVIEW_GSC_NODE_NUM (1)
+#define PICTURE_GSC_NODE_NUM (2)
+#define VIDEO_GSC_NODE_NUM   (1)
 
-#define CSC_MEMORY_TYPE                           CSC_MEMORY_DMABUF /* (CSC_MEMORY_USERPTR) */
-
-#define MFC_7X_BUFFER_OFFSET                      (256)
+#define CSC_MEMORY_TYPE             CSC_MEMORY_DMABUF /* (CSC_MEMORY_USERPTR) */
 
 // This hack does two things:
 // -- it sets preview to NV21 (YUV420SP)
@@ -63,6 +61,12 @@
 //        the color planes switched.  We need to figure which side is doing it
 //        wrong and have the respective party fix it.
 
+//#define PREVIEW_WAITING_HACK
+
+#ifdef PREVIEW_WAITING_HACK
+int isPreviewFrameReady = 0;
+#endif
+
 namespace android {
 
 struct addrs {
@@ -77,9 +81,20 @@ static const int INITIAL_SKIP_FRAME = 8;
 static const int EFFECT_SKIP_FRAME = 1;
 
 gralloc_module_t const* ExynosCameraHWImpl::m_grallocHal;
+#ifdef MULTI_INSTANCE_CHECK
+int ExynosCameraHWImpl::multi_instance_check;
+#endif
 
-Mutex ExynosCameraHWImpl::g_is3a0Mutex;
-Mutex ExynosCameraHWImpl::g_is3a1Mutex;
+Mutex ExynosCameraHWImpl::isCh0Mutex;
+Mutex ExynosCameraHWImpl::is3aaMutex;
+int ExynosCameraHWImpl::isp_check;
+#ifdef CAPTURE_DELAY
+extern int capture_delay = 0;
+#endif
+#if defined (CSC_SUPPORT_ROT) && defined(USE_S5K3H7_CAMERA)
+extern int capture_rotate =0;
+extern int record_rotate =0;
+#endif
 
 ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
         :
@@ -87,6 +102,7 @@ ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
           m_captureMode(false),
           m_waitForCapture(false),
           m_flip_horizontal(0),
+
           m_faceDetected(false),
           m_fdThreshold(0),
           m_sensorErrCnt(0),
@@ -101,11 +117,7 @@ ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
 {
     m_cameraId = cameraId;
 
-#ifdef CHECK_TIME_START_PREVIEW
-    m_startPreviewTimer.start();
-#endif //CHECK_TIME_START_PREVIEW
-
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGI("[INFO] %s", __FUNCTION__);
 
     m_exynosPreviewCSC = NULL;
     m_exynosPictureCSC = NULL;
@@ -159,7 +171,14 @@ ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
     m_exitAutoFocusThread = false;
     m_autoFocusRunning = false;
 
+    m_exitPreviewThread = false;
     m_exitVideoThread = false;
+    m_exitSensorThread = false;
+
+#ifdef OTF_SENSOR_LPZSL
+    m_exitSensorThreadLpzsl = false;
+#endif
+
     m_exitIspThread = false;
 
     /*
@@ -170,20 +189,19 @@ ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
     m_videoRunning = false;
     m_pictureRunning = false;
     m_sensorRunning = false;
-
-#ifdef OTF_SENSOR_REPROCESSING
-    m_sensorRunningReprocessing = false;
+#ifdef OTF_SENSOR_LPZSL
+    m_sensorRunningLpzsl = false;
 #endif
     m_previewStartDeferred = false;
     m_startComplete = THREAD_ID_ALL_CLEARED;
 
 #ifdef START_HW_THREAD_ENABLE
-    m_exitStartThreadMain = false;
-    m_exitStartThreadReprocessing = false;
-    m_exitStartThreadBufAlloc = false;
-    m_errorExistInStartThreadMain = false;
-    m_errorExistInStartThreadReprocessing = false;
-    m_errorExistInStartThreadBufAlloc = false;
+    m_exitStartCameraHwThreadA = false;
+    m_exitStartCameraHwThreadB = false;
+    m_exitStartCameraHwThreadC = false;
+    m_ErrorExistInCameraHwThreadA = false;
+    m_ErrorExistInCameraHwThreadB = false;
+    m_ErrorExistInCameraHwThreadC = false;
 #endif
 
     if (!m_grallocHal) {
@@ -192,11 +210,11 @@ ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
     }
 
     if (m_initSecCamera(cameraId) == false) {
-        CLOGE("ERR(%s):m_initSecCamera(%d) fail", __func__, cameraId);
+        CLOGE("ERR(%s): Fail to ctreate secCamera", __func__);
     }
 
 #ifdef USE_VDIS
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
         if (m_VDis == NULL) {
             m_VDis = new ExynosCameraVDis;
         }
@@ -207,7 +225,6 @@ ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
         }
     }
 #endif
-
     m_initDefaultParameters(cameraId);
 
     CSC_METHOD cscMethod = CSC_METHOD_HW;
@@ -227,6 +244,12 @@ ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
         CLOGE("ERR(%s):csc_init() fail", __func__);
     csc_set_hw_property(m_exynosVideoCSC, CSC_HW_PROPERTY_FIXED_NODE, VIDEO_GSC_NODE_NUM);
 
+    m_numOfCamera = 1;
+
+#ifdef CAPTURE_DELAY
+    capture_delay = 0;
+#endif
+    isp_check = 0;
     isp_input_count = 0;
     isp_last_frame_cnt = 0;
 #ifdef SCALABLE_SENSOR
@@ -236,43 +259,31 @@ ExynosCameraHWImpl::ExynosCameraHWImpl(int cameraId, camera_device_t *dev)
 #ifdef FORCE_LEADER_OFF
     tryThreadStop = false;
 #endif
-
-    CLOGD("DEBUG(%s):out", __func__);
+    CLOGD("ExynosCameraHWImpl is created!");
 }
 
 ExynosCameraHWImpl::~ExynosCameraHWImpl()
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
     this->release();
-
-    CLOGD("DEBUG(%s):out", __func__);
+    CLOGI("[INFO] ExynosCameraHWImpl is deleted!");
 }
 
 status_t ExynosCameraHWImpl::setPreviewWindowLocked(preview_stream_ops *w)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
+    CLOGI("%s", __FUNCTION__);
     int ret_val;
-
-    CLOGD("DEBUG(%s):m_startStopLock.lock()", __func__);
+    CLOGI("%s m_startStopLock.lock()", __FUNCTION__);
     m_startStopLock.lock();
-
     ret_val = setPreviewWindow(w);
-
     m_startStopLock.unlock();
-    CLOGD("DEBUG(%s):m_startStopLock.unlock()", __func__);
-
-    CLOGD("DEBUG(%s):out", __func__);
-
+    CLOGI("%s m_startStopLock.unlock()", __FUNCTION__);
     return ret_val;
 }
 
 status_t ExynosCameraHWImpl::setPreviewWindow(preview_stream_ops *w)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
-    bool restartPreview = false;
+    CLOGI("[INFO] %s", __FUNCTION__);
+    bool reStartPreview = false;
     m_previewWindow = w;
     m_numOfDequeuedBuf = 0;
 
@@ -286,7 +297,7 @@ status_t ExynosCameraHWImpl::setPreviewWindow(preview_stream_ops *w)
         stopPreview();
         CLOGD("DEBUG(%s):stop preview complete (window change)\n\n\n", __func__);
         /* when window chaged, must be restart preview */
-        restartPreview = true;
+        reStartPreview = true;
     }
 
     m_previewLock.lock();
@@ -298,7 +309,7 @@ status_t ExynosCameraHWImpl::setPreviewWindow(preview_stream_ops *w)
         int hal_pixel_format = HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP;
 
         const char *str_preview_format = m_params.getPreviewFormat();
-        CLOGV("DEBUG(%s):str_preview_format %s width : %d height : %d ", __func__, str_preview_format, previewW, previewH);
+        CLOGV("DEBUG(%s):str preview format %s width : %d height : %d ", __func__, str_preview_format, previewW, previewH);
 
         if (!strcmp(str_preview_format,
                     CameraParameters::PIXEL_FORMAT_RGB565)) {
@@ -354,16 +365,17 @@ status_t ExynosCameraHWImpl::setPreviewWindow(preview_stream_ops *w)
     }
     m_previewLock.unlock();
 
-    if (restartPreview == true) {
+    if (reStartPreview == true) {
         CLOGD("DEBUG(%s):start/resume preview", __func__);
         //m_previewRunning = true;
-        if (this->startPreview() != OK) {
-            CLOGE("ERR(%s):startPreview() fail", __func__);
+        if (startPreview() == OK) {
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_previewCondition) - send", __FUNCTION__, __LINE__);
+            //m_previewCondition.signal();
+        } else {
+            CLOGE("ERR(%s): Fail to startPreviewInternal()", __func__);
             return UNKNOWN_ERROR;
         }
     }
-
-    CLOGD("DEBUG(%s):out", __func__);
 
     return OK;
 }
@@ -374,30 +386,29 @@ void ExynosCameraHWImpl::setCallbacks(camera_notify_callback notify_cb,
                                      camera_request_memory get_memory,
                                      void *user)
 {
-    CLOGD("DEBUG(%s):(notify_cb(%p), data_cb(%p), data_cb_timestamp(%p), get_memory(%p), user(%p)",
-        __func__, notify_cb, data_cb, data_cb_timestamp, get_memory, user);
-
-    m_notifyCb        = notify_cb;
-    m_dataCb          = data_cb;
+    CLOGI("[INFO] %s", __FUNCTION__);
+    m_notifyCb = notify_cb;
+    m_dataCb = data_cb;
     m_dataCbTimestamp = data_cb_timestamp;
-    m_getMemoryCb     = get_memory;
-    m_callbackCookie  = user;
+    m_getMemoryCb = get_memory;
+    m_callbackCookie = user;
 }
 
 void ExynosCameraHWImpl::enableMsgType(int32_t msgType)
 {
-    CLOGD("DEBUG(%s):msgType = 0x%x, m_msgEnable(0x%x -> 0x%x)",
-         __func__, msgType, m_msgEnabled, m_msgEnabled | msgType);
-
+    CLOGV("DEBUG(%s):msgType = 0x%x, m_msgEnabled before = 0x%x",
+         __func__, msgType, m_msgEnabled);
     m_msgEnabled |= msgType;
+
+    CLOGV("DEBUG(%s):m_msgEnabled = 0x%x", __func__, m_msgEnabled);
 }
 
 void ExynosCameraHWImpl::disableMsgType(int32_t msgType)
 {
-    CLOGD("DEBUG(%s):msgType = 0x%x, m_msgEnabled(0x%x -> 0x%x)",
-         __func__, msgType, m_msgEnabled, m_msgEnabled & ~msgType);
-
+    CLOGV("DEBUG(%s):msgType = 0x%x, m_msgEnabled before = 0x%x",
+         __func__, msgType, m_msgEnabled);
     m_msgEnabled &= ~msgType;
+    CLOGV("DEBUG(%s):m_msgEnabled = 0x%x", __func__, m_msgEnabled);
 }
 
 bool ExynosCameraHWImpl::msgTypeEnabled(int32_t msgType)
@@ -407,28 +418,21 @@ bool ExynosCameraHWImpl::msgTypeEnabled(int32_t msgType)
 
 status_t ExynosCameraHWImpl::startPreviewLocked()
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
+    CLOGI("%s", __FUNCTION__);
     int ret_val;
-
-    CLOGD("DEBUG(%s):m_startStopLock.lock()", __func__);
+    CLOGI("%s m_startStopLock.lock()", __FUNCTION__);
     m_startStopLock.lock();
-
     ret_val = startPreview();
-
     m_startStopLock.unlock();
-    CLOGD("DEBUG(%s):m_startStopLock.unlock()", __func__);
-
-    CLOGD("DEBUG(%s):out", __func__);
-
+    CLOGI("%s m_startStopLock.unlock()", __FUNCTION__);
     return ret_val;
 }
 
 status_t ExynosCameraHWImpl::startPreview()
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
     int ret = OK;
+
+    CLOGD("[INFO] %s in", __FUNCTION__);
 
     Mutex::Autolock lock(m_stateLock);
 
@@ -447,14 +451,11 @@ status_t ExynosCameraHWImpl::startPreview()
     m_13MCaptureStart = false;
     CLOGD("DEBUG(%s):scalable sensor(%d)", __func__, m_secCamera->getScalableSensorStart());
 #endif
-
 #ifdef FORCE_LEADER_OFF
     tryThreadStop = false;
     tryThreadStatus = 0;
 #endif
-
     m_previewLock.lock();
-
     if (m_previewRunning == true) {
         CLOGE("ERR(%s):preview thread already running", __func__);
         m_previewLock.unlock();
@@ -479,14 +480,14 @@ status_t ExynosCameraHWImpl::startPreview()
 
     if (m_secCamera->flagOpen(m_cameraId) == false) {
         if (m_secCamera->openCamera(m_cameraId) == false) {
-            CLOGE("ERR(%s):Fail to camera open", __func__);
+            CLOGE("ERR(%s): Fail to camera open", __func__);
             ret = UNKNOWN_ERROR;
             goto err;
         }
     }
 #ifdef USE_VDIS
     if ((m_secCamera->getRecordingHint() == true) &&
-         (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK)) {
+         (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK)) {
          m_VDis->createThread();
     }
 #endif
@@ -496,12 +497,14 @@ status_t ExynosCameraHWImpl::startPreview()
 
     if (m_startPreviewInternal() == true) {
         m_previewRunning = true;
+
+        CLOGD("[%s] previewThread run.. (%d)", __func__, __LINE__);
         m_previewThread->run("CameraPreviewThread", PRIORITY_DEFAULT);
 
         ret = OK;
         goto done;
     } else  {
-        CLOGE("ERR(%s):startPreviewInternal() fail", __func__);
+        CLOGE("ERR(%s): Fail to startPreviewInternal()", __func__);
         ret = UNKNOWN_ERROR;
         goto err;
     }
@@ -514,46 +517,39 @@ err:
     m_ispThread->requestExit();
     m_sensorThread->requestExit();
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK)
-        m_sensorThreadReprocessing->requestExit();
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK)
+        m_sensorThreadLpzsl->requestExit();
 
-    CLOGD("DEBUG(%s):(%d) m_previewThread try exit", __func__, __LINE__);
+    CLOGD("[INFO] %s (%d) m_previewThread try exit", __FUNCTION__, __LINE__);
     m_previewThread->requestExitAndWait();
-    CLOGD("DEBUG(%s):(%d) m_previewThread was exited", __func__, __LINE__);
+    CLOGD("[INFO] %s (%d) m_previewThread was exited", __FUNCTION__, __LINE__);
 
-    CLOGD("DEBUG(%s):(%d) m_ispThread try exit", __func__, __LINE__);
+    CLOGD("[INFO] %s (%d) m_ispThread try exit", __FUNCTION__, __LINE__);
     m_exitIspThread = true;
     m_ispCondition.signal();
     m_ispThread->requestExitAndWait();
     m_exitIspThread = false;
-    CLOGD("DEBUG(%s):(%d) m_ispThread was exited", __func__, __LINE__);
+    CLOGD("[INFO] %s (%d) m_ispThread was exited", __FUNCTION__, __LINE__);
 
 done:
     m_previewLock.unlock();
-
-    CLOGD("DEBUG(%s):out", __func__);
+    CLOGD("[INFO] %s out", __FUNCTION__);
     return ret;
 }
 
 void ExynosCameraHWImpl::stopPreviewLocked()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGI("%s", __FUNCTION__);
 
-    CLOGD("DEBUG(%s):m_startStopLock.lock()", __func__);
+    CLOGI("%s m_startStopLock.lock()", __FUNCTION__);
     m_startStopLock.lock();
-
     stopPreview();
-
     m_startStopLock.unlock();
-    CLOGD("DEBUG(%s):m_startStopLock.unlock()", __func__);
-
-    CLOGD("DEBUG(%s):out", __func__);
+    CLOGI("%s m_startStopLock.unlock()", __FUNCTION__);
 }
 
 void ExynosCameraHWImpl::stopPreview()
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
 #ifdef THREAD_PROFILE
     struct timeval mTimeStart;
     struct timeval mTimeStop;
@@ -562,6 +558,7 @@ void ExynosCameraHWImpl::stopPreview()
 #ifdef FORCE_LEADER_OFF
     int tryStopCount = 0;
 #endif
+    CLOGD("[INFO] %s in", __FUNCTION__);
 
     /* This function have to fair with restoreMsgType() */
     m_disableMsgType(CAMERA_MSG_PREVIEW_FRAME | CAMERA_MSG_PREVIEW_METADATA, true);
@@ -569,15 +566,18 @@ void ExynosCameraHWImpl::stopPreview()
     // FIXME: Need to reset parameter */
     m_params.set(CameraParameters::KEY_VIDEO_STABILIZATION, "false");
 
-    // HACK: move to destroy() for interval when takePicture
+    // HACK: move to destroy() for inteval when takePicture
 /*
     if (m_captureMode == true) {
         m_captureMode = false;
     } else {
 */
 
-    if (m_captureMode)
-        this->cancelPicture();
+    if (m_captureMode) {
+        CLOGV("DEBUG(%s):waiting for picture thread to exit", __func__);
+        cancelPicture();
+        CLOGV("DEBUG(%s):picture thread has exited", __func__);
+    }
 
 #ifdef FORCE_LEADER_OFF
         tryThreadStop = true;
@@ -587,7 +587,7 @@ void ExynosCameraHWImpl::stopPreview()
 
         if (m_previewRunning == true) {
             m_previewRunning = false;
-            CLOGD("DEBUG(%s):(%d) m_previewRunning false", __func__, __LINE__);
+            CLOGD("[INFO] %s (%d) m_previewRunning true", __FUNCTION__, __LINE__);
 
 #ifdef USE_VDIS
             /* Stop Dis thread */
@@ -603,10 +603,10 @@ void ExynosCameraHWImpl::stopPreview()
 #endif
 #ifdef FORCE_LEADER_OFF
             do {
-                CLOGD("DEBUG(%s):tryThreadStatus = 0x%x tryStopCount %d", __func__, tryThreadStatus, tryStopCount);
+                CLOGD("[%s] tryThreadStatus = 0x%x tryStopCount %d", __func__, tryThreadStatus, tryStopCount);
 
 #ifdef DYNAMIC_BAYER_BACK_REC
-                if ((m_secCamera->getRecordingHint() == true) && (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK)) {
+                if ((m_secCamera->getRecordingHint() == true) && (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK)) {
                     if (tryThreadStatus == 0x7)
                         break;
                 }
@@ -636,77 +636,94 @@ void ExynosCameraHWImpl::stopPreview()
             m_ispThread->requestExit();
             m_sensorThread->requestExit();
 
-            if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK)
-                m_sensorThreadReprocessing->requestExit();
+            if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK)
+                m_sensorThreadLpzsl->requestExit();
 
 #ifdef THREAD_PROFILE
             gettimeofday(&mTimeStop, NULL);
             timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-            CLOGD("DEBUG(%s):Thread requestexit time_check elapsed time=(%ld)us", __func__, timeUs);
+            CLOGD("[%s] Thread requestexit time_check elapsed time=(%ld)us", __func__, timeUs);
             gettimeofday(&mTimeStart, NULL);
 #endif
 
-            CLOGD("DEBUG(%s):(%d) m_stopSensor try exit", __func__, __LINE__);
+            CLOGD("[INFO] %s (%d) m_stopSensor try exit", __FUNCTION__, __LINE__);
             m_stopSensor();
-            CLOGD("DEBUG(%s):(%d) m_stopSensor was exited", __func__, __LINE__);
+            CLOGD("[INFO] %s (%d) m_stopSensor was exited", __FUNCTION__, __LINE__);
 
 #ifdef THREAD_PROFILE
             gettimeofday(&mTimeStop, NULL);
             timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-            CLOGD("DEBUG(%s):Thread exit time_check elapsed time=(%ld)us", __func__, timeUs);
+            CLOGD("[%s] Thread exit time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
             // stop 3a1
-            if (m_secCamera->flagStart3a1Src(ExynosCamera::CAMERA_MODE_FRONT) == true &&
-                m_secCamera->flagStart3a1Dst(ExynosCamera::CAMERA_MODE_FRONT) == true &&
-                m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_FRONT) == false)
-                CLOGE("ERR(%s):m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_FRONT) fail", __func__);
+            if (m_secCamera->flagStartIs3a1Output(SENSOR_FRONT) == true &&
+                m_secCamera->flagStartIs3a1Capture(SENSOR_FRONT) == true &&
+                m_secCamera->stopIs3a1(SENSOR_FRONT) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_FRONT) fail", __func__);
 
-            if (m_secCamera->flagStart3a1Src(ExynosCamera::CAMERA_MODE_BACK) == true &&
-                m_secCamera->flagStart3a1Dst(ExynosCamera::CAMERA_MODE_BACK) == true &&
-                m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_BACK) == false)
-                CLOGE("ERR(%s):m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_BACK) fail", __func__);
+            if (m_secCamera->flagStartIs3a1Output(SENSOR_BACK) == true &&
+                m_secCamera->flagStartIs3a1Capture(SENSOR_BACK) == true &&
+                m_secCamera->stopIs3a1(SENSOR_BACK) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_BACK) fail", __func__);
 
-            if (m_secCamera->flagStart3a1Src(ExynosCamera::CAMERA_MODE_REPROCESSING) == true &&
-                m_secCamera->flagStart3a1Dst(ExynosCamera::CAMERA_MODE_REPROCESSING) == true &&
-                m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_REPROCESSING) == false)
-                CLOGE("ERR(%s):m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_REPROCESSING) fail", __func__);
+            if (m_secCamera->flagStartIs3a1Output(SENSOR_FAKE) == true &&
+                m_secCamera->flagStartIs3a1Capture(SENSOR_FAKE) == true &&
+                m_secCamera->stopIs3a1(SENSOR_FAKE) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_FAKE) fail", __func__);
 
 
             // stop 3a0
-            if (m_secCamera->flagStartIs3a0Src(ExynosCamera::CAMERA_MODE_FRONT) == true &&
-                m_secCamera->flagStartIs3a0Dst(ExynosCamera::CAMERA_MODE_FRONT) == true &&
-                m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_FRONT) == false)
-                CLOGE("ERR(%s):m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_FRONT) fail", __func__);
+            if (m_secCamera->flagStartIs3a0Output(SENSOR_FRONT) == true &&
+                m_secCamera->flagStartIs3a0Capture(SENSOR_FRONT) == true &&
+                m_secCamera->stopIs3a0(SENSOR_FRONT) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_FRONT) fail", __func__);
 
-            if (m_secCamera->flagStartIs3a0Src(ExynosCamera::CAMERA_MODE_BACK) == true &&
-                m_secCamera->flagStartIs3a0Dst(ExynosCamera::CAMERA_MODE_BACK) == true &&
-                m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_BACK) == false)
-                CLOGE("ERR(%s):m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_BACK) fail", __func__);
+            if (m_secCamera->flagStartIs3a0Output(SENSOR_BACK) == true &&
+                m_secCamera->flagStartIs3a0Capture(SENSOR_BACK) == true &&
+                m_secCamera->stopIs3a0(SENSOR_BACK) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_BACK) fail", __func__);
 
-            if (m_secCamera->flagStartIs3a0Src(ExynosCamera::CAMERA_MODE_REPROCESSING) == true &&
-                m_secCamera->flagStartIs3a0Dst(ExynosCamera::CAMERA_MODE_REPROCESSING) == true &&
-                m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_REPROCESSING) == false)
-                CLOGE("ERR(%s):m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_REPROCESSING) fail", __func__);
+            if (m_secCamera->flagStartIs3a0Output(SENSOR_FAKE) == true &&
+                m_secCamera->flagStartIs3a0Capture(SENSOR_FAKE) == true &&
+                m_secCamera->stopIs3a0(SENSOR_FAKE) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_FAKE) fail", __func__);
+
+
+            // stop sensor 0-FAKE if this mode is dual or back
+            if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+                if (m_secCamera->stopSensorOff(SENSOR_FAKE) == false)
+                    CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(SENSOR_FAKE)", __func__);
+
+                if (m_secCamera->flagStartSensor() == true) {
+                    if (m_secCamera->stopSensor() == false)
+                        CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
+                }
+
+                if (m_secCamera->flagStartSensorLpzsl() == true) {
+                    if (m_secCamera->stopSensorLpzsl() == false)
+                        CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
+                }
+            }
 
             /*Isp off*/
             if (m_secCamera->flagStartIsp() == true &&
                 m_secCamera->stopIsp() == false)
-                CLOGE("ERR(%s):m_secCamera->stopIsp() fail", __func__);
+                CLOGE("ERR(%s):on m_secCamera->stopIsp() fail", __func__);
 
-            if (m_secCamera->flagStartIspReprocessing() == true &&
-                m_secCamera->stopIspReprocessing() == false)
-                CLOGE("ERR(%s):m_secCamera->stopIspReprocessing() fail", __func__);
+            if (m_secCamera->flagStartIspLpzsl() == true &&
+                m_secCamera->stopIspLpzsl() == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIspLpzsl() fail", __func__);
 
             /*Preview off*/
             if (m_secCamera->flagStartPreview() == true &&
                 m_secCamera->stopPreview() == false)
                 CLOGE("ERR(%s):Fail on m_secCamera->stopPreview()", __func__);
 
-            if (m_secCamera->flagStartPreviewReprocessing() == true &&
-                m_secCamera->stopPreviewReprocessing() == false)
+            if (m_secCamera->flagStartPreviewLpzsl() == true &&
+                m_secCamera->stopPreviewLpzsl() == false)
                 CLOGE("ERR(%s):Fail on m_secCamera->stopPreview()", __func__);
 #ifdef USE_VDIS
-            if (/*m_secCamera->getRecordingHint() == true &&*/ m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
+            if (/*m_secCamera->getRecordingHint() == true &&*/ m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
                 /* Dis Capture off */
                 if (m_secCamera->flagStartVdisCapture() == true &&
                     m_secCamera->stopVdisCapture() == false)
@@ -719,11 +736,11 @@ void ExynosCameraHWImpl::stopPreview()
             }
 #endif
 
-            if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
+            if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
                 if (m_pictureRunning == true &&
-                    m_stopPictureInternalReprocessing() == false)
-                    CLOGE("ERR(%s):m_stopPictureInternalReprocessing() fail", __func__);
-            } else if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
+                    m_stopPictureInternalLpzsl() == false)
+                    CLOGE("ERR(%s):m_stopPictureInternalLpzsl() fail", __func__);
+            } else if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
                 if (m_pictureRunning == true &&
                     m_stopPictureInternal() == false)
                     CLOGE("ERR(%s):m_stopPictureInternal() fail", __func__);
@@ -731,38 +748,38 @@ void ExynosCameraHWImpl::stopPreview()
 
         m_stopPreviewInternal();
 
-        CLOGD("DEBUG(%s):(%d) m_previewThread try exit", __func__, __LINE__);
+        CLOGD("[INFO] %s (%d) m_previewThread try exit", __FUNCTION__, __LINE__);
         m_previewThread->requestExitAndWait();
-        CLOGD("DEBUG(%s):(%d) m_previewThread was exited", __func__, __LINE__);
+        CLOGD("[INFO] %s (%d) m_previewThread was exited", __FUNCTION__, __LINE__);
 
-        CLOGD("DEBUG(%s):(%d) m_ispThread try exit", __func__, __LINE__);
+        CLOGD("[INFO] %s (%d) m_ispThread try exit", __FUNCTION__, __LINE__);
         m_exitIspThread = true;
         m_ispCondition.signal();
         m_ispThread->requestExitAndWait();
         m_exitIspThread = false;
-        CLOGD("DEBUG(%s):(%d) m_ispThread was exited", __func__, __LINE__);
+        CLOGD("[INFO] %s (%d) m_ispThread was exited", __FUNCTION__, __LINE__);
 
-        CLOGD("DEBUG(%s):(%d) m_sensorThread try exit", __func__, __LINE__);
+        CLOGD("[INFO] %s (%d) m_sensorThread try exit", __FUNCTION__, __LINE__);
         m_sensorThread->requestExitAndWait();
-        CLOGD("DEBUG(%s):(%d) m_sensorThread was exited", __func__, __LINE__);
+        CLOGD("[INFO] %s (%d) m_sensorThread was exited", __FUNCTION__, __LINE__);
 
-        // stop sensorReprocessing thread if this mode is dual or back
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-            CLOGD("DEBUG(%s):(%d) m_stopSensorReprocessing try exit", __func__, __LINE__);
-            m_stopSensorReprocessing();
-            CLOGD("DEBUG(%s):(%d) m_stopSensorReprocessing was exited", __func__, __LINE__);
+        // stop sensorlpzsl thread if this mode is dual or back
+        if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+            CLOGD("[INFO] %s (%d) m_stopSensorLpzsl try exit", __FUNCTION__, __LINE__);
+            m_stopSensorLpzsl();
+            CLOGD("[INFO] %s (%d) m_stopSensorLpzsl was exited", __FUNCTION__, __LINE__);
         }
 
 #ifdef THREAD_PROFILE
             gettimeofday(&mTimeStop, NULL);
             timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-            CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
+            CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
         } else {
             CLOGD("DEBUG(%s):preview not running, doing nothing", __func__);
         }
 
-        CLOGD("DEBUG(%s):(%d) out", __func__, __LINE__);
+        CLOGD("[INFO] %s (%d) out", __FUNCTION__, __LINE__);
         m_previewLock.unlock();
 
 #ifdef FORCE_LEADER_OFF
@@ -770,8 +787,6 @@ void ExynosCameraHWImpl::stopPreview()
 #endif
 
     m_restoreMsgType();
-
-    CLOGD("DEBUG(%s):out", __func__);
 }
 
 bool ExynosCameraHWImpl::previewEnabled()
@@ -792,7 +807,7 @@ status_t ExynosCameraHWImpl::storeMetaDataInBuffers(bool enable)
 
 status_t ExynosCameraHWImpl::startRecording()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGI("[INFO] %s", __FUNCTION__);
 
     Mutex::Autolock lock(m_videoLock);
 
@@ -854,7 +869,7 @@ status_t ExynosCameraHWImpl::startRecording()
                 m_resizedVideoHeapFd[i][j] = -1;
             }
 
-            m_resizedVideoHeap[i][j] = m_getMemoryCb(-1, (orgVideoPlaneSize + MFC_7X_BUFFER_OFFSET), 1, &(m_resizedVideoHeapFd[i][j]));
+            m_resizedVideoHeap[i][j] = m_getMemoryCb(-1, orgVideoPlaneSize, 1, &(m_resizedVideoHeapFd[i][j]));
             if (!m_resizedVideoHeap[i][j] || m_resizedVideoHeapFd[i][j] <= 0) {
                 CLOGE("ERR(%s):m_getMemoryCb(m_resizedVideoHeap[%d][%d], size(%d) fail",\
                     __func__, i, j, orgVideoPlaneSize);
@@ -871,32 +886,31 @@ status_t ExynosCameraHWImpl::startRecording()
 
         m_videoRunning = true;
 
-        CLOGD("DEBUG(%s:%d): SIGNAL(m_videoCondition) - send", __func__, __LINE__);
+        CLOGD("DEBUG(%s:%d): SIGNAL(m_videoCondition) - send", __FUNCTION__, __LINE__);
         m_videoCondition.signal();
     }
-
-    CLOGD("DEBUG(%s):out", __func__);
 
     return NO_ERROR;
 }
 
 void ExynosCameraHWImpl::stopRecording()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGI("[INFO] %s", __FUNCTION__);
 
     if (m_videoRunning == true) {
         m_videoRunning = false;
 
         Mutex::Autolock lock(m_videoLock);
         m_resetRecordingFrameStatus();
-        CLOGD("DEBUG(%s:%d): SIGNAL(m_videoCondition) - send", __func__, __LINE__);
+        CLOGD("DEBUG(%s:%d): SIGNAL(m_videoCondition) - send", __FUNCTION__, __LINE__);
         m_videoCondition.signal();
+
         /* wait until video thread is stopped */
-        CLOGD("DEBUG(%s:%d): SIGNAL(m_videoStoppedCondition) - waiting", __func__, __LINE__);
+        CLOGD("DEBUG(%s:%d): SIGNAL(m_videoStoppedCondition) - waiting", __FUNCTION__, __LINE__);
         if (m_videoStoppedCondition.waitRelative(m_videoLock, (1000 * 1000000)) == NO_ERROR)
-            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoStoppedCondition) - recevied", __func__, __LINE__);
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoStoppedCondition) - recevied", __FUNCTION__, __LINE__);
         else
-            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoStoppedCondition) - not recevied, but release after 1 sec", __func__, __LINE__);
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoStoppedCondition) - not recevied, but release after 1 sec", __FUNCTION__, __LINE__);
     } else
         CLOGV("DEBUG(%s):video not running, doing nothing", __func__);
 
@@ -915,8 +929,6 @@ void ExynosCameraHWImpl::stopRecording()
             }
         }
     }
-
-    CLOGD("DEBUG(%s):out", __func__);
 }
 
 bool ExynosCameraHWImpl::recordingEnabled()
@@ -951,7 +963,7 @@ void ExynosCameraHWImpl::releaseRecordingFrame(const void *opaque)
 
 status_t ExynosCameraHWImpl::autoFocus()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGI("[INFO] %s", __FUNCTION__);
 
     /* waiting previous AF is over */
     m_autoFocusLock.lock();
@@ -959,14 +971,12 @@ status_t ExynosCameraHWImpl::autoFocus()
     m_autoFocusThread->requestExitAndWait();
     m_autoFocusThread->run("CameraAutoFocusThread", PRIORITY_DEFAULT);
 
-    CLOGD("DEBUG(%s):out", __func__);
-
     return NO_ERROR;
 }
 
 status_t ExynosCameraHWImpl::cancelAutoFocus()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGI("[INFO] %s", __FUNCTION__);
 
     m_autoFocusRunning = false;
 
@@ -978,7 +988,7 @@ status_t ExynosCameraHWImpl::cancelAutoFocus()
     /* Adonis can support the different AF area and Metering Areas */
 #if 0
     /* TODO: Currently we only able to set same area both touchAF and touchMetering */
-    if (m_secCamera->getFocusMode() == ExynosCamera::FOCUS_MODE_TOUCH) {
+    if (m_secCamera->getFocusMode() == ExynosCamera::FOCUS_MODE_TOUCH){
         if (m_secCamera->cancelMeteringAreas() == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->cancelMeteringArea()", __func__);
             return UNKNOWN_ERROR;
@@ -988,22 +998,16 @@ status_t ExynosCameraHWImpl::cancelAutoFocus()
     }
 #endif
 
-    CLOGD("DEBUG(%s):out", __func__);
-
     return NO_ERROR;
 }
 
 status_t ExynosCameraHWImpl::takePicture()
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
-#ifdef CHECK_TIME_SHOT2SHOT
-    m_shot2ShotTimer.start();
-#endif //CHECK_TIME_SHOT2SHOT
+    CLOGI("[INFO] %s", __FUNCTION__);
 
     Mutex::Autolock lock(m_stateLock);
     if (m_previewRunning == false) {
-        CLOGE("ERR(%s):Capture fail: preview is not initialized", __func__);
+        CLOGE("ERR(%s): Capture fail: preview is not initialized", __func__);
         return INVALID_OPERATION;
     }
 
@@ -1011,6 +1015,10 @@ status_t ExynosCameraHWImpl::takePicture()
         CLOGW("WARN(%s):capture already in progress", __func__);
         return NO_ERROR;
     }
+
+#ifdef CAPTURE_DELAY
+    capture_delay = 1;
+#endif
 
     m_captureInProgress = true;
     m_waitForCapture = true;
@@ -1026,7 +1034,7 @@ status_t ExynosCameraHWImpl::takePicture()
 #endif
     if ((m_13MCaptureStart == false) &&
          (m_secCamera->getScalableSensorStart()) &&
-         (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK)) {
+         (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK)) {
 
         /* AE lock for AE-haunting when zoom capture */
         if ((m_secCamera->getZoom() != m_secCamera->getMaxZoom()) &&
@@ -1041,17 +1049,17 @@ status_t ExynosCameraHWImpl::takePicture()
         }
 
         if (m_checkAndWaitScalableSate(SCALABLE_SENSOR_SIZE_13M) == false) {
-            CLOGE("ERR(%s):m_checkAndWaitScalableSate() fail", __func__);
+            CLOGE("ERR(%s): m_checkAndWaitScalableSate() fail", __FUNCTION__);
             return INVALID_OPERATION;
         }
         if (m_chgScalableSensorSize(SCALABLE_SENSOR_SIZE_13M) == false) {
-            CLOGE("ERR(%s):scalable sensor input change(SCALABLE_SENSOR_SIZE_13M)!!", __func__);
+            CLOGE("ERR(%s): scalable sensor input change(SCALABLE_SENSOR_SIZE_13M)!!", __func__);
             return INVALID_OPERATION;
         }
     }
 #ifdef SCALABLE_SENSOR_CHKTIME
     gettimeofday(&end, NULL);
-    CLOGD("DEBUG(%s):CHKTIME m_chgScalableSensorSize all done total [to picture size](%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
+    CLOGI("INFO(%s):CHKTIME m_chgScalableSensorSize all done total [to picture size](%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
 #endif
 #endif
 
@@ -1060,14 +1068,16 @@ status_t ExynosCameraHWImpl::takePicture()
         return INVALID_OPERATION;
     }
 
-    CLOGD("DEBUG(%s):out", __func__);
+#ifdef CAPTURE_DELAY
+    capture_delay = 0;
+#endif
 
     return NO_ERROR;
 }
 
 status_t ExynosCameraHWImpl::cancelPicture()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGI("[INFO] %s", __FUNCTION__);
 
     if (m_pictureThread.get()) {
         CLOGV("DEBUG(%s):waiting for picture thread to exit", __func__);
@@ -1075,34 +1085,24 @@ status_t ExynosCameraHWImpl::cancelPicture()
         CLOGV("DEBUG(%s):picture thread has exited", __func__);
     }
 
-    CLOGD("DEBUG(%s):out", __func__);
-
     return NO_ERROR;
 }
 
 status_t ExynosCameraHWImpl::setParametersLocked(const CameraParameters& params)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
+    CLOGI("%s", __FUNCTION__);
     int ret_val;
-
-    CLOGD("DEBUG(%s):m_startStopLock.lock()", __func__);
+    CLOGI("%s m_startStopLock.lock()", __FUNCTION__);
     m_startStopLock.lock();
-
     ret_val = setParameters(params);
-
     m_startStopLock.unlock();
-    CLOGD("DEBUG(%s):m_startStopLock.unlock()", __func__);
-
-    CLOGD("DEBUG(%s):out", __func__);
-
+    CLOGI("%s m_startStopLock.unlock()", __FUNCTION__);
     return ret_val;
 }
 
 status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
+    CLOGI("[INFO] %s", __FUNCTION__);
     status_t ret = NO_ERROR;
     bool flagRestartPreview = false;
 
@@ -1117,8 +1117,7 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
     if (m_waitForCapture == true) {
         m_stateLock.unlock();
         m_pictureLock.lock();
-        if (m_pictureCondition.waitRelative(m_pictureLock, ((nsecs_t)2000 * (nsecs_t)1000000)) == NO_ERROR)
-            CLOGD("DEBUG(%s:%d): SIGNAL(m_pictureCondition) - recevied", __func__, __LINE__);
+        m_pictureCondition.waitRelative(m_pictureLock, ((nsecs_t)2000 * (nsecs_t)1000000));
         m_pictureLock.unlock();
     }
     m_stateLock.unlock();
@@ -1184,16 +1183,9 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
         CLOGD("DEBUG(%s):newFrameRate : %d", "setParameters", newFrameRate);
 
         int tempFps = newFrameRate * 1000;
-
-        if (recordingHint == true) {
-            /* set fixed fps. */
-            newMinFps = tempFps;
+        if (m_getSupportedVariableFpsList(tempFps / 2, tempFps, &newMinFps, &newMaxFps) == false) {
+            newMinFps = tempFps / 2;
             newMaxFps = tempFps;
-        } else {
-            if (m_getSupportedVariableFpsList(tempFps / 2, tempFps, &newMinFps, &newMaxFps) == false) {
-                newMinFps = tempFps / 2;
-                newMaxFps = tempFps;
-            }
         }
 
         if (m_secCamera->setPreviewFpsRange(newMinFps, newMaxFps) == false) {
@@ -1372,7 +1364,7 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
             if (tempW != oldPictureW || tempH != oldPictureH) {
 #ifdef FU_3INSTANCE
                 if (m_pictureRunning == true || m_previewRunning == true) {
-                        CLOGE("%s: Picture ratio changed without stopPreview, force restart preview", __func__);
+                        CLOGE("%s: Picture ratio changed without stopPreview, force restart preview", __FUNCTION__);
                     /* HACK : When preview is running, we need stop/start preview for change sensor ratio */
                     /* We must be wait until picture thread is done, and it's working in stopPreview() */
                         stopPreview();
@@ -1387,7 +1379,7 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
                         CLOGE("ERR(%s):m_startPictureInternal() fail", __func__);
                 }
 #endif
-            }
+             }
             m_orgPictureRect.w = newPictureW;
             m_orgPictureRect.h = newPictureH;
             m_params.setPictureSize(newPictureW, newPictureH);
@@ -1588,9 +1580,9 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
         CLOGD("DEBUG(%s):newMeteringAreas: %s", "setParameters", newMeteringAreas);
 
         if (newMeteringAreasSize == curMeteringAreasSize && curMeteringAreas != NULL)
-            isMeteringAreasSame = strncmp(newMeteringAreas, curMeteringAreas, newMeteringAreasSize);
+	        isMeteringAreasSame = strncmp(newMeteringAreas, curMeteringAreas, newMeteringAreasSize);
         else
-            isMeteringAreasSame = false;
+	        isMeteringAreasSame = false;
 
         if (curMeteringAreas == NULL || !isMeteringAreasSame) {
             // ex : (-10,-10,0,0,300),(0,0,10,10,700)
@@ -1699,12 +1691,8 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
             */
 
             strNewFlashMode = CameraParameters::FLASH_MODE_OFF;
-
-            /* let it change whitebalalance even if SCENE_MODE_SOMETHING */
-            /*
             newWhiteBalance = CameraParameters::WHITE_BALANCE_AUTO;
             m_params.set(CameraParameters::KEY_WHITE_BALANCE, newWhiteBalance);
-            */
 
             if (!strcmp(strNewSceneMode, CameraParameters::SCENE_MODE_ACTION)) {
                 newSceneMode = ExynosCamera::SCENE_MODE_ACTION;
@@ -1836,9 +1824,12 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
     }
 
     // white balance
-
+    /*
     if (newWhiteBalance != NULL &&
         strNewSceneMode && !strcmp(strNewSceneMode, CameraParameters::SCENE_MODE_AUTO)) {
+    */
+    /* TN' feautre can change whiteBalance even if Non SCENE_MODE_AUTO */
+    if (newWhiteBalance != NULL) {
         CLOGD("DEBUG(%s):newWhiteBalance %s", "setParameters", newWhiteBalance);
         int value = -1;
 
@@ -2210,7 +2201,7 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
     }
 
     //gamma
-    const char *strNewGamma = params.get("video_recording_gamma");
+    const char *strNewGamma = m_internalParams.get("video_recording_gamma");
     if (strNewGamma != NULL) {
         CLOGD("DEBUG(%s):strNewGamma %s", "setParameters", strNewGamma);
         int newGamma = -1;
@@ -2236,7 +2227,7 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
     }
 
     //slow ae
-    const char *strNewSlowAe = params.get("slow_ae");
+    const char *strNewSlowAe = m_internalParams.get("slow_ae");
     if (strNewSlowAe != NULL) {
         CLOGD("DEBUG(%s):strNewSlowAe %s", "setParameters", strNewSlowAe);
         int newSlowAe = -1;
@@ -2261,14 +2252,6 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
         }
     }
 
-    if (flagRestartPreview) {
-        if ((m_previewRunning == true) &&
-            m_previewStartDeferred == false) {
-            CLOGE("%s:preview is running, cannot change size and format! but I do", "setParameters");
-            this->setPreviewWindow(m_previewWindow);
-        }
-    }
-
     // image unique id
     const char *oldImageUniqueId = m_params.get("imageuniqueid-value");
     if (oldImageUniqueId == NULL || strcmp(oldImageUniqueId, "") == 0) {
@@ -2280,9 +2263,9 @@ status_t ExynosCameraHWImpl::setParameters(const CameraParameters& params)
         }
     }
 
-    m_restoreMsgType();
+    CLOGD("DEBUG(%s): finished: ret = %d", "setParameters", ret);
 
-    CLOGD("DEBUG(%s):out ret(%d)", __func__, ret);
+    m_restoreMsgType();
 
     return ret;
 }
@@ -2346,7 +2329,7 @@ status_t ExynosCameraHWImpl::sendCommand(int32_t command, int32_t arg1, int32_t 
 
 void ExynosCameraHWImpl::release()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGI("[INFO] %s", __FUNCTION__);
 
     /* shut down any threads we have that might be running.  do it here
      * instead of the destructor.  we're guaranteed to be on another thread
@@ -2356,34 +2339,34 @@ void ExynosCameraHWImpl::release()
      */
 
 #ifdef START_HW_THREAD_ENABLE
-    if (m_startThreadMain != NULL) {
-        m_startThreadMainLock.lock();
-        m_startThreadMain->requestExit();
-        m_exitStartThreadMain = true;
-        m_startThreadMainCondition.signal();
-        m_startThreadMainLock.unlock();
-        m_startThreadMain->requestExitAndWait();
-        m_startThreadMain.clear();
+    if (m_startCameraHwThreadA != NULL) {
+        m_startCameraHwThreadLockA.lock();
+        m_startCameraHwThreadA->requestExit();
+        m_exitStartCameraHwThreadA = true;
+        m_startCameraHwThreadConditionA.signal();
+        m_startCameraHwThreadLockA.unlock();
+        m_startCameraHwThreadA->requestExitAndWait();
+        m_startCameraHwThreadA.clear();
     }
 
-    if (m_startThreadReprocessing != NULL) {
-        m_startThreadReprocessingLock.lock();
-        m_startThreadReprocessing->requestExit();
-        m_exitStartThreadReprocessing = true;
-        m_startThreadReprocessingCondition.signal();
-        m_startThreadReprocessingLock.unlock();
-        m_startThreadReprocessing->requestExitAndWait();
-        m_startThreadReprocessing.clear();
+    if (m_startCameraHwThreadB != NULL) {
+        m_startCameraHwThreadLockB.lock();
+        m_startCameraHwThreadB->requestExit();
+        m_exitStartCameraHwThreadB = true;
+        m_startCameraHwThreadConditionB.signal();
+        m_startCameraHwThreadLockB.unlock();
+        m_startCameraHwThreadB->requestExitAndWait();
+        m_startCameraHwThreadB.clear();
     }
 
-    if (m_startThreadBufAlloc != NULL) {
-        m_startThreadBufAllocLock.lock();
-        m_startThreadBufAlloc->requestExit();
-        m_exitStartThreadBufAlloc = true;
-        m_startThreadBufAllocCondition.signal();
-        m_startThreadBufAllocLock.unlock();
-        m_startThreadBufAlloc->requestExitAndWait();
-        m_startThreadBufAlloc.clear();
+    if (m_startCameraHwThreadC != NULL) {
+        m_startCameraHwThreadLockC.lock();
+        m_startCameraHwThreadC->requestExit();
+        m_exitStartCameraHwThreadC = true;
+        m_startCameraHwThreadConditionC.signal();
+        m_startCameraHwThreadLockC.unlock();
+        m_startCameraHwThreadC->requestExitAndWait();
+        m_startCameraHwThreadC.clear();
     }
 #endif
 
@@ -2433,8 +2416,8 @@ void ExynosCameraHWImpl::release()
 
 #ifdef FU_3INSTANCE
     if (m_pictureRunning == true) {
-        if (m_stopPictureInternalReprocessing() == false)
-            CLOGE("ERR(%s):m_stopPictureInternalReprocessing() fail", __func__);
+        if (m_stopPictureInternalLpzsl() == false)
+            CLOGE("ERR(%s):m_stopPictureInternalLpzsl() fail", __func__);
     }
 #else
     if (m_pictureRunning == true) {
@@ -2450,12 +2433,12 @@ void ExynosCameraHWImpl::release()
         m_sensorThread.clear();
     }
 
-#ifdef OTF_SENSOR_REPROCESSING
-    if (m_sensorThreadReprocessing != NULL) {
-        m_sensorThreadReprocessing->requestExit();
-        m_sensorRunningReprocessing = false;
-        m_sensorThreadReprocessing->requestExitAndWait();
-        m_sensorThreadReprocessing.clear();
+#ifdef OTF_SENSOR_LPZSL
+    if (m_sensorThreadLpzsl != NULL) {
+        m_sensorThreadLpzsl->requestExit();
+        m_sensorRunningLpzsl = false;
+        m_sensorThreadLpzsl->requestExitAndWait();
+        m_sensorThreadLpzsl.clear();
     }
 #endif
 
@@ -2538,11 +2521,12 @@ void ExynosCameraHWImpl::release()
         m_secCamera = NULL;
     }
 
+#ifdef MULTI_INSTANCE_CHECK
+    this->multi_instance_check = 0;
+#endif
 #ifdef FORCE_LEADER_OFF
     tryThreadStop = true;
 #endif
-
-    CLOGD("DEBUG(%s):out", __func__);
 }
 
 status_t ExynosCameraHWImpl::dump(int fd) const
@@ -2554,6 +2538,7 @@ status_t ExynosCameraHWImpl::dump(int fd) const
 
     if (m_secCamera != 0) {
         m_params.dump(fd, args);
+        m_internalParams.dump(fd, args);
         snprintf(buffer, 255, " preview running(%s)\n", m_previewRunning?"true": "false");
         result.append(buffer);
     } else {
@@ -2571,8 +2556,8 @@ int ExynosCameraHWImpl::getCameraId() const
 
 void ExynosCameraHWImpl::m_disableMsgType(int32_t msgType, bool restore)
 {
-    CLOGD("DEBUG(%s):msgType = 0x%x, m_storedMsg = 0x%x, m_msgEnabled(0x%x -> 0x%x)",
-        __func__, msgType, m_storedMsg, m_msgEnabled, m_msgEnabled & ~msgType);
+    CLOGW("DEBUG(%s):m_msgEnabled = 0x%x, disable msgType = 0x%x",
+         __func__, m_msgEnabled, msgType);
 
     if (m_storedMsg == 0 && m_msgEnabled != 0) {
         if (restore == true) {
@@ -2587,8 +2572,8 @@ void ExynosCameraHWImpl::m_disableMsgType(int32_t msgType, bool restore)
 
 void ExynosCameraHWImpl::m_restoreMsgType(void)
 {
-    CLOGD("DEBUG(%s):m_storedMsg = 0x%x, m_msgEnabled(0x%x -> 0x%x)",
-         __func__, m_storedMsg, m_msgEnabled, m_storedMsg);
+    CLOGW("DEBUG(%s):m_storedMsg = 0x%x, m_msgEnabled before = 0x%x",
+         __func__, m_storedMsg, m_msgEnabled);
 
     if (m_storedMsg != 0) {
         m_msgEnabled = m_storedMsg;
@@ -2598,7 +2583,7 @@ void ExynosCameraHWImpl::m_restoreMsgType(void)
 
 bool ExynosCameraHWImpl::m_initSecCamera(int cameraId)
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGD("DEBUG(%s)", __func__);
 
     if (m_secCamera != NULL) {
         CLOGE("ERR(%s):m_secCamera object is NULL", __func__);
@@ -2613,12 +2598,12 @@ bool ExynosCameraHWImpl::m_initSecCamera(int cameraId)
     }
 
 #ifdef START_HW_THREAD_ENABLE
-    m_startThreadMain = new StartThreadMain(this);
-    m_startThreadReprocessing = new StartThreadReprocessing(this);
-    m_startThreadBufAlloc = new StartThreadBufAlloc(this);
+    m_startCameraHwThreadA = new StartCameraHwThreadA(this);
+    m_startCameraHwThreadB = new StartCameraHwThreadB(this);
+    m_startCameraHwThreadC = new StartCameraHwThreadC(this);
 #endif
-
     m_previewThread = new CameraThread(this, &ExynosCameraHWImpl::m_previewThreadFunc);
+
     m_videoThread = new VideoThread(this);
     m_autoFocusThread = new AutoFocusThread(this);
     m_pictureThread = new PictureThread(this);
@@ -2627,9 +2612,7 @@ bool ExynosCameraHWImpl::m_initSecCamera(int cameraId)
     m_ispThread = new CameraThread(this, &ExynosCameraHWImpl::m_ispThreadFunc);
 
     if (cameraId == 0)
-        m_sensorThreadReprocessing = new CameraThread(this, &ExynosCameraHWImpl::m_sensorThreadFuncReprocessing);
-
-    CLOGD("DEBUG(%s):out", __func__);
+        m_sensorThreadLpzsl = new CameraThread(this, &ExynosCameraHWImpl::m_sensorThreadFuncLpzsl);
 
     return true;
 }
@@ -2642,6 +2625,7 @@ void ExynosCameraHWImpl::m_initDefaultParameters(int cameraId)
     }
 
     CameraParameters p;
+    CameraParameters ip;
 
     String8 parameterString;
 
@@ -2649,6 +2633,18 @@ void ExynosCameraHWImpl::m_initDefaultParameters(int cameraId)
     cameraName = m_secCamera->getCameraName();
     if (cameraName == NULL)
         CLOGE("ERR(%s):getCameraName() fail", __func__);
+
+#if defined (CSC_SUPPORT_ROT) && defined(USE_S5K3H7_CAMERA)
+    if(getCameraId() == 0) //back camera
+    {
+       capture_rotate = HAL_TRANSFORM_ROT_180;
+       record_rotate = 0;    
+    }
+    else{
+	capture_rotate = 0;
+      record_rotate = 0;    
+    }
+#endif	
 
     char strBuf[256];
     String8 listString;
@@ -2669,7 +2665,7 @@ void ExynosCameraHWImpl::m_initDefaultParameters(int cameraId)
     }
 
     p.set(CameraParameters::KEY_SUPPORTED_PREVIEW_SIZES, listString.string());
-    CLOGD("DEBUG(%s): Default preview size is %dx%d", __func__, previewMaxW, previewMaxH);
+    CLOGD("DEBUG(%s): Default preview size is %dx%d", __FUNCTION__, previewMaxW, previewMaxH);
     p.setPreviewSize(previewMaxW, previewMaxH);
 
     listString.setTo("");
@@ -2692,7 +2688,7 @@ void ExynosCameraHWImpl::m_initDefaultParameters(int cameraId)
         listString = String8::format("%dx%d", videoMaxW, videoMaxH);
     }
     p.set(CameraParameters::KEY_SUPPORTED_VIDEO_SIZES, listString.string());
-    CLOGD("DEBUG(%s): Default video size is %dx%d", __func__, videoMaxW, videoMaxH);
+    CLOGD("DEBUG(%s): Default video size is %dx%d", __FUNCTION__, videoMaxW, videoMaxH);
     p.setVideoSize(videoMaxW, videoMaxH);
 
     int cropX, cropY, cropW, cropH = 0;
@@ -2736,10 +2732,10 @@ void ExynosCameraHWImpl::m_initDefaultParameters(int cameraId)
     p.set(CameraParameters::KEY_SUPPORTED_PICTURE_SIZES, listString.string());
 
     if (m_getMatchedPictureSize(previewMaxW, previewMaxH, &matchedW, &matchedH) == false) {
-        CLOGW("WRN(%s): Could not found matched picture size, set the max size(%dx%d)", __func__, pictureMaxW, pictureMaxH);
+        CLOGW("WRN(%s): Could not found matched picture size, set the max size(%dx%d)", __FUNCTION__, pictureMaxW, pictureMaxH);
         p.setPictureSize(pictureMaxW, pictureMaxH);
     } else {
-        CLOGD("DEBUG(%s): Default picture size is %dx%d", __func__, matchedW, matchedH);
+        CLOGD("DEBUG(%s): Default picture size is %dx%d", __FUNCTION__, matchedW, matchedH);
         p.setPictureSize(matchedW, matchedH);
     }
 
@@ -3207,6 +3203,7 @@ void ExynosCameraHWImpl::m_initDefaultParameters(int cameraId)
     p.set("focallength-35mm-value", focalLengthIn35mmFilm);
 
     m_params = p;
+    m_internalParams = ip;
 
     /* make sure m_secCamera has all the settings we do.  applications
      * aren't required to call setParameters themselves (only if they
@@ -3217,7 +3214,7 @@ void ExynosCameraHWImpl::m_initDefaultParameters(int cameraId)
 
 status_t ExynosCameraHWImpl::m_startSensor()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGD("[%s] (%d)", __func__, __LINE__);
 
     Mutex::Autolock lock(m_sensorLock);
 
@@ -3230,16 +3227,15 @@ status_t ExynosCameraHWImpl::m_startSensor()
     */
 
     m_sensorRunning = true;
+    CLOGD("DEBUG(%s:%d): SIGNAL(m_sensorCondition) - send", __FUNCTION__, __LINE__);
     m_sensorThread->run("CameraSensorThread", PRIORITY_DEFAULT);
-
-    CLOGD("DEBUG(%s):out", __func__);
 
     return NO_ERROR;
 }
 
 void ExynosCameraHWImpl::m_stopSensor()
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGD("[%s] (%d)", __func__, __LINE__);
 
     if (m_sensorRunning == true) {
         m_sensorRunning = false;
@@ -3247,75 +3243,38 @@ void ExynosCameraHWImpl::m_stopSensor()
 #ifdef USE_VDIS
         m_secCamera->setRecordingHint(false);
 #endif
-            if (0 < m_secCamera->getNumOfShotedFrame() &&
-                m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-                CLOGD("DEBUG %s(%d), stop phase - %d frames are remained", __func__, __LINE__, m_secCamera->getNumOfShotedFrame());
+            if (m_secCamera->getNumOfShotedFrame() > 0
+                && m_secCamera->getCameraMode() != CAMERA_ACTIVATE_MODE_FRONT) {
+                CLOGD("DEBUG %s(%d), stop phase - %d frames are remained", __FUNCTION__, __LINE__, m_secCamera->getNumOfShotedFrame());
             // break; // this should be modified... origital code has break;
             }
 
-            if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
-                if (m_secCamera->setSensorStreamOff(ExynosCamera::CAMERA_MODE_FRONT) == false)
-                    CLOGE("ERR(%s):Fail on m_secCamera->setSensorStreamOff(ExynosCamera::CAMERA_MODE_FRONT)", __func__);
-
-                if (m_secCamera->stopSensorOff(ExynosCamera::CAMERA_MODE_FRONT) == false)
-                    CLOGE("ERR(%s):m_secCamera->stopSensorOff(ExynosCamera::CAMERA_MODE_FRONT) fail", __func__);
-
-                if (m_secCamera->flagStartSensor() == true) {
-                    if (m_secCamera->stopSensor() == false)
-                        CLOGE("ERR(%s):m_secCamera->stopSensor() fail", __func__);
-                }
-            }
-
-            // stop sensor 0-reprocessing if this mode is dual or back
-            if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-                if (m_secCamera->setSensorStreamOff(ExynosCamera::CAMERA_MODE_REPROCESSING) == false)
-                    CLOGE("ERR(%s):Fail on m_secCamera->setSensorStreamOff(ExynosCamera::CAMERA_MODE_REPROCESSING)", __func__);
-
-                if (m_secCamera->stopSensorOff(ExynosCamera::CAMERA_MODE_REPROCESSING) == false)
-                    CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(ExynosCamera::CAMERA_MODE_REPROCESSING)", __func__);
+            if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
+                if (m_secCamera->stopSensorOff(SENSOR_FRONT) == false)
+                    CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(SENSOR_FRONT)", __func__);
 
                 if (m_secCamera->flagStartSensor() == true) {
                     if (m_secCamera->stopSensor() == false)
                         CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
                 }
-
-                if (m_secCamera->flagStartSensorReprocessing() == true) {
-                    if (m_secCamera->stopSensorReprocessing() == false)
-                        CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
-                }
             }
-    } else {
+    } else
         CLOGV("DEBUG(%s):sensor not running, doing nothing", __func__);
-    }
-
-    CLOGD("DEBUG(%s):out", __func__);
 }
 
 bool ExynosCameraHWImpl::m_sensorThreadFuncWrap(void)
 {
     bool ret = false;
 
-    int cameraMode = m_secCamera->getCameraMode();
-
-    switch (cameraMode) {
-    case ExynosCamera::CAMERA_MODE_BACK:
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK)
         ret = m_sensorThreadFuncOTF();
-        break;
-    case ExynosCamera::CAMERA_MODE_FRONT:
+    else if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT)
         ret = m_sensorThreadFuncM2M();
-        break;
-    default:
-        CLOGE("ERR(%s):invalid cameraMode(%d)", __func__, cameraMode);
-        ret = false;
-        break;
-    }
 
 #ifdef USE_CAMERA_ESD_RESET
     /* thread stop */
-    if (ret == false && m_sensorESDReset == true) {
-        CLOGE("ERR(%s):[esdreset]:ret == false && m_sensorESDReset == true", __func__);
+    if (ret == false && m_sensorESDReset == true)
         return false;
-    }
 #endif
 
     return true;
@@ -3334,26 +3293,24 @@ bool ExynosCameraHWImpl::m_sensorThreadFuncM2M(void)
         return false;
     }
 #endif
-
 #ifdef FORCE_LEADER_OFF
     if (tryThreadStop == true) {
         tryThreadStatus = tryThreadStatus | (1 << TRY_THREAD_STATUS_SENSOR) | (1 << TRY_THREAD_STATUS_BAYER);
         usleep(10000);
 
-        CLOGD("DEBUG(%s):(%d):tryThreadStop == true", __func__, __LINE__);
+        CLOGD("[%s] (%d)", __func__, __LINE__);
+
         return false;
     }
 #endif
-
-    if (m_sensorRunning == true &&
-        m_secCamera->getNotifyStopMsg() == false) {
-
+    if (m_secCamera->getNotifyStopMsg() == false
+        && m_sensorRunning == true) {
         m_sensorLock.lock();
 
         if (m_secCamera->getSensorBuf(&sensorBuf) == false) {
             m_sensorLock.unlock();
             if (CHECK_THREADHOLD(m_sensorErrCnt)) {
-                CLOG_ASSERT("ERR(%s): getSensorBuf() fail [%d times]!!!", __func__, m_sensorErrCnt);
+                CLOG_ASSERT("ERR(%s): getSensorBuf() fail [%d times]!!!", __FUNCTION__, m_sensorErrCnt);
                 return false;
             } else {
                 m_sensorErrCnt++;
@@ -3387,33 +3344,20 @@ bool ExynosCameraHWImpl::m_sensorThreadFuncM2M(void)
 
     shot_ext = (struct camera2_shot_ext *)(sensorBuf.virt.extP[1]);
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-        ExynosCameraHWImpl::g_is3a1Mutex.lock();
+    ExynosCameraHWImpl::isCh0Mutex.lock();
 
-        if (m_secCamera->getIs3a1Buf(ExynosCamera::CAMERA_MODE_BACK, &sensorBuf, &ispBuf) == false) {
-            CLOGE("ERR(%s):getIs3a1Buf() fail(id:%d)", __func__, getCameraId());
+    if (m_secCamera->getIs3a0Buf(SENSOR_FRONT, &sensorBuf, &ispBuf) == false) {
+        CLOGE("ERR(%s):getIs3a0Buf() fail(id:%d)", __func__, getCameraId());
 
-            ExynosCameraHWImpl::g_is3a1Mutex.unlock();
-            goto done;
-        }
-        ExynosCameraHWImpl::g_is3a1Mutex.unlock();
-    } else if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
-        ExynosCameraHWImpl::g_is3a0Mutex.lock();
-
-        if (m_secCamera->getIs3a0Buf(ExynosCamera::CAMERA_MODE_FRONT, &sensorBuf, &ispBuf) == false) {
-            CLOGE("ERR(%s):getIs3a0Buf() fail(id:%d)", __func__, getCameraId());
-
-            ExynosCameraHWImpl::g_is3a0Mutex.unlock();
-            goto done;
-        }
-        ExynosCameraHWImpl::g_is3a0Mutex.unlock();
+        ExynosCameraHWImpl::isCh0Mutex.unlock();
+        goto done;
     }
+    ExynosCameraHWImpl::isCh0Mutex.unlock();
 
     if (ispBuf.reserved.p < 0) {
         CLOGW("WRN(%s): ispBuf.reserved.p = %d", __func__, ispBuf.reserved.p);
         goto done;
     }
-
     shot_ext = (struct camera2_shot_ext *)ispBuf.virt.extP[1];
     isp_last_frame_cnt = shot_ext->shot.dm.request.frameCount;
 
@@ -3424,7 +3368,7 @@ bool ExynosCameraHWImpl::m_sensorThreadFuncM2M(void)
         CLOGE("ERR(%s):putISPBuf() fail", __func__);
         return false;
     }
-
+    isp_check++;
     isp_input_count++;
     m_ispCondition.signal();
 
@@ -3460,39 +3404,26 @@ bool ExynosCameraHWImpl::m_sensorThreadFuncOTF(void)
         return false;
     }
 #endif
-
 #ifdef FORCE_LEADER_OFF
     if (tryThreadStop == true) {
         tryThreadStatus = tryThreadStatus | (1 << TRY_THREAD_STATUS_SENSOR);
         usleep(10000);
 
-        CLOGD("DEBUG(%s):(%d):tryThreadStop == true", __func__, __LINE__);
+        CLOGD("[%s] (%d)", __func__, __LINE__);
+
         return false;
     }
 #endif
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-        ExynosCameraHWImpl::g_is3a1Mutex.lock();
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+        ExynosCameraHWImpl::is3aaMutex.lock();
 
-        if (m_secCamera->getIs3a1Buf(ExynosCamera::CAMERA_MODE_BACK, &sensorBuf, &ispBuf) == false) {
+        if (m_secCamera->getIs3a1Buf(SENSOR_BACK, &sensorBuf, &ispBuf) == false) {
             CLOGE("ERR(%s):getIs3a1Buf() fail(id:%d)", __func__, getCameraId());
 
-            ExynosCameraHWImpl::g_is3a1Mutex.unlock();
+            ExynosCameraHWImpl::is3aaMutex.unlock();
             goto done;
         }
-        ExynosCameraHWImpl::g_is3a1Mutex.unlock();
-        if (m_sensorRunning == false)
-            return false;
-    } else if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
-        ExynosCameraHWImpl::g_is3a0Mutex.lock();
-
-        if (m_secCamera->getIs3a0Buf(ExynosCamera::CAMERA_MODE_FRONT, &sensorBuf, &ispBuf) == false) {
-            CLOGE("ERR(%s):getIs3a0Buf() fail(id:%d)", __func__, getCameraId());
-
-            ExynosCameraHWImpl::g_is3a0Mutex.unlock();
-            goto done;
-        }
-
-        ExynosCameraHWImpl::g_is3a0Mutex.unlock();
+        ExynosCameraHWImpl::is3aaMutex.unlock();
         if (m_sensorRunning == false)
             return false;
     }
@@ -3501,7 +3432,6 @@ bool ExynosCameraHWImpl::m_sensorThreadFuncOTF(void)
         CLOGW("WRN(%s): ispBuf.reserved.p = %d", __func__, ispBuf.reserved.p);
         goto done;
     }
-
     shot_ext = (struct camera2_shot_ext *)ispBuf.virt.extP[1];
     isp_last_frame_cnt = shot_ext->shot.dm.request.frameCount;
 
@@ -3512,36 +3442,91 @@ bool ExynosCameraHWImpl::m_sensorThreadFuncOTF(void)
         CLOGE("ERR(%s):putISPBuf() fail", __func__);
         return false;
     }
+    isp_check++;
     isp_input_count++;
     m_ispCondition.signal();
 
 done:
-    if (m_secCamera->getCameraMode() != ExynosCamera::CAMERA_MODE_FRONT)
-        usleep(10);
+    usleep(10);
 
     return true;
 }
 
-status_t ExynosCameraHWImpl::m_startSensorReprocessing()
+status_t ExynosCameraHWImpl::m_startSensorLpzsl()
 {
-    Mutex::Autolock lock(m_sensorLockReprocessing);
+    Mutex::Autolock lock(m_sensorLockLpzsl);
 
-    m_sensorRunningReprocessing = true;
-    m_sensorThreadReprocessing->run("CameraSensorThreadReprocessing", PRIORITY_DEFAULT);
+    m_sensorRunningLpzsl = true;
+    CLOGD("DEBUG(%s:%d): SIGNAL(m_sensorConditionLpzsl) - send", __FUNCTION__, __LINE__);
+    m_sensorThreadLpzsl->run("CameraSensorThreadLpzsl", PRIORITY_DEFAULT);
 
     return NO_ERROR;
 }
 
-void ExynosCameraHWImpl::m_stopSensorReprocessing()
+void ExynosCameraHWImpl::m_stopSensorLpzsl()
 {
-    if (m_sensorRunningReprocessing == true) {
-        m_sensorRunningReprocessing = false;
-        m_sensorThreadReprocessing->requestExitAndWait();
+    if (m_sensorRunningLpzsl == true) {
+        m_sensorRunningLpzsl = false;
+        m_sensorThreadLpzsl->requestExitAndWait();
     } else
         CLOGV("DEBUG(%s):sensor not running, doing nothing", __func__);
 }
 
-bool ExynosCameraHWImpl::m_sensorThreadFuncReprocessing(void)
+bool ExynosCameraHWImpl::m_sensorThreadFuncWrapLpzsl(void)
+{
+    while (1) {
+        m_sensorStopLockLpzsl.lock();
+        while (m_sensorRunningLpzsl == false) {
+           if (m_secCamera->stopSensorOff(SENSOR_FAKE) == false)
+               CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(SENSOR_FAKE)", __func__);
+
+            if (m_secCamera->flagStartSensor() == true) {
+                if (m_secCamera->stopSensor() == false)
+                    CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
+            }
+
+            if (m_secCamera->flagStartSensorLpzsl() == true) {
+                if (m_secCamera->stopSensorLpzsl() == false)
+                    CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
+            }
+
+            CLOGV("DEBUG(%s):waiting", __func__);
+
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_sensorStoppedConditionLpzsl) - send", __FUNCTION__, __LINE__);
+            m_sensorStoppedConditionLpzsl.signal();
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_sensorConditionLpzsl) - waiting", __FUNCTION__, __LINE__);
+            m_setStartPreviewComplete(THREAD_ID_BAYER_OUT, false);
+            m_sensorConditionLpzsl.wait(m_sensorStopLockLpzsl);
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_sensorConditionLpzsl) - recevied", __FUNCTION__, __LINE__);
+        }
+        m_sensorStopLockLpzsl.unlock();
+
+        if (m_exitSensorThreadLpzsl == true) {
+            m_sensorStopLockLpzsl.lock();
+            if (m_secCamera->stopSensorOff(SENSOR_FAKE) == false)
+                CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(SENSOR_FAKE)", __func__);
+
+            if (m_secCamera->flagStartSensor() == true
+                && m_secCamera->stopSensor() == false)
+                CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
+
+            if (m_secCamera->flagStartSensorLpzsl() == true) {
+                if (m_secCamera->stopSensorLpzsl() == false)
+                    CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
+            }
+
+            m_sensorStopLockLpzsl.unlock();
+            return true;
+        }
+
+        m_setStartPreviewComplete(THREAD_ID_BAYER_OUT, true);
+        m_sensorThreadFuncLpzsl();
+    }
+
+    return true;
+}
+
+bool ExynosCameraHWImpl::m_sensorThreadFuncLpzsl(void)
 {
     ExynosBuffer sensorBuf;
     struct camera2_shot_ext *shot_ext;
@@ -3556,19 +3541,20 @@ bool ExynosCameraHWImpl::m_sensorThreadFuncReprocessing(void)
 #ifdef FORCE_LEADER_OFF
     if (tryThreadStop == true) {
         tryThreadStatus = tryThreadStatus | (1 << TRY_THREAD_STATUS_BAYER);
-        usleep(10000);
 
-        CLOGD("DEBUG(%s):(%d):tryThreadStop == true", __func__, __LINE__);
+        usleep(10000);
+        CLOGD("[%s] (%d)", __func__, __LINE__);
+
         return false;
     }
 #endif
-    if (m_sensorRunningReprocessing == true) {
-        m_sensorLockReprocessing.lock();
+    if (m_sensorRunningLpzsl == true) {
+        m_sensorLockLpzsl.lock();
 
         if (m_secCamera->getSensorBuf(&sensorBuf) == false) {
-            m_sensorLockReprocessing.unlock();
+            m_sensorLockLpzsl.unlock();
             if (CHECK_THREADHOLD(m_sensorErrCnt)) {
-                CLOG_ASSERT("ERR(%s): getSensorBuf() fail [%d times]!!!", __func__, m_sensorErrCnt);
+                CLOG_ASSERT("ERR(%s): getSensorBuf() fail [%d times]!!!", __FUNCTION__, m_sensorErrCnt);
                 return false;
             } else {
                 m_sensorErrCnt++;
@@ -3591,18 +3577,18 @@ bool ExynosCameraHWImpl::m_sensorThreadFuncReprocessing(void)
             getSenBufDone = true;
         }
 
-        m_sensorLockReprocessing.unlock();
+        m_sensorLockLpzsl.unlock();
     } else
         return false;
 
     if (getSenBufDone == true) {
-        m_sensorLockReprocessing.lock();
+        m_sensorLockLpzsl.lock();
         if (m_secCamera->putSensorBuf(&sensorBuf) == false) {
             CLOGE("ERR(%s):putSensorBuf() fail", __func__);
-            m_sensorLockReprocessing.unlock();
+            m_sensorLockLpzsl.unlock();
             return true;
         }
-        m_sensorLockReprocessing.unlock();
+        m_sensorLockLpzsl.unlock();
     }
 
     usleep(10);
@@ -3618,7 +3604,7 @@ bool ExynosCameraHWImpl::m_ispThreadFunc(void)
         tryThreadStatus = tryThreadStatus | (1 << TRY_THREAD_STATUS_ISP);
         usleep(10000);
 
-        CLOGD("DEBUG(%s):(%d):tryThreadStop == true", __func__, __LINE__);
+        CLOGD("[%s] (%d)", __func__, __LINE__);
 
         return false;
     }
@@ -3664,86 +3650,82 @@ bool ExynosCameraHWImpl::m_ispThreadFunc(void)
             m_ispLock.unlock();
             return true;
         }
+        isp_check--;
         isp_input_count--;
     } while (m_secCamera->getNumOfShotedIspFrame());
 
-    if (m_secCamera->getCameraMode() != ExynosCamera::CAMERA_MODE_FRONT)
+    if (m_secCamera->getCameraMode() != CAMERA_ACTIVATE_MODE_FRONT)
         usleep(10);
 
     return true;
 }
 
 #ifdef START_HW_THREAD_ENABLE
-bool ExynosCameraHWImpl::m_startThreadFuncBufAlloc(void)
+bool ExynosCameraHWImpl::startCameraHwThreadFuncC(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
-     m_startThreadBufAllocLock.lock();
+     m_startCameraHwThreadLockC.lock();
     /* check early exit request */
-    if (m_exitStartThreadBufAlloc == true) {
-        m_startThreadBufAllocLock.unlock();
+    if (m_exitStartCameraHwThreadC == true) {
+        m_startCameraHwThreadLockC.unlock();
         CLOGV("DEBUG(%s):exiting on request0", __func__);
         return true;
     }
 
-    m_startThreadBufAllocCondition.wait(m_startThreadBufAllocLock);
+    m_startCameraHwThreadConditionC.wait(m_startCameraHwThreadLockC);
     /* check early exit request */
-    if (m_exitStartThreadBufAlloc == true) {
-        m_startThreadBufAllocLock.unlock();
+    if (m_exitStartCameraHwThreadC == true) {
+        m_startCameraHwThreadLockC.unlock();
         CLOGV("DEBUG(%s):exiting on request1", __func__);
         return true;
     }
-    m_startThreadBufAllocLock.unlock();
+    m_startCameraHwThreadLockC.unlock();
 
-    CLOGD("DEBUG(%s):(%d)", __func__, __LINE__);
+    CLOGD("[%s] start (%d)", __func__, __LINE__);
 
-    m_startThreadBufAllocFinished = false;
-    m_errorExistInStartThreadBufAlloc = false;
-    if (m_getPreviewCallbackBuffer() == false) {
-        CLOGE("ERR(%s):Fail on m_getPreviewCallbackBuffer()", __func__);
-        m_errorExistInStartThreadBufAlloc = true;
+    m_CameraBufferAllocFinished = false;
+    m_ErrorExistInCameraHwThreadC = false;
+    if (getPreviewCallbackBuffer() == false) {
+        CLOGE("ERR(%s):Fail on getPreviewCallbackBuffer()", __func__);
+        m_ErrorExistInCameraHwThreadC = true;
         goto done;
     }
 
 done:
-    m_startThreadBufAllocFinishLock.lock();
-    if (m_startThreadBufAllocWaiting == true) {
-        CLOGD("DEBUG(%s):before send signal finished ThreadBufAlloc (%d)", __func__, __LINE__);
-        m_startThreadBufAllocFinishCondition.signal();
+    m_initCameraBufferAllocFinishLock.lock();
+    if (m_CameraBufferAllocWaiting == true) {
+        CLOGD("[%s] before send signal finished ThreadC (%d)", __func__, __LINE__);
+        m_initCameraBufferAllocFinishCondition.signal();
     }
-    m_startThreadBufAllocFinished = true;
-    m_startThreadBufAllocFinishLock.unlock();
-
-    CLOGD("DEBUG(%s):out", __func__);
+    m_CameraBufferAllocFinished = true;
+    m_initCameraBufferAllocFinishLock.unlock();
+    CLOGD("[%s] end   (%d)", __func__, __LINE__);
     return true;
 }
 
-bool ExynosCameraHWImpl::m_startThreadFuncReprocessing(void)
+bool ExynosCameraHWImpl::startCameraHwThreadFuncB(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
-    m_startThreadReprocessingLock.lock();
+    m_startCameraHwThreadLockB.lock();
     /* check early exit request */
-    if (m_exitStartThreadReprocessing == true) {
-        m_startThreadReprocessingLock.unlock();
+    if (m_exitStartCameraHwThreadB == true) {
+        m_startCameraHwThreadLockB.unlock();
         CLOGV("DEBUG(%s):exiting on request0", __func__);
         return true;
     }
 
-    m_startThreadReprocessingCondition.wait(m_startThreadReprocessingLock);
+    m_startCameraHwThreadConditionB.wait(m_startCameraHwThreadLockB);
     /* check early exit request */
-    if (m_exitStartThreadReprocessing == true) {
-        m_startThreadReprocessingLock.unlock();
+    if (m_exitStartCameraHwThreadB == true) {
+        m_startCameraHwThreadLockB.unlock();
         CLOGV("DEBUG(%s):exiting on request1", __func__);
         return true;
     }
-    m_startThreadReprocessingLock.unlock();
+    m_startCameraHwThreadLockB.unlock();
 
-    CLOGD("DEBUG(%s):(%d)", __func__, __LINE__);
+    CLOGD("[%s] start (%d)", __func__, __LINE__);
 
-    m_startThreadReprocessingFinished = false;
-    m_errorExistInStartThreadReprocessing = false;
-    m_startThreadReprocessingRunning = true;
+    m_CameraHwThreadFinishedB = false;
+    m_ErrorExistInCameraHwThreadB = false;
+    m_startCameraHwThreadRunningB = true;
 
     int i;
     int previewCallbackFramesize = 0;
@@ -3769,198 +3751,195 @@ bool ExynosCameraHWImpl::m_startThreadFuncReprocessing(void)
         }
     }
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-        if (m_errorExistInStartThreadMain == false &&
-            m_secCamera->startIspReprocessing() == false) {
-            CLOGE("ERR(%s):Fail on m_secCamera->startIspReprocessing()", __func__);
-            m_errorExistInStartThreadReprocessing = true;
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+        if (m_ErrorExistInCameraHwThreadA == false
+            && m_secCamera->startIspLpzsl() == false) {
+            CLOGE("ERR(%s):Fail on m_secCamera->startIspLpzsl()", __func__);
+            m_ErrorExistInCameraHwThreadB = true;
             goto done;
         }
 
-        if (m_errorExistInStartThreadMain == false &&
-            m_secCamera->startIs3a0(ExynosCamera::CAMERA_MODE_REPROCESSING) == false) {
+        if (m_ErrorExistInCameraHwThreadA == false
+            && m_secCamera->startIs3a0(SENSOR_FAKE) == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->startIs3a0()", __func__);
-            m_errorExistInStartThreadReprocessing = true;
+            m_ErrorExistInCameraHwThreadB = true;
             goto done;
         }
 
-        if (m_errorExistInStartThreadMain == false &&
-            m_pictureRunning== false
-            && m_startPictureInternalReprocessing() == false)
-            CLOGE("ERR(%s):m_startPictureInternalReprocessing() fail", __func__);
+        if (m_ErrorExistInCameraHwThreadA == false
+            && m_pictureRunning== false
+            && m_startPictureInternalLpzsl() == false)
+            CLOGE("ERR(%s):m_startPictureInternalLpzsl() fail", __func__);
 
-        if (m_errorExistInStartThreadMain == false &&
-            m_secCamera->startPreviewReprocessing() == false) {
-            CLOGE("ERR(%s):Fail on m_secCamera->startPreviewReprocessing()", __func__);
-            m_errorExistInStartThreadReprocessing = true;
+        if (m_ErrorExistInCameraHwThreadA == false
+            && m_secCamera->startPreviewLpzsl() == false) {
+            CLOGE("ERR(%s):Fail on m_secCamera->startPreviewLpzsl()", __func__);
+            m_ErrorExistInCameraHwThreadB = true;
             goto done;
         }
     }
 
 done:
-    m_startThreadReprocessingFinishLock.lock();
-    if (m_startThreadReprocessingFinishWaiting == true) {
-        CLOGD("DEBUG(%s):before send signal finished startThreadReprocessing (%d)", __func__, __LINE__);
-        m_startThreadReprocessingFinishCondition.signal();
+    m_startCameraHwThreadFinishLockB.lock();
+    if (m_CameraHwThreadFinishWaitingB == true) {
+        CLOGD("[%s] before send signal finished ThreadB (%d)", __func__, __LINE__);
+        m_startCameraHwThreadFinishConditionB.signal();
     }
-    m_startThreadReprocessingFinished = true;
-    m_startThreadReprocessingFinishLock.unlock();
-
-    CLOGD("DEBUG(%s):out", __func__);
+    m_CameraHwThreadFinishedB = true;
+    m_startCameraHwThreadFinishLockB.unlock();
+    CLOGD("[%s] end   (%d)", __func__, __LINE__);
     return true;
 }
 
-bool ExynosCameraHWImpl::m_startThreadFuncMain(void)
+bool ExynosCameraHWImpl::startCameraHwThreadFuncA(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
-    m_startThreadMainLock.lock();
+    m_startCameraHwThreadLockA.lock();
     /* check early exit request */
-    if (m_exitStartThreadMain == true) {
-        m_startThreadMainLock.unlock();
+    if (m_exitStartCameraHwThreadA == true) {
+        m_startCameraHwThreadLockA.unlock();
         CLOGV("DEBUG(%s):exiting on request0", __func__);
         return true;
     }
 
-    m_startThreadMainCondition.wait(m_startThreadMainLock);
+    m_startCameraHwThreadConditionA.wait(m_startCameraHwThreadLockA);
     /* check early exit request */
-    if (m_exitStartThreadMain == true) {
-        m_startThreadMainLock.unlock();
+    if (m_exitStartCameraHwThreadA == true) {
+        m_startCameraHwThreadLockA.unlock();
         CLOGV("DEBUG(%s):exiting on request1", __func__);
         return true;
     }
-    m_startThreadMainLock.unlock();
+    m_startCameraHwThreadLockA.unlock();
 
-    CLOGD("DEBUG(%s):(%d)", __func__, __LINE__);
+    CLOGD("[%s] start (%d)", __func__, __LINE__);
 
-    m_errorExistInStartThreadMain = false;
-    m_startThreadBufAllocWaiting = false;
-    m_startThreadReprocessingFinishWaiting = false;
+    m_ErrorExistInCameraHwThreadA = false;
+    m_CameraBufferAllocWaiting = false;
+    m_CameraHwThreadFinishWaitingB = false;
 
-    if (m_startThreadMainRunning == true) {
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
+    if (m_startCameraHwThreadRunA == true) {
+        if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
            if (m_secCamera->startSensor() == false) {
                 CLOGE("ERR(%s):Fail on m_secCamera->startSensor()", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
 
-            if (m_secCamera->startSensorOn(ExynosCamera::CAMERA_MODE_FRONT) == false) {
+            if (m_secCamera->startSensorOn(SENSOR_FRONT) == false) {
                 CLOGE("ERR(%s):Fail on m_secCamera->startSensorOn()", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
 
             if (m_secCamera->startIsp() == false) {
                 CLOGE("ERR(%s):Fail on m_secCamera->startIsp()", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
 
-            CLOGD("DEBUG(%s):before send signal to startThreadReprocessing (%d)", __func__, __LINE__);
-            m_startThreadReprocessingCondition.signal();
+            CLOGD("[%s] before send signal to startCameraHwThreadB (%d)", __func__, __LINE__);
+            m_startCameraHwThreadConditionB.signal();
 
-            if (m_secCamera->startIs3a0(ExynosCamera::CAMERA_MODE_FRONT) == false) {
+            if (m_secCamera->startIs3a0(SENSOR_FRONT) == false) {
                 CLOGE("ERR(%s):Fail on m_secCamera->startIs3a0()", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
 
-            if (m_pictureRunning == false &&
-                m_startPictureInternal() == false)
+            if (m_pictureRunning == false
+                && m_startPictureInternal() == false)
                 CLOGE("ERR(%s):m_startPictureInternal() fail", __func__);
-
-        } else if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-            if (m_errorExistInStartThreadReprocessing == false &&
-                m_secCamera->startSensorReprocessing() == false) {
-                CLOGE("ERR(%s):Fail on m_secCamera->startSensorReprocessing()", __func__);
-                m_errorExistInStartThreadMain = true;
+        } else if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+            if (m_ErrorExistInCameraHwThreadB == false
+                && m_secCamera->startSensorLpzsl() == false) {
+                CLOGE("ERR(%s):Fail on m_secCamera->startSensorLpzsl()", __func__);
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
 
             /* Sensor stream on at the OTF path */
-            if (m_errorExistInStartThreadReprocessing == false &&
-                m_secCamera->startSensorOn(ExynosCamera::CAMERA_MODE_REPROCESSING) == false) {
+            if (m_ErrorExistInCameraHwThreadB == false
+                && m_secCamera->startSensorOn(SENSOR_FAKE) == false) {
                 CLOGE("ERR(%s):Fail on m_secCamera->startSensorOn()", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
 
-            if (m_errorExistInStartThreadReprocessing == false &&
-                m_secCamera->startIsp() == false) {
+            if (m_ErrorExistInCameraHwThreadB == false
+                && m_secCamera->startIsp() == false) {
                 CLOGE("ERR(%s):Fail on m_secCamera->startIsp()", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
 
-            CLOGD("DEBUG(%s):before send signal to startThreadReprocessing (%d)", __func__, __LINE__);
-            m_startThreadReprocessingCondition.signal();
+            CLOGD("[%s] before send signal to startCameraHwThreadB (%d)", __func__, __LINE__);
+            m_startCameraHwThreadConditionB.signal();
 
-            if (m_errorExistInStartThreadReprocessing == false &&
-                m_secCamera->startIs3a1(ExynosCamera::CAMERA_MODE_BACK) == false) {
+            if (m_ErrorExistInCameraHwThreadB == false
+                && m_secCamera->startIs3a1(SENSOR_BACK) == false) {
                 CLOGE("ERR(%s):Fail on m_secCamera->startIs3a1()", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
         }
 
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-            if (m_errorExistInStartThreadReprocessing == false &&
-                m_secCamera->startSensor() == false) {
+        if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+
+            if (m_ErrorExistInCameraHwThreadB == false
+                && m_secCamera->startSensor() == false) {
                 CLOGE("ERR(%s):Fail on m_secCamera->startSensor()", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
         }
 
-        m_startThreadBufAllocFinishLock.lock();
-        if (m_startThreadBufAllocFinished == false) {
-            m_startThreadBufAllocWaiting = true;
-            CLOGD("DEBUG(%s):wait signal finished ThreadBufAlloc (%d)", __func__, __LINE__);
-            m_startThreadBufAllocFinishCondition.wait(m_startThreadBufAllocFinishLock);
+        m_initCameraBufferAllocFinishLock.lock();
+        if (m_CameraBufferAllocFinished == false) {
+            m_CameraBufferAllocWaiting = true;
+            CLOGD("[%s] wait signal finished ThreadC (%d)", __func__, __LINE__);
+            m_initCameraBufferAllocFinishCondition.wait(m_initCameraBufferAllocFinishLock);
 
         }
-        m_startThreadBufAllocWaiting = false;
-        m_startThreadBufAllocFinishLock.unlock();
+        m_CameraBufferAllocWaiting = false;
+        m_initCameraBufferAllocFinishLock.unlock();
 
-        if (m_errorExistInStartThreadReprocessing == false &&
-            m_secCamera->startPreview() == false) {
+        if (m_ErrorExistInCameraHwThreadB == false
+            && m_secCamera->startPreview() == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->startPreview()", __func__);
-            m_errorExistInStartThreadMain = true;
+            m_ErrorExistInCameraHwThreadA = true;
             goto done;
         }
 
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-            if (m_errorExistInStartThreadReprocessing == false &&
-                m_secCamera->qAll3a1Buf() == false)
-                CLOGE("ERR(%s):Fail qAll3a1Buf", __func__);
+        if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+            if (m_ErrorExistInCameraHwThreadB == false
+                && m_secCamera->qAll3a1Buf() == false)
+                CLOGE("ERR(%s): Fail qAll3a1Buf", __func__);
         }
 
-        m_startThreadReprocessingFinishLock.lock();
-        if (m_startThreadReprocessingFinished == false) {
-            m_startThreadReprocessingFinishWaiting = true;
-            CLOGD("DEBUG(%s):wait signal finished startThreadReprocessing (%d)", __func__, __LINE__);
-            m_startThreadReprocessingFinishCondition.wait(m_startThreadReprocessingFinishLock);
+        m_startCameraHwThreadFinishLockB.lock();
+        if (m_CameraHwThreadFinishedB == false) {
+            m_CameraHwThreadFinishWaitingB = true;
+            CLOGD("[%s] wait signal finished ThreadB (%d)", __func__, __LINE__);
+            m_startCameraHwThreadFinishConditionB.wait(m_startCameraHwThreadFinishLockB);
         }
-        m_startThreadReprocessingFinishWaiting = false;
-        m_startThreadReprocessingFinishLock.unlock();
+        m_CameraHwThreadFinishWaitingB = false;
+        m_startCameraHwThreadFinishLockB.unlock();
 
-        if (m_errorExistInStartThreadReprocessing == false &&
-            m_secCamera->StartStream() == false) {
+        if (m_ErrorExistInCameraHwThreadB == false
+            && m_secCamera->StartStream() == false) {
             CLOGE("ERR(%s):StartStream fail", __func__);
-            m_errorExistInStartThreadMain = true;
+            m_ErrorExistInCameraHwThreadA = true;
             goto done;
         }
 #if CAPTURE_BUF_GET
-        if (((m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) ||
-            (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT)) &&
+        if (((m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) ||
+            (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT)) &&
             m_secCamera->getRecordingHint() != true)
         {
             ExynosBuffer tempBuf;
-            if (m_errorExistInStartThreadReprocessing == false &&
-                m_secCamera->getSensorBuf(&tempBuf) == false) {
+            if (m_ErrorExistInCameraHwThreadB == false
+                && m_secCamera->getSensorBuf(&tempBuf) == false) {
                 CLOGE("ERR(%s):getSensorBuf() fail", __func__);
-                m_errorExistInStartThreadMain = true;
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
             m_secCamera->putSensorBuf(&tempBuf);
@@ -3969,15 +3948,15 @@ bool ExynosCameraHWImpl::m_startThreadFuncMain(void)
 
         m_setSkipFrame(INITIAL_SKIP_FRAME);
 
-        if (m_errorExistInStartThreadReprocessing == false &&
-            m_startSensor() != NO_ERROR) {
+        if (m_ErrorExistInCameraHwThreadB == false
+            && m_startSensor() != NO_ERROR) {
             CLOGE("ERR(%s):Fail on m_startSensor()", __func__);
-            m_errorExistInStartThreadMain = true;
+            m_ErrorExistInCameraHwThreadA = true;
             goto done;
         }
 
-#ifdef OTF_SENSOR_REPROCESSING
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
+#ifdef OTF_SENSOR_LPZSL
+        if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
 #ifdef DYNAMIC_BAYER_BACK_REC
             if ((m_secCamera->getRecordingHint() == true)
 #ifdef SCALABLE_SENSOR
@@ -3985,25 +3964,25 @@ bool ExynosCameraHWImpl::m_startThreadFuncMain(void)
 #endif
             ) {
                 /* Dummy Start */
-                m_sensorRunningReprocessing = true;
+                m_sensorRunningLpzsl = true;
                 isDqSensor = false;
             } else {
 #endif /* DYNAMIC_BAYER_BACK_REC */
-            if (m_errorExistInStartThreadReprocessing == false &&
-                m_startSensorReprocessing() != NO_ERROR) {
-                CLOGE("ERR(%s):Fail on m_startSensorReprocessing()", __func__);
-                m_errorExistInStartThreadMain = true;
+            if (m_ErrorExistInCameraHwThreadB == false
+                && m_startSensorLpzsl() != NO_ERROR) {
+                CLOGE("ERR(%s):Fail on m_startSensorLpzsl()", __func__);
+                m_ErrorExistInCameraHwThreadA = true;
                 goto done;
             }
 #ifdef DYNAMIC_BAYER_BACK_REC
             }
 #endif /* DYNAMIC_BAYER_BACK_REC */
-#endif
         }
+#endif /* OTF_SENSOR_LPZSL */
 
 #ifdef USE_VDIS
         if ((m_secCamera->getRecordingHint() == true) &&
-            (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) &&
+            (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) &&
             (m_secCamera->getVideoStabilization() == true)) {
             m_VDis->startVDisInternal();
         }
@@ -4011,153 +3990,144 @@ bool ExynosCameraHWImpl::m_startThreadFuncMain(void)
     }
 
 done:
-    if (m_startThreadMainRunning == true) {
-        m_startThreadMainRunning = false;
-        CLOGD("DEBUG(%s):before send signal to startThreadMain (%d)", __func__, __LINE__);
-        m_startThreadMainFinishLock.lock();
-        m_startThreadMainFinishCondition.signal();
-        m_startThreadMainFinishLock.unlock();
+    if (m_startCameraHwThreadRunA == true) {
+        m_startCameraHwThreadRunA = false;
+        CLOGD("[%s] before send signal to startCameraHwThreadA (%d)", __func__, __LINE__);
+        m_startCameraHwThreadFinishLockA.lock();
+        m_startCameraHwThreadFinishConditionA.signal();
+        m_startCameraHwThreadFinishLockA.unlock();
     }
-
-    CLOGD("DEBUG(%s):out", __func__);
-
+    CLOGD("[%s] end   (%d)", __func__, __LINE__);
     return true;
 }
 #endif
 
 bool ExynosCameraHWImpl::m_startPreviewInternal(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
+    CLOGD("[%s] start (%d)", __func__, __LINE__);
     m_previewTimerIndex = 0;
     /* notify message for we are not in stop phase. */
     m_secCamera->notifyStop(false);
-
 #ifdef START_HW_THREAD_ENABLE
-    m_startThreadBufAllocWaiting = false;
-    m_startThreadBufAllocFinished = false;
-    m_errorExistInStartThreadBufAlloc = false;
-    CLOGD("DEBUG(%s):before send signal to startThreadBufAlloc (%d)", __func__, __LINE__);
-    m_startThreadBufAllocCondition.signal();
+    m_CameraBufferAllocWaiting = false;
+    m_CameraBufferAllocFinished = false;
+    m_ErrorExistInCameraHwThreadC = false;
+    CLOGD("[%s] before send signal to startCameraHwThreadC (%d)", __func__, __LINE__);
+    m_startCameraHwThreadConditionC.signal();
 
-    m_errorExistInStartThreadMain = false;
-    m_startThreadReprocessingFinishWaiting = false;
-    m_startThreadMainRunning = true;
-    m_startThreadReprocessingRunning = false;
-    CLOGD("DEBUG(%s):before send signal to startThreadMain (%d)", __func__, __LINE__);
-    m_startThreadMainCondition.signal();
+    m_ErrorExistInCameraHwThreadA = false;
+    m_CameraHwThreadFinishWaitingB = false;
+    m_startCameraHwThreadRunA = true;
+    m_startCameraHwThreadRunningB = false;
+    CLOGD("[%s] before send signal to startCameraHwThreadA (%d)", __func__, __LINE__);
+    m_startCameraHwThreadConditionA.signal();
 
-    m_startThreadMainFinishLock.lock();
-    CLOGD("DEBUG(%s):wait signal finishing startThreadMain (%d)", __func__, __LINE__);
-    m_startThreadMainFinishCondition.wait(m_startThreadMainFinishLock);
-    m_startThreadMainFinishLock.unlock();
+    m_startCameraHwThreadFinishLockA.lock();
+    CLOGD("[%s] wait signal finishing startCameraHwThreadA (%d)", __func__, __LINE__);
+    m_startCameraHwThreadFinishConditionA.wait(m_startCameraHwThreadFinishLockA);
+    m_startCameraHwThreadFinishLockA.unlock();
 
-    if (m_errorExistInStartThreadMain == true
-        || m_errorExistInStartThreadReprocessing == true
-        || m_errorExistInStartThreadBufAlloc == true) {
+    if (m_ErrorExistInCameraHwThreadA == true
+        || m_ErrorExistInCameraHwThreadB == true
+        || m_ErrorExistInCameraHwThreadC == true) {
 
-        m_startThreadBufAllocFinishLock.lock();
-        if (m_startThreadBufAllocFinished == false) {
-            m_startThreadBufAllocWaiting = true;
-            CLOGD("DEBUG(%s):wait signal finished ThreadBufAlloc (%d)", __func__, __LINE__);
-            m_startThreadBufAllocFinishCondition.wait(m_startThreadBufAllocFinishLock);
+        m_initCameraBufferAllocFinishLock.lock();
+        if (m_CameraBufferAllocFinished == false) {
+            m_CameraBufferAllocWaiting = true;
+            CLOGD("[%s] wait signal finished ThreadC (%d)", __func__, __LINE__);
+            m_initCameraBufferAllocFinishCondition.wait(m_initCameraBufferAllocFinishLock);
         }
-        m_startThreadBufAllocWaiting = false;
-        m_startThreadBufAllocFinishLock.unlock();
+        m_CameraBufferAllocWaiting = false;
+        m_initCameraBufferAllocFinishLock.unlock();
 
-        m_startThreadReprocessingFinishLock.lock();
-        if (m_startThreadReprocessingRunning == true && m_startThreadReprocessingFinished == false) {
-            m_startThreadReprocessingFinishWaiting = true;
-            CLOGD("DEBUG(%s):wait signal finished startThreadReprocessing (%d)", __func__, __LINE__);
-            m_startThreadReprocessingFinishCondition.wait(m_startThreadReprocessingFinishLock);
+        m_startCameraHwThreadFinishLockB.lock();
+        if (m_startCameraHwThreadRunningB == true && m_CameraHwThreadFinishedB == false) {
+            m_CameraHwThreadFinishWaitingB = true;
+            CLOGD("[%s] wait signal finished ThreadB (%d)", __func__, __LINE__);
+            m_startCameraHwThreadFinishConditionB.wait(m_startCameraHwThreadFinishLockB);
         }
-        m_startThreadReprocessingFinishWaiting = false;
-        m_startThreadReprocessingFinishLock.unlock();
+        m_CameraHwThreadFinishWaitingB = false;
+        m_startCameraHwThreadFinishLockB.unlock();
 
-        CLOGE("ERR(%s):Fail on startThreadFuncReprocessing()", __func__);
+        CLOGE("ERR(%s):Fail on startCameraHwThreadFunc()", __func__);
         // 1. stop sensorthread
         // 2. stop sensor if mode is front camera
-        CLOGD("DEBUG(%s):(%d) m_stopSensor try exit", __func__, __LINE__);
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
-            if (m_secCamera->setSensorStreamOff(ExynosCamera::CAMERA_MODE_FRONT) == false)
-                CLOGE("ERR(%s):Fail on m_secCamera->setSensorStreamOff(ExynosCamera::CAMERA_MODE_FRONT)", __func__);
-            if (m_secCamera->stopSensorOff(ExynosCamera::CAMERA_MODE_FRONT) == false)
-                CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(ExynosCamera::CAMERA_MODE_FRONT)", __func__);
+        CLOGD("[INFO] %s (%d) m_stopSensor try exit", __FUNCTION__, __LINE__);
+        if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
+            if (m_secCamera->stopSensorOff(SENSOR_FRONT) == false)
+                CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(SENSOR_FRONT)", __func__);
             if (m_secCamera->stopSensor() == false)
                 CLOGE("ERR(%s):Fail on m_secCamera->stopSensor()", __func__);
         }
 
-        // stop sensorReprocessing thread if this mode is dual or back
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-            CLOGD("DEBUG(%s):(%d) m_stopSensorReprocessing try exit", __func__, __LINE__);
-            m_stopSensorReprocessing();
-            CLOGD("DEBUG(%s):(%d) m_stopSensorReprocessing was exited", __func__, __LINE__);
+        // stop sensorlpzsl thread if this mode is dual or back
+        if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+            CLOGD("[INFO] %s (%d) m_stopSensorLpzsl try exit", __FUNCTION__, __LINE__);
+            m_stopSensorLpzsl();
+            CLOGD("[INFO] %s (%d) m_stopSensorLpzsl was exited", __FUNCTION__, __LINE__);
         }
 
-        // stop sensor 0-reprocessing if this mode is dual or back
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-            if (m_secCamera->setSensorStreamOff(ExynosCamera::CAMERA_MODE_REPROCESSING) == false)
-                CLOGE("ERR(%s):Fail on m_secCamera->setSensorStreamOff(ExynosCamera::CAMERA_MODE_REPROCESSING)", __func__);
+        // stop 3a1
+        if (m_secCamera->stopIs3a1(SENSOR_FRONT) == false)
+            CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_FRONT) fail", __func__);
 
-            if (m_secCamera->stopSensorOff(ExynosCamera::CAMERA_MODE_REPROCESSING) == false)
-                CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(ExynosCamera::CAMERA_MODE_REPROCESSING)", __func__);
+        if (m_secCamera->stopIs3a1(SENSOR_BACK) == false)
+            CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_BACK) fail", __func__);
+
+        if (m_secCamera->stopIs3a1(SENSOR_FAKE) == false)
+            CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_FAKE) fail", __func__);
+
+        // stop 3a0
+        if (m_secCamera->stopIs3a0(SENSOR_FRONT) == false)
+            CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_FRONT) fail", __func__);
+
+        if (m_secCamera->stopIs3a0(SENSOR_BACK) == false)
+            CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_BACK) fail", __func__);
+
+        if (m_secCamera->stopIs3a0(SENSOR_FAKE) == false)
+            CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_FAKE) fail", __func__);
+
+        // stop sensor 0-FAKE if this mode is dual or back
+        if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+            if (m_secCamera->stopSensorOff(SENSOR_FAKE) == false)
+                CLOGE("ERR(%s):Fail on m_secCamera->stopSensorOff(SENSOR_FAKE)", __func__);
 
             if (m_secCamera->stopSensor() == false)
                 CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
 
-            if (m_secCamera->stopSensorReprocessing() == false)
+            if (m_secCamera->stopSensorLpzsl() == false)
                 CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
         }
 
-        // stop 3a1
-        if (m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_FRONT) == false)
-            CLOGE("ERR(%s):m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_FRONT) fail", __func__);
-
-        if (m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_BACK) == false)
-            CLOGE("ERR(%s):m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_BACK) fail", __func__);
-
-        if (m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_REPROCESSING) == false)
-            CLOGE("ERR(%s):m_secCamera->stopIs3a1(ExynosCamera::CAMERA_MODE_REPROCESSING) fail", __func__);
-
-        // stop 3a0
-        if (m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_FRONT) == false)
-            CLOGE("ERR(%s):m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_FRONT) fail", __func__);
-
-        if (m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_BACK) == false)
-            CLOGE("ERR(%s):m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_BACK) fail", __func__);
-
-        if (m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_REPROCESSING) == false)
-            CLOGE("ERR(%s):m_secCamera->stopIs3a0(ExynosCamera::CAMERA_MODE_REPROCESSING) fail", __func__);
-
         if (m_secCamera->stopIsp() == false)
-            CLOGE("ERR(%s):m_secCamera->stopIsp() fail", __func__);
+            CLOGE("ERR(%s):on m_secCamera->stopIsp() fail", __func__);
 
-        if (m_secCamera->stopIspReprocessing() == false)
-            CLOGE("ERR(%s):m_secCamera->stopIspReprocessing() fail", __func__);
+        if (m_secCamera->stopIspLpzsl() == false)
+            CLOGE("ERR(%s):on m_secCamera->stopIspLpzsl() fail", __func__);
 
         if (m_secCamera->stopPreview() == false)
-            CLOGE("ERR(%s):m_secCamera->stopPreview() fail", __func__);
+            CLOGE("ERR(%s):Fail on m_secCamera->stopPreview() fail", __func__);
 
-        if (m_secCamera->stopPreviewReprocessing() == false)
-            CLOGE("ERR(%s):m_secCamera->stopPreviewReprocessing() fail", __func__);
+        if (m_secCamera->stopPreviewLpzsl() == false)
+            CLOGE("ERR(%s:%d):m_secCamera is not created.. Something is wrong", __func__, __LINE__);
 
         if (m_secCamera->stopPicture() == false)
-            CLOGE("ERR(%s):m_secCamera->stopPicture() fail", __func__);
+            CLOGE("ERR(%s):Fail on m_secCamera->stopPicture() fail", __func__);
 
-        if (m_secCamera->stopPictureReprocessing() == false)
-            CLOGE("ERR(%s):m_secCamera->stopPictureReprocessing() fail", __func__);
+        if (m_secCamera->stopPictureLpzsl() == false)
+            CLOGE("ERR(%s):Fail on m_secCamera->stopPictureLpzsl() fail", __func__);
 
-        m_releaseBuffer();
-        CLOGD("DEBUG(%s):error exit (%d)", __func__, __LINE__);
+        releaseBuffer();
+        CLOGD("[%s] error exit (%d)", __func__, __LINE__);
         return false;
     }
 #else
-    if (m_getPreviewCallbackBuffer() == false) {
-        CLOGE("ERR(%s):Fail on m_getPreviewCallbackBuffer()", __func__);
+    if (getPreviewCallbackBuffer() == false) {
+        CLOGE("ERR(%s):Fail on getPreviewCallbackBuffer()", __func__);
         return false;
     }
 
-    if (m_startCameraHw() == false) {
+    if (startCameraHw() == false) {
         CLOGE("ERR(%s):Fail on startExynosCameraHw()", __func__);
         return false;
     }
@@ -4167,13 +4137,13 @@ bool ExynosCameraHWImpl::m_startPreviewInternal(void)
             CLOGE("ERR(%s):setFlashMode() fail", __func__);
     }
 
-    CLOGD("DEBUG(%s):out", __func__);
+    CLOGD("[%s] end   (%d)", __func__, __LINE__);
     return true;
 }
 
-void ExynosCameraHWImpl::m_releaseBuffer(void)
+void ExynosCameraHWImpl::releaseBuffer(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGD("[%s] start (%d)", __func__, __LINE__);
 
     /* release preview buffer */
     if (m_previewWindow) {
@@ -4260,9 +4230,9 @@ void ExynosCameraHWImpl::m_releaseBuffer(void)
     return;
 }
 
-bool ExynosCameraHWImpl::m_getPreviewCallbackBuffer(void)
+bool ExynosCameraHWImpl::getPreviewCallbackBuffer(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGD("[%s] start (%d)", __func__, __LINE__);
 
     int i, j;
     int previewW, previewH, previewFormat, previewFramesize, previewBufW, previewBufH;
@@ -4300,9 +4270,6 @@ bool ExynosCameraHWImpl::m_getPreviewCallbackBuffer(void)
                 CLOGE("ERR(%s):Could not dequeue gralloc buffer[%d]!!", __func__, i);
                 continue;
             } else {
-                if (m_previewBufHandle[i] == NULL)
-                    continue;
-
                 m_numOfDequeuedBuf++;
 
                  if (m_previewWindow->lock_buffer(m_previewWindow, m_previewBufHandle[i]) != 0)
@@ -4317,18 +4284,18 @@ bool ExynosCameraHWImpl::m_getPreviewCallbackBuffer(void)
                     CLOGE("ERR(%s):could not obtain gralloc buffer", __func__);
                     CLOGE("ERR(%s)(%d): gralloc buffer handle information is following;", __func__, __LINE__);
                     if (*m_previewBufHandle[i] != NULL)
-                        CLOGE("ERR(%s):version: %d, numFds: %d, numInts: %d, data[0]: %d ",
+                        CLOGE("ERR(%s): version: %d, numFds: %d, numInts: %d, data[0]: %d ",
                                         __func__,
                                         (*m_previewBufHandle[i])->version,
                                         (*m_previewBufHandle[i])->numFds,
                                         (*m_previewBufHandle[i])->numInts,
                                         (*m_previewBufHandle[i])->data[0]);
                     else
-                        CLOGE("ERR(%s):bufHandle is null ", __func__);
+                        CLOGE("ERR(%s): bufHandle is null ", __func__);
 
-                    CLOGE("ERR(%s):virtAddr[0]: 0x%08x", __func__, (unsigned int)virtAddr[0]);
-                    CLOGE("ERR(%s):virtAddr[1]: 0x%08x", __func__, (unsigned int)virtAddr[1]);
-                    CLOGE("ERR(%s):virtAddr[2]: 0x%08x", __func__, (unsigned int)virtAddr[2]);
+                    CLOGE("ERR(%s): virtAddr[0]: 0x%08x", __func__, (unsigned int)virtAddr[0]);
+                    CLOGE("ERR(%s): virtAddr[1]: 0x%08x", __func__, (unsigned int)virtAddr[1]);
+                    CLOGE("ERR(%s): virtAddr[2]: 0x%08x", __func__, (unsigned int)virtAddr[2]);
 
                     if (m_previewWindow->cancel_buffer(m_previewWindow, m_previewBufHandle[i]) != 0)
                         CLOGE("ERR(%s):Could not cancel_buffer gralloc buffer[%d]!!", __func__, i);
@@ -4350,7 +4317,7 @@ bool ExynosCameraHWImpl::m_getPreviewCallbackBuffer(void)
         } else {
             /* Hal have to allocate internal memory for preview, due to window is NULL */
             if (m_secCamera->allocInternalPreviewBuf(&previewBuf) == false) {
-                CLOGE("ERR(%s):Failed to alloc internal preview buffer", __func__);
+                CLOGE("ERR(%s): Failed to alloc internal preview buffer", __FUNCTION__);
                 continue;
             }
         }
@@ -4402,21 +4369,17 @@ bool ExynosCameraHWImpl::m_getPreviewCallbackBuffer(void)
     }
 #endif
 
-    CLOGD("DEBUG(%s):out", __func__);
-
     return true;
 }
-bool ExynosCameraHWImpl::m_startCameraHw(void)
+bool ExynosCameraHWImpl::startCameraHw(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
         if (m_secCamera->startSensor() == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->startSensor()", __func__);
             return UNKNOWN_ERROR;
         }
 
-        if (m_secCamera->startSensorOn(ExynosCamera::CAMERA_MODE_FRONT) == false) {
+        if (m_secCamera->startSensorOn(SENSOR_FRONT) == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->startSensorOn()", __func__);
             return UNKNOWN_ERROR;
         }
@@ -4426,7 +4389,7 @@ bool ExynosCameraHWImpl::m_startCameraHw(void)
             return false;
         }
 
-        if (m_secCamera->startIs3a0(ExynosCamera::CAMERA_MODE_FRONT) == false) {
+        if (m_secCamera->startIs3a0(SENSOR_FRONT) == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->startIs3a0()", __func__);
             return false;
         }
@@ -4439,14 +4402,14 @@ bool ExynosCameraHWImpl::m_startCameraHw(void)
             CLOGE("ERR(%s):Fail on m_secCamera->startPreview()", __func__);
             return false;
         }
-    } else if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-        if (m_secCamera->startSensorReprocessing() == false) {
-            CLOGE("ERR(%s):Fail on m_secCamera->startSensorReprocessing()", __func__);
+    } else if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+        if (m_secCamera->startSensorLpzsl() == false) {
+            CLOGE("ERR(%s):Fail on m_secCamera->startSensorLpzsl()", __func__);
             return UNKNOWN_ERROR;
         }
 
         /* Sensor stream on at the OTF path */
-        if (m_secCamera->startSensorOn(ExynosCamera::CAMERA_MODE_REPROCESSING) == false) {
+        if (m_secCamera->startSensorOn(SENSOR_FAKE) == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->startSensorOn()", __func__);
             return UNKNOWN_ERROR;
         }
@@ -4456,7 +4419,7 @@ bool ExynosCameraHWImpl::m_startCameraHw(void)
             return false;
         }
 
-        if (m_secCamera->startIs3a1(ExynosCamera::CAMERA_MODE_BACK) == false) {
+        if (m_secCamera->startIs3a1(SENSOR_BACK) == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->startIs3a1()", __func__);
             return false;
         }
@@ -4466,12 +4429,12 @@ bool ExynosCameraHWImpl::m_startCameraHw(void)
             return false;
         }
 
-        if (m_secCamera->startIspReprocessing() == false) {
-            CLOGE("ERR(%s):Fail on m_secCamera->startIspReprocessing()", __func__);
+        if (m_secCamera->startIspLpzsl() == false) {
+            CLOGE("ERR(%s):Fail on m_secCamera->startIspLpzsl()", __func__);
             return false;
         }
 
-        if (m_secCamera->startIs3a0(ExynosCamera::CAMERA_MODE_REPROCESSING) == false) {
+        if (m_secCamera->startIs3a0(SENSOR_FAKE) == false) {
             CLOGE("ERR(%s):Fail on m_secCamera->startIs3a0()", __func__);
             return false;
         }
@@ -4482,18 +4445,18 @@ bool ExynosCameraHWImpl::m_startCameraHw(void)
         }
 
         if (m_pictureRunning== false
-            && m_startPictureInternalReprocessing() == false)
-            CLOGE("ERR(%s):m_startPictureInternalReprocessing() fail", __func__);
+            && m_startPictureInternalLpzsl() == false)
+            CLOGE("ERR(%s):m_startPictureInternalLpzsl() fail", __func__);
 
-        if (m_secCamera->startPreviewReprocessing() == false) {
-            CLOGE("ERR(%s):Fail on m_secCamera->startPreviewReprocessing()", __func__);
+        if (m_secCamera->startPreviewLpzsl() == false) {
+            CLOGE("ERR(%s):Fail on m_secCamera->startPreviewLpzsl()", __func__);
             return false;
         }
     }
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
         if (m_secCamera->qAll3a1Buf() == false)
-            CLOGE("ERR(%s):Fail qAll3a1Buf", __func__);
+            CLOGE("ERR(%s): Fail qAll3a1Buf", __func__);
     }
 
     if (m_secCamera->StartStream() == false) {
@@ -4507,23 +4470,32 @@ bool ExynosCameraHWImpl::m_startCameraHw(void)
         return false;
     }
 
-#ifdef OTF_SENSOR_REPROCESSING
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
-        if (m_startSensorReprocessing() != NO_ERROR) {
-            CLOGE("ERR(%s):Fail on m_startSensorReprocessing()", __func__);
+#ifdef OTF_SENSOR_LPZSL
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+        if (m_startSensorLpzsl() != NO_ERROR) {
+            CLOGE("ERR(%s):Fail on m_startSensorLpzsl()", __func__);
             return false;
         }
     }
 #endif
-
-    CLOGD("DEBUG(%s):out", __func__);
 
     return true;
 }
 
 void ExynosCameraHWImpl::m_stopPreviewInternal(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGD("[%s] (%d)", __func__, __LINE__);
+
+#ifdef PREVIEW_WAITING_HACK
+stoppreviewretry:
+    if (isPreviewFrameReady < 4 && m_previewRunning == true) {
+        usleep(30 * 1000);
+        CLOGE("%s, waiting Preview(%d)", __func__, __LINE__);
+        goto stoppreviewretry;
+    }
+#endif
+
+    CLOGD("[INFO] %s (%d)", __FUNCTION__, __LINE__);
 
      /* request that the preview thread stop. */
     if (m_previewWindow) {
@@ -4551,7 +4523,7 @@ void ExynosCameraHWImpl::m_stopPreviewInternal(void)
 
         m_numOfDequeuedBuf = 0;
         if (m_secCamera->clearPreviewBuf() == false) {
-            CLOGE("ERR(%s):Failed to clearPreviewBuf()", __func__);
+            CLOGE("ERR(%s): Failed to clearPreviewBuf()", __FUNCTION__);
         }
 
         if (m_previewWindow->set_buffer_count(m_previewWindow, NUM_OF_PREVIEW_BUF) != 0) {
@@ -4569,11 +4541,201 @@ void ExynosCameraHWImpl::m_stopPreviewInternal(void)
         }
     }
 
+#ifdef PREVIEW_WAITING_HACK
+    isPreviewFrameReady = 0;
+#endif
 #ifdef DYNAMIC_BAYER_BACK_REC
     isDqSensor = false;
 #endif
 
-    CLOGD("DEBUG(%s):out", __func__);
+}
+
+bool ExynosCameraHWImpl::m_previewThreadFuncWrapper(void)
+{
+    int afstatus = 0;
+    int afResult = 1;
+
+    while (1) {
+        m_previewStopLock.lock();
+        while (m_previewRunning == false) {
+#ifdef USE_VDIS
+            /* Stop Dis thread */
+            if (m_secCamera->flagStartVdisCapture() == true)
+                m_VDis->stopVDisThread();
+#endif
+
+            /*Sensor off*/
+            m_stopSensor();
+            m_stopSensorLpzsl();
+
+            /*Isp off*/
+            if (m_secCamera->flagStartIsp() == true &&
+                m_secCamera->stopIsp() == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIsp() fail", __func__);
+
+            if (m_secCamera->flagStartIspLpzsl() == true &&
+                m_secCamera->stopIspLpzsl() == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIspLpzsl() fail", __func__);
+
+            if (m_secCamera->flagStartIs3a0Output(SENSOR_FRONT) == true &&
+                m_secCamera->flagStartIs3a0Capture(SENSOR_FRONT) == true &&
+                m_secCamera->stopIs3a0(SENSOR_FRONT) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_FRONT) fail", __func__);
+
+            if (m_secCamera->flagStartIs3a0Output(SENSOR_BACK) == true &&
+                m_secCamera->flagStartIs3a0Capture(SENSOR_BACK) == true &&
+                m_secCamera->stopIs3a0(SENSOR_BACK) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_BACK) fail", __func__);
+
+            if (m_secCamera->flagStartIs3a0Output(SENSOR_FAKE) == true &&
+                m_secCamera->flagStartIs3a0Capture(SENSOR_FAKE) == true &&
+                m_secCamera->stopIs3a0(SENSOR_FAKE) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a0(SENSOR_FAKE) fail", __func__);
+
+            if (m_secCamera->flagStartIs3a1Output(SENSOR_FRONT) == true &&
+                m_secCamera->flagStartIs3a1Capture(SENSOR_FRONT) == true &&
+                m_secCamera->stopIs3a1(SENSOR_FRONT) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_FRONT) fail", __func__);
+
+            if (m_secCamera->flagStartIs3a1Output(SENSOR_BACK) == true &&
+                m_secCamera->flagStartIs3a1Capture(SENSOR_BACK) == true &&
+                m_secCamera->stopIs3a1(SENSOR_BACK) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_BACK) fail", __func__);
+
+            if (m_secCamera->flagStartIs3a1Output(SENSOR_FAKE) == true &&
+                m_secCamera->flagStartIs3a1Capture(SENSOR_FAKE) == true &&
+                m_secCamera->stopIs3a1(SENSOR_FAKE) == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIs3a1(SENSOR_FAKE) fail", __func__);
+
+            /*Preview off*/
+            if (m_secCamera->flagStartPreview() == true &&
+                m_secCamera->stopPreview() == false)
+                CLOGE("ERR(%s):Fail on m_secCamera->stopPreview()", __func__);
+
+            if (m_secCamera->flagStartPreviewLpzsl() == true &&
+                m_secCamera->stopPreviewLpzsl() == false)
+                CLOGE("ERR(%s):Fail on m_secCamera->stopPreview()", __func__);
+#ifdef USE_VDIS
+            if (/*m_secCamera->getRecordingHint() == true &&*/ m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+                /* Dis Capture off */
+                if (m_secCamera->flagStartVdisCapture() == true &&
+                    m_secCamera->stopVdisCapture() == false)
+                    CLOGE("ERR(%s):on m_secCamera->stopVdisCapture() fail", __func__);
+
+                /* Dis Output off */
+                if (m_secCamera->flagStartVdisOutput() == true &&
+                    m_secCamera->stopVdisOutput() == false)
+                    CLOGE("ERR(%s):on m_secCamera->stopVdisOutput() fail", __func__);
+            }
+#endif
+
+            if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+                if (m_pictureRunning == true &&
+                    m_stopPictureInternalLpzsl() == false)
+                    CLOGE("ERR(%s):m_stopPictureInternalLpzsl() fail", __func__);
+            } else if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
+                if (m_pictureRunning == true &&
+                    m_stopPictureInternal() == false)
+                    CLOGE("ERR(%s):m_stopPictureInternal() fail", __func__);
+            }
+
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_previewStoppedCondition) - send", __FUNCTION__, __LINE__);
+            m_previewStoppedCondition.signal();
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_previewCondition) - waiting", __FUNCTION__, __LINE__);
+            m_setStartPreviewComplete(THREAD_ID_PREVIEW, false);
+            m_previewCondition.wait(m_previewStopLock);
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_previewCondition) - recevied", __FUNCTION__, __LINE__);
+        }
+        m_previewStopLock.unlock();
+
+        if (m_exitPreviewThread == true) {
+            /*Sensor off*/
+            m_stopSensor();
+            m_stopSensorLpzsl();
+
+            /*Isp off*/
+            if (m_secCamera->flagStartIsp() == true &&
+                m_secCamera->stopIsp() == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIsp() fail", __func__);
+
+            if (m_secCamera->flagStartIspLpzsl() == true &&
+                m_secCamera->stopIspLpzsl() == false)
+                CLOGE("ERR(%s):on m_secCamera->stopIspLpzsl() fail", __func__);
+
+            /*Preview off*/
+            if (m_secCamera->flagStartPreview() == true &&
+                m_secCamera->stopPreview() == false)
+                CLOGE("ERR(%s):Fail on m_secCamera->stopPreview()", __func__);
+
+            if (m_secCamera->flagStartPreviewLpzsl() == true &&
+                m_secCamera->stopPreviewLpzsl() == false)
+                CLOGE("ERR(%s):Fail on m_secCamera->stopPreview()", __func__);
+
+            if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
+                if (m_pictureRunning == true &&
+                    m_stopPictureInternalLpzsl() == false)
+                    CLOGE("ERR(%s):m_stopPictureInternalLpzsl() fail", __func__);
+            } else if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
+                if (m_pictureRunning == true &&
+                    m_stopPictureInternal() == false)
+                    CLOGE("ERR(%s):m_stopPictureInternal() fail", __func__);
+            }
+#ifdef USE_VDIS
+            /* Dis thread stops. */
+            if (m_secCamera->flagStartVdisCapture() == true)
+                m_VDis->stopVDisThread();
+
+            if ((m_secCamera->getRecordingHint() == true) &&
+                 (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK)) {
+
+                /* Dis Capture off */
+                if (m_secCamera->flagStartVdisCapture() == true &&
+                    m_secCamera->stopVdisCapture() == false)
+                    CLOGE("ERR(%s):on m_secCamera->stopVdisCapture() fail", __func__);
+
+                /* Dis Output off */
+                if (m_secCamera->flagStartVdisOutput() == true &&
+                    m_secCamera->stopVdisOutput() == false)
+                    CLOGE("ERR(%s):on m_secCamera->stopVdisOutput() fail", __func__);
+            }
+#endif
+
+            return true;
+        }
+
+        m_setStartPreviewComplete(THREAD_ID_PREVIEW, true);
+
+        m_previewThreadFunc();
+
+#ifdef PREVIEW_WAITING_HACK
+        if (m_secCamera->getFocusMode() == ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE && m_previewRunning) {
+#else
+        if (m_secCamera->getFocusMode() == ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE) {
+#endif
+
+            int prev_afstatus = afResult;
+            afstatus = m_secCamera->getCAFResult();
+            afResult = afstatus;
+            if (afstatus == 3 && (prev_afstatus == 0 || prev_afstatus == 1)) {
+                afResult = 4;
+            }
+#if 1
+        if ((m_msgEnabled & CAMERA_MSG_FOCUS) && (prev_afstatus != afstatus))
+                    m_notifyCb(CAMERA_MSG_FOCUS, afResult, 0, m_callbackCookie);
+#else
+            if (m_secCamera->flagStartFaceDetection() == true && m_faceDetected == true) {
+                /* draw nothing */
+                m_notifyCb(CAMERA_MSG_FOCUS, 4, 0, m_callbackCookie);
+                /* skip callback, when FD detected */
+                // ; /* nop */
+            } else {
+                if ((m_msgEnabled & CAMERA_MSG_FOCUS) && (prev_afstatus != afstatus))
+                    m_notifyCb(CAMERA_MSG_FOCUS, afResult, 0, m_callbackCookie);
+            }
+#endif
+        }
+        usleep(10);
+    }
 }
 
 bool ExynosCameraHWImpl::m_previewThreadFunc(void)
@@ -4582,7 +4744,6 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
     int stride = 0;
 
     ExynosBuffer previewBuf;
-    int skipFrameCount = 0;
     int previewW = 0, previewH = 0;
     bool doPutPreviewBuf = false;
     bool shouldEraseBack = false;
@@ -4599,39 +4760,42 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
     nsecs_t previewBufTimestamp = 0;
 
     int previewFormat = m_secCamera->getPreviewFormat();
+#ifdef PREVIEW_WAITING_HACK
+    isPreviewFrameReady++;
+#endif
+
 
 #ifdef USE_CAMERA_ESD_RESET
-    if (m_sensorESDReset == true) {
-        CLOGE("ERR(%s):[esdreset]:m_sensorESDReset == true", __func__);
+    if (m_sensorESDReset) {
+        CLOGE("[esdreset](%s)(%d)", __func__, __LINE__);
         return false;
     }
 #endif
-
 #ifdef FORCE_LEADER_OFF
     if (tryThreadStop == true) {
         tryThreadStatus = tryThreadStatus | (1 << TRY_THREAD_STATUS_PREVIEW);
         usleep(10000);
 
-        CLOGD("DEBUG(%s):(%d):tryThreadStop == true", __func__, __LINE__);
+        CLOGD("[%s] (%d)", __func__, __LINE__);
+
         return false;
     }
 #endif
     if (m_secCamera->getPreviewBuf(&previewBuf, &isValid, &previewBufTimestamp) == false) {
         CLOGE("ERR(%s):getPreviewBuf() fail(id:%d)", __func__, getCameraId());
-
 #ifdef FORCE_LEADER_OFF
-        if (tryThreadStop == true) {
-            ret = false;
-            CLOGD("DEBUG(%s):(%d):tryThreadStop == true", __func__, __LINE__);
-            goto done;
-        }
+    if (tryThreadStop == true) {
+        ret = false;
+        CLOGD("[%s] (%d)", __func__, __LINE__);
+
+        goto done;
+    }
 #endif
-
 #ifdef USE_CAMERA_ESD_RESET
-        m_sensorESDReset = true;
+    m_sensorESDReset = true;
 
-        m_notifyCb(CAMERA_MSG_ERROR, 1001, 0, m_callbackCookie);
-        CLOGE("ERR(%s):[esdreset]: notify error to app", __func__);
+    m_notifyCb(CAMERA_MSG_ERROR, 1001, 0, m_callbackCookie);
+    CLOGE("[esdreset](%s): notify error to app", __func__);
 #endif
 
         ret = false;
@@ -4640,7 +4804,7 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
 
 #ifdef FRONT_NO_ZSL
 #else /* FRONT_NOS_ZSL */
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
+    if (m_secCamera->getCameraMode()== CAMERA_ACTIVATE_MODE_FRONT) {
         if (m_secCamera->getPictureBuf(&m_pictureBuf[0]) == false) {
             CLOGE("ERR(%s):getPictureBuf() fail", __func__);
             ret = false;
@@ -4668,24 +4832,11 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
 #ifdef CHECK_TIME_PREVIEW
     m_checkPreviewTime();
 #endif
-
-    skipFrameCount = m_getSkipFrame();
-
-    if (0 < skipFrameCount) {
-        m_decSkipFrame();
-        CLOGV("DEBUG(%s):skipping %d frame", __func__, previewBuf.reserved.p);
-        goto done;
-    }
-#ifdef CHECK_TIME_START_PREVIEW
-    else if (skipFrameCount == 0){
-        m_decSkipFrame();
-
-        m_startPreviewTimer.stop();
-        long long startPreviewDurationTime = m_startPreviewTimer.durationUsecs();
-        CLOGD("DEBUG(%s):CHECK_TIME_START_PREVIEW : %d msec", __func__, (int)startPreviewDurationTime / 1000);
-    }
-#endif //CHECK_TIME_START_PREVIEW
-
+        if (0 < m_getSkipFrame()) {
+            m_decSkipFrame();
+            CLOGV("DEBUG(%s):skipping %d frame", __func__, previewBuf.reserved.p);
+            goto done;
+        }
     m_secCamera->getPreviewSize(&previewW, &previewH);
 
     /* callback & face detection */
@@ -4705,56 +4856,56 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
             ExynosRect2 detectedRightEye[NUM_OF_DETECTED_FACES];
             ExynosRect2 detectedMouth[NUM_OF_DETECTED_FACES];
 
-            int numOfDetectedFaces = m_secCamera->getDetectedFacesAreas(NUM_OF_DETECTED_FACES,
-                                                                        id,
-                                                                        score,
-                                                                        detectedFace,
-                                                                        detectedLeftEye,
-                                                                        detectedRightEye,
-                                                                        detectedMouth);
+        int numOfDetectedFaces = m_secCamera->getDetectedFacesAreas(NUM_OF_DETECTED_FACES,
+                                                  id,
+                                                  score,
+                                                  detectedFace,
+                                                  detectedLeftEye,
+                                                  detectedRightEye,
+                                                  detectedMouth);
 
-            if (0 < numOfDetectedFaces) {
-                // camera.h
-                // width   : -1000~1000
-                // height  : -1000~1000
-                // if eye, mouth is not detectable : -2000, -2000.
-                memset(m_faces, 0, sizeof(camera_face_t) * NUM_OF_DETECTED_FACES);
+        if (0 < numOfDetectedFaces) {
+            // camera.h
+            // width   : -1000~1000
+            // height  : -1000~1000
+            // if eye, mouth is not detectable : -2000, -2000.
+            memset(m_faces, 0, sizeof(camera_face_t) * NUM_OF_DETECTED_FACES);
 
-                int realNumOfDetectedFaces = 0;
+            int realNumOfDetectedFaces = 0;
 
-                for (int i = 0; i < numOfDetectedFaces; i++) {
-                    // over 50s, we will catch
-                    //if (score[i] < 50)
-                    //    continue;
+            for (int i = 0; i < numOfDetectedFaces; i++) {
+                // over 50s, we will catch
+                //if (score[i] < 50)
+                //    continue;
 
-                    m_faces[realNumOfDetectedFaces].rect[0] = m_calibratePosition(previewW, 2000, detectedFace[i].x1) - 1000;
-                    m_faces[realNumOfDetectedFaces].rect[1] = m_calibratePosition(previewH, 2000, detectedFace[i].y1) - 1000;
-                    m_faces[realNumOfDetectedFaces].rect[2] = m_calibratePosition(previewW, 2000, detectedFace[i].x2) - 1000;
-                    m_faces[realNumOfDetectedFaces].rect[3] = m_calibratePosition(previewH, 2000, detectedFace[i].y2) - 1000;
+                m_faces[realNumOfDetectedFaces].rect[0] = m_calibratePosition(previewW, 2000, detectedFace[i].x1) - 1000;
+                m_faces[realNumOfDetectedFaces].rect[1] = m_calibratePosition(previewH, 2000, detectedFace[i].y1) - 1000;
+                m_faces[realNumOfDetectedFaces].rect[2] = m_calibratePosition(previewW, 2000, detectedFace[i].x2) - 1000;
+                m_faces[realNumOfDetectedFaces].rect[3] = m_calibratePosition(previewH, 2000, detectedFace[i].y2) - 1000;
 
-                    m_faces[realNumOfDetectedFaces].id = id[i];
-                    m_faces[realNumOfDetectedFaces].score = score[i];
-                    CLOGV("face posision(cal:%d,%d %dx%d)(org:%d,%d %dx%d), id(%d), score(%d)",
-                                                 m_faces[realNumOfDetectedFaces].rect[0], m_faces[realNumOfDetectedFaces].rect[1],
-                                                 m_faces[realNumOfDetectedFaces].rect[2], m_faces[realNumOfDetectedFaces].rect[3],
-                                                 detectedFace[i].x1, detectedFace[i].y1,
-                                                 detectedFace[i].x2, detectedFace[i].y2,
-                                                 id[i], score[i]);
+                m_faces[realNumOfDetectedFaces].id = id[i];
+                m_faces[realNumOfDetectedFaces].score = score[i];
+                CLOGV("face posision(cal:%d,%d %dx%d)(org:%d,%d %dx%d), id(%d), score(%d)",
+                                             m_faces[realNumOfDetectedFaces].rect[0], m_faces[realNumOfDetectedFaces].rect[1],
+                                             m_faces[realNumOfDetectedFaces].rect[2], m_faces[realNumOfDetectedFaces].rect[3],
+                                             detectedFace[i].x1, detectedFace[i].y1,
+                                             detectedFace[i].x2, detectedFace[i].y2,
+                                             id[i], score[i]);
 
-                    m_faces[realNumOfDetectedFaces].left_eye[0] = (detectedLeftEye[i].x1 < 0) ? -2000 : m_calibratePosition(previewW, 2000, detectedLeftEye[i].x1) - 1000;
-                    m_faces[realNumOfDetectedFaces].left_eye[1] = (detectedLeftEye[i].y1 < 0) ? -2000 : m_calibratePosition(previewH, 2000, detectedLeftEye[i].y1) - 1000;
+                m_faces[realNumOfDetectedFaces].left_eye[0] = (detectedLeftEye[i].x1 < 0) ? -2000 : m_calibratePosition(previewW, 2000, detectedLeftEye[i].x1) - 1000;
+                m_faces[realNumOfDetectedFaces].left_eye[1] = (detectedLeftEye[i].y1 < 0) ? -2000 : m_calibratePosition(previewH, 2000, detectedLeftEye[i].y1) - 1000;
 
-                    m_faces[realNumOfDetectedFaces].right_eye[0] = (detectedRightEye[i].x1 < 0) ? -2000 : m_calibratePosition(previewW, 2000, detectedRightEye[i].x1) - 1000;
-                    m_faces[realNumOfDetectedFaces].right_eye[1] = (detectedRightEye[i].y1 < 0) ? -2000 : m_calibratePosition(previewH, 2000, detectedRightEye[i].y1) - 1000;
+                m_faces[realNumOfDetectedFaces].right_eye[0] = (detectedRightEye[i].x1 < 0) ? -2000 : m_calibratePosition(previewW, 2000, detectedRightEye[i].x1) - 1000;
+                m_faces[realNumOfDetectedFaces].right_eye[1] = (detectedRightEye[i].y1 < 0) ? -2000 : m_calibratePosition(previewH, 2000, detectedRightEye[i].y1) - 1000;
 
-                    m_faces[realNumOfDetectedFaces].mouth[0] = (detectedMouth[i].x1 < 0) ? -2000 : m_calibratePosition(previewW, 2000, detectedMouth[i].x1) - 1000;
-                    m_faces[realNumOfDetectedFaces].mouth[1] = (detectedMouth[i].y1 < 0) ? -2000 : m_calibratePosition(previewH, 2000, detectedMouth[i].y1) - 1000;
+                m_faces[realNumOfDetectedFaces].mouth[0] = (detectedMouth[i].x1 < 0) ? -2000 : m_calibratePosition(previewW, 2000, detectedMouth[i].x1) - 1000;
+                m_faces[realNumOfDetectedFaces].mouth[1] = (detectedMouth[i].y1 < 0) ? -2000 : m_calibratePosition(previewH, 2000, detectedMouth[i].y1) - 1000;
 
-                    realNumOfDetectedFaces++;
-                }
+                realNumOfDetectedFaces++;
+            }
 
-                m_frameMetadata.number_of_faces = realNumOfDetectedFaces;
-                m_frameMetadata.faces = m_faces;
+            m_frameMetadata.number_of_faces = realNumOfDetectedFaces;
+            m_frameMetadata.faces = m_faces;
 
                 m_faceDetected = true;
             } else {
@@ -4785,6 +4936,9 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
             m_faceDetected = false;
         }
 
+#ifdef PREVIEW_WAITING_HACK
+        if (m_previewRunning == true)
+#endif
         if (m_msgEnabled & CAMERA_MSG_PREVIEW_METADATA)
             m_dataCb(CAMERA_MSG_PREVIEW_METADATA, previewCallbackHeap, 0, &m_frameMetadata, m_callbackCookie);
     } else {
@@ -4794,11 +4948,11 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
     }
 
     if ((m_previewRunning == true) &&
-        (m_msgEnabled & CAMERA_MSG_PREVIEW_FRAME)) {
+            (m_msgEnabled & CAMERA_MSG_PREVIEW_FRAME)) {
          needCSC = m_secCamera->getCallbackCSC();
 
          if (m_doPreviewToCallbackFunc(previewBuf, &callbackBuf, needCSC) == false) {
-             CLOGE("ERR(%s):Fail to doPreviewCallbackFunc", __func__);
+             CLOGE("ERR(%s): Fail to doPreviewCallbackFunc", __FUNCTION__);
              flagPreviewCallback = false;
          } else {
              flagPreviewCallback = true;
@@ -4815,8 +4969,7 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
                 else
                     CLOGW("(%s): Dropping video frame(under processing) [%d]", __func__, previewBuf.reserved.p);
         } else {
-                CLOGW("(%s): Dropping video frame m_sizeOfVideoQ(%d), m_availableRecordingFrameCnt(%d)",
-                    __func__, m_sizeOfVideoQ(), m_availableRecordingFrameCnt);
+                CLOGW("(%s): Dropping video frame internalQCnt(%d), videoBuf(%d)", __func__, m_sizeOfVideoQ(), m_availableRecordingFrameCnt);
         }
 
         m_videoLock.lock();
@@ -4882,18 +5035,18 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
                 CLOGE("ERR(%s):could not obtain gralloc buffer", __func__);
                 CLOGE("ERR(%s)(%d): gralloc buffer handle information is following;", __func__, __LINE__);
                 if (*bufHandle != NULL)
-                    CLOGE("ERR(%s):version: %d, numFds: %d, numInts: %d, data[0]: %d ",
+                    CLOGE("ERR(%s): version: %d, numFds: %d, numInts: %d, data[0]: %d ",
                                 __func__,
                                 (*bufHandle)->version,
                                 (*bufHandle)->numFds,
                                 (*bufHandle)->numInts,
                                 (*bufHandle)->data[0]);
                 else
-                    CLOGE("ERR(%s):bufHandle is null ", __func__);
+                    CLOGE("ERR(%s): bufHandle is null ", __func__);
 
-                CLOGE("ERR(%s):virtAddr[0]: 0x%08x", __func__, (unsigned int)virtAddr[0]);
-                CLOGE("ERR(%s):virtAddr[1]: 0x%08x", __func__, (unsigned int)virtAddr[1]);
-                CLOGE("ERR(%s):virtAddr[2]: 0x%08x", __func__, (unsigned int)virtAddr[2]);
+                CLOGE("ERR(%s): virtAddr[0]: 0x%08x", __func__, (unsigned int)virtAddr[0]);
+                CLOGE("ERR(%s): virtAddr[1]: 0x%08x", __func__, (unsigned int)virtAddr[1]);
+                CLOGE("ERR(%s): virtAddr[2]: 0x%08x", __func__, (unsigned int)virtAddr[2]);
                 goto done;
             }
 
@@ -4976,7 +5129,7 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
                             previewBufTemp2 = previewBuf;
                             m_popPreviewQ(&previewBuf);
                             if (m_previewBufStatus[previewBuf.reserved.p] != ON_HAL) {
-                                CLOGD("DEBUG(%s): next2 previewBuf[%d] - status(%d) not on hal", __func__, previewBuf.reserved.p, m_previewBufStatus[previewBuf.reserved.p]);
+                                CLOGW("DEBUG(%s): next2 previewBuf[%d] - status(%d) not on hal", __func__, previewBuf.reserved.p, m_previewBufStatus[previewBuf.reserved.p]);
                                 previewBuf = previewBufFromSvc;
                                 shouldEraseBack = true;
                             }
@@ -4992,48 +5145,53 @@ bool ExynosCameraHWImpl::m_previewThreadFunc(void)
     }
 
 done:
-    if (doPutPreviewBuf == true) {
-        if (shouldEraseBack)
-            m_eraseBackPreviewQ();
-        if (m_secCamera->putPreviewBuf(&previewBuf) == false) {
-            CLOGE("ERR(%s):putPreviewBuf(%d) fail", __func__, previewBuf.reserved.p);
-            ret = false;
-        } else {
-            m_setPreviewBufStatus(previewBuf.reserved.p, ON_DRIVER);
-            m_previewBufRegistered[previewBuf.reserved.p] = true;
-        }
+        if (doPutPreviewBuf == true) {
+            if (shouldEraseBack)
+                m_eraseBackPreviewQ();
+            if (m_secCamera->putPreviewBuf(&previewBuf) == false) {
+                CLOGE("ERR(%s):putPreviewBuf(%d) fail", __func__, previewBuf.reserved.p);
+                ret = false;
+            } else {
+                m_setPreviewBufStatus(previewBuf.reserved.p, ON_DRIVER);
+                m_previewBufRegistered[previewBuf.reserved.p] = true;
+            }
     }
 
 done2:
-    // moved from wrapper func
-    if (m_secCamera->getFocusMode() == ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE)
-    {
-        int afstatus = 0;
-        static int afResult = 1;
 
-        int prev_afstatus = afResult;
-        afstatus = m_secCamera->getCAFResult();
-        afResult = afstatus;
-        if (afstatus == 3 && (prev_afstatus == 0 || prev_afstatus == 1)) {
-            afResult = 4;
-        }
-#if 1
-        if ((m_msgEnabled & CAMERA_MSG_FOCUS) && (prev_afstatus != afstatus)) {
-            CLOGD("DEBUG(%s):CAMERA_MSG_FOCUS(%d) mode(%d)", __func__, afResult, m_secCamera->getFocusMode());
-            m_notifyCb(CAMERA_MSG_FOCUS, afResult, 0, m_callbackCookie);
-        }
+    // moved from wrapper func
+#ifdef PREVIEW_WAITING_HACK
+        if (m_secCamera->getFocusMode() == ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE && m_previewRunning)
 #else
-        if (m_secCamera->flagStartFaceDetection() == true && m_faceDetected == true) {
-            /* draw nothing */
-            m_notifyCb(CAMERA_MSG_FOCUS, 4, 0, m_callbackCookie);
-            /* skip callback, when FD detected */
-            // ; /* nop */
-        } else {
-            if ((m_msgEnabled & CAMERA_MSG_FOCUS) && (prev_afstatus != afstatus))
-                m_notifyCb(CAMERA_MSG_FOCUS, afResult, 0, m_callbackCookie);
-        }
+        if (m_secCamera->getFocusMode() == ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE)
 #endif
-    }
+        {
+            int afstatus = 0;
+            static int afResult = 1;
+
+            int prev_afstatus = afResult;
+            afstatus = m_secCamera->getCAFResult();
+            afResult = afstatus;
+            if (afstatus == 3 && (prev_afstatus == 0 || prev_afstatus == 1)) {
+                afResult = 4;
+            }
+#if 1
+            if ((m_msgEnabled & CAMERA_MSG_FOCUS) && (prev_afstatus != afstatus)) {
+                CLOGD("DEBUG(%s):CAMERA_MSG_FOCUS(%d) mode(%d)", __func__, afResult, m_secCamera->getFocusMode());
+                m_notifyCb(CAMERA_MSG_FOCUS, afResult, 0, m_callbackCookie);
+            }
+#else
+            if (m_secCamera->flagStartFaceDetection() == true && m_faceDetected == true) {
+                /* draw nothing */
+                m_notifyCb(CAMERA_MSG_FOCUS, 4, 0, m_callbackCookie);
+                /* skip callback, when FD detected */
+                // ; /* nop */
+            } else {
+                if ((m_msgEnabled & CAMERA_MSG_FOCUS) && (prev_afstatus != afstatus))
+                    m_notifyCb(CAMERA_MSG_FOCUS, afResult, 0, m_callbackCookie);
+            }
+#endif
+        }
 
     usleep(10);
     return true;
@@ -5042,7 +5200,7 @@ done2:
 
 bool ExynosCameraHWImpl::m_doPreviewToCallbackFunc(ExynosBuffer previewBuf, ExynosBuffer *callbackBuf, bool useCSC)
 {
-    CLOGV("DEBUG(%s): converting preview to callback buffer", __func__);
+    CLOGV("DEBUG(%s): converting preview to callback buffer", __FUNCTION__);
 
     camera_memory_t *previewCallbackHeap = NULL;
     int previewCallbackHeapFd = -1;
@@ -5050,7 +5208,7 @@ bool ExynosCameraHWImpl::m_doPreviewToCallbackFunc(ExynosBuffer previewBuf, Exyn
     int previewFormat = m_secCamera->getPreviewFormat();
 
     if (m_secCamera->getPreviewSize(&previewW, &previewH) == false) {
-        CLOGE("ERR(%s):Fail to getPreviewSize", __func__);
+        CLOGE("ERR(%s): Fail to getPreviewSize", __FUNCTION__);
         return false;
     }
 
@@ -5089,8 +5247,8 @@ bool ExynosCameraHWImpl::m_doPreviewToCallbackFunc(ExynosBuffer previewBuf, Exyn
         callbackBuf->virt.extP[2] = callbackBuf->virt.extP[1] + callbackBuf->size.extS[1];
     }
 
-    CLOGV("DEBUG(%s): preview size(%dx%d)", __func__, previewW, previewH);
-    CLOGV("DEBUG(%s): dst_size(%dx%d), dst_crop_size(%dx%d)", __func__, dst_width, dst_height, dst_crop_width, dst_crop_height);
+    CLOGV("DEBUG(%s): preview size(%dx%d)", __FUNCTION__, previewW, previewH);
+    CLOGV("DEBUG(%s): dst_size(%dx%d), dst_crop_size(%dx%d)", __FUNCTION__, dst_width, dst_height, dst_crop_width, dst_crop_height);
 
     if (useCSC) {
         /* resize from previewBuf(max size) to callbackHeap(user's set size) */
@@ -5131,6 +5289,10 @@ bool ExynosCameraHWImpl::m_doPreviewToCallbackFunc(ExynosBuffer previewBuf, Exyn
             int remainedH = m_orgPreviewRect.h - dst_height;
 
             if (remainedH != 0) {
+                /* W/A for aligned NV21(3D) */
+                //if (ion_sync(m_secCamera->getIonClient(), previewBuf.fd.extFd[1]) < 0)
+                //    CLOGE("ERR(%s):ion_sync() fail", __func__);
+
                 char *srcAddr = NULL;
                 char *dstAddr = NULL;
                 int planeDiver = 1;
@@ -5165,15 +5327,18 @@ bool ExynosCameraHWImpl::m_doPreviewToCallbackFunc(ExynosBuffer previewBuf, Exyn
         }
     }
 
-    if ((m_msgEnabled & CAMERA_MSG_PREVIEW_FRAME))
-        m_dataCb(CAMERA_MSG_PREVIEW_FRAME, previewCallbackHeap, 0, NULL, m_callbackCookie);
+#ifdef PREVIEW_WAITING_HACK
+    if (m_previewRunning == true)
+#endif
+        if ((m_msgEnabled & CAMERA_MSG_PREVIEW_FRAME))
+            m_dataCb(CAMERA_MSG_PREVIEW_FRAME, previewCallbackHeap, 0, NULL, m_callbackCookie);
 
     return true;
 }
 
 bool ExynosCameraHWImpl::m_doCallbackToPreviewFunc(ExynosBuffer previewBuf, ExynosBuffer *callbackBuf, bool useCSC)
 {
-    CLOGV("DEBUG(%s): converting callback to preview buffer", __func__);
+    CLOGV("DEBUG(%s): converting callback to preview buffer", __FUNCTION__);
 
     camera_memory_t *previewCallbackHeap = NULL;
     int previewCallbackHeapFd = -1;
@@ -5181,7 +5346,7 @@ bool ExynosCameraHWImpl::m_doCallbackToPreviewFunc(ExynosBuffer previewBuf, Exyn
     int previewFormat = m_secCamera->getPreviewFormat();
 
     if (m_secCamera->getPreviewSize(&previewW, &previewH) == false) {
-        CLOGE("ERR(%s):Fail to getPreviewSize", __func__);
+        CLOGE("ERR(%s): Fail to getPreviewSize", __FUNCTION__);
         return false;
     }
 
@@ -5238,17 +5403,16 @@ bool ExynosCameraHWImpl::m_videoThreadFuncWrapper(void)
 #endif
             m_releaseVideoQ();
 
-            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoStoppedCondition) - send", __func__, __LINE__);
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoStoppedCondition) - send", __FUNCTION__, __LINE__);
             m_videoStoppedCondition.signal();
-            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoCondition) - waiting", __func__, __LINE__);
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoCondition) - waiting", __FUNCTION__, __LINE__);
             m_videoCondition.wait(m_videoLock);
-            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoCondition) - recevied", __func__, __LINE__);
+            CLOGD("DEBUG(%s:%d): SIGNAL(m_videoCondition) - recevied", __FUNCTION__, __LINE__);
 
             m_videoLock.unlock();
         }
 
         if (m_exitVideoThread == true) {
-            CLOGD("DEBUG(%s:%d):m_exitVideoThread == true", __func__, __LINE__);
             m_videoLock.lock();
 
 #ifdef USE_3DNR_DMAOUT
@@ -5265,9 +5429,9 @@ bool ExynosCameraHWImpl::m_videoThreadFuncWrapper(void)
         /* waiting for preview thread */
         if (m_sizeOfVideoQ() == 0) {
             m_videoLock.lock();
-            CLOGV("DEBUG(%s:%d): SIGNAL(m_videoCondition) - waiting", __func__, __LINE__);
+            CLOGV("DEBUG(%s:%d): SIGNAL(m_videoCondition) - waiting", __FUNCTION__, __LINE__);
             m_videoCondition.wait(m_videoLock);
-            CLOGV("DEBUG(%s:%d): SIGNAL(m_videoCondition) - recevied", __func__, __LINE__);
+            CLOGV("DEBUG(%s:%d): SIGNAL(m_videoCondition) - recevied", __FUNCTION__, __LINE__);
             m_videoLock.unlock();
         }
 
@@ -5289,10 +5453,8 @@ bool ExynosCameraHWImpl::m_videoThreadFunc(void)
     if ((m_msgEnabled & CAMERA_MSG_VIDEO_FRAME) &&
         (m_videoRunning == true)) {
 
-        if (m_popVideoQ(&videoBuf) == false) {
-            /* CLOGV("DEBUG(%s:%d):m_popVideoQ() false", __func__, __LINE__); */
+        if (m_popVideoQ(&videoBuf) == false)
             return true;
-        }
 
         timestamp = m_videoBufTimestamp[videoBuf.reserved.p];
         m_videoBufTimestamp[videoBuf.reserved.p] = 1;
@@ -5307,17 +5469,13 @@ bool ExynosCameraHWImpl::m_videoThreadFunc(void)
             usleep(200);
             waitCnt++;
             if (waitCnt > 1000) {
-                CLOGE("ERR(%s):videoThread Timeout", __func__);
+                CLOGE("ERR(%s): videoThread Timeout", __func__);
                 return true;
             }
         }
-
         recordingFrameIndex = m_getRecordingFrame();
-        if (recordingFrameIndex == -1) {
-            CLOGD("DEBUG(%s:%d): m_getRecordingFrame() is %d", __func__, __LINE__, recordingFrameIndex);
+        if (recordingFrameIndex == -1)
             return true;
-        }
-
         videoBuf.reserved.p = recordingFrameIndex;
 #endif
 
@@ -5401,15 +5559,8 @@ bool ExynosCameraHWImpl::m_videoThreadFunc(void)
 
             if ((0L < timestamp) && (m_lastRecordingTimestamp < timestamp) && (m_recordingStartTimestamp < timestamp)) {
                 if ((m_msgEnabled & CAMERA_MSG_VIDEO_FRAME) && (m_videoRunning == true)) {
-
-                    CLOGV("DEBUG(%s):timestamp(%d msec), curTime(%d msec)",
-                        __func__,
-                        (int)(timestamp) / (1000 * 1000),
-                        (int)(systemTime(SYSTEM_TIME_MONOTONIC)) / (1000 * 1000));
-
                     m_dataCbTimestamp(timestamp, CAMERA_MSG_VIDEO_FRAME,
                                       m_recordHeap, recordingFrameIndex, m_callbackCookie);
-
                     m_lastRecordingTimestamp = timestamp;
                 }
             } else {
@@ -5470,17 +5621,8 @@ bool ExynosCameraHWImpl::m_autoFocusThreadFunc(void)
         (m_msgEnabled & CAMERA_MSG_FOCUS)) {
 
         if (m_notifyCb != NULL) {
-            int afFinalResult = (int)afResult;
-
-            /* if inactive detected, tell it */
-            if (m_secCamera->getFocusMode() == ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE) {
-                if (m_secCamera->getCAFResult() == 2) {
-                    afFinalResult = 2;
-                }
-            }
-
-            CLOGD("DEBUG(%s):CAMERA_MSG_FOCUS(%d) mode(%d)", __func__, afFinalResult, m_secCamera->getFocusMode());
-            m_notifyCb(CAMERA_MSG_FOCUS, afFinalResult, 0, m_callbackCookie);
+            CLOGD("DEBUG(%s):CAMERA_MSG_FOCUS(%d) mode(%d)", __func__, afResult, m_secCamera->getFocusMode());
+            m_notifyCb(CAMERA_MSG_FOCUS, afResult, 0, m_callbackCookie);
         }  else {
             CLOGD("DEBUG(%s):m_notifyCb is NULL mode(%d)", __func__, m_secCamera->getFocusMode());
         }
@@ -5502,9 +5644,9 @@ done:
 
 bool ExynosCameraHWImpl::m_startPictureInternal(void)
 {
-    CLOGD("DEBUG(%s):(%d)", __func__, __LINE__);
+    CLOGD("[%s] (%d)", __func__, __LINE__);
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
         if (m_pictureRunning == true) {
             CLOGE("ERR(%s):Aready m_pictureRunning is running", __func__);
             return false;
@@ -5572,15 +5714,15 @@ bool ExynosCameraHWImpl::m_startPictureInternal(void)
 
 bool ExynosCameraHWImpl::m_stopPictureInternal(void)
 {
-    CLOGD("DEBUG(%s):(%d)", __func__, __LINE__);
+    CLOGD("[%s] (%d)", __func__, __LINE__);
 
     if (m_pictureRunning == false) {
         CLOGE("ERR(%s):Aready m_pictureRunning is stop", __func__);
         return false;
     }
 
-    if (m_secCamera->flagStartPicture() == true &&
-        m_secCamera->stopPicture() == false)
+    if (m_secCamera->flagStartPicture() == true
+        && m_secCamera->stopPicture() == false)
         CLOGE("ERR(%s):Fail on m_secCamera->stopPicture()", __func__);
 
     for (int i = 0; i < NUM_OF_PICTURE_BUF; i++) {
@@ -5605,7 +5747,7 @@ bool ExynosCameraHWImpl::m_stopPictureInternal(void)
 
 bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
 {
-    CLOGD("DEBUG(%s):(%d)", __func__, __LINE__);
+    CLOGD("[%s] (%d)", __func__, __LINE__);
 
     bool ret = false;
 
@@ -5613,6 +5755,15 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
     int newFocusMode = oldFocusMode;
 #ifdef DYNAMIC_BAYER_BACK_REC
     ExynosBuffer dynamicSensorBuf;
+#endif
+
+#ifdef PREVIEW_WAITING_HACK
+takepictureretry:
+    if (isPreviewFrameReady < 4) {
+        usleep(30 * 1000);
+        CLOGE("%s, waiting Preview(%d)", __func__, __LINE__);
+        goto takepictureretry;
+    }
 #endif
 
     int pictureW, pictureH, pictureFramesize = 0;
@@ -5630,10 +5781,18 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
     int JpegHeapOutFd = -1;
     struct camera2_shot_ext *shot_ext;
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT)
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT)
         usleep(50000);
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
+#ifdef CAPTURE_DELAY
+    while (capture_delay > 2) {
+        usleep(10000);
+    }
+    capture_delay = 3;
+#endif
+
+
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
         if (m_pictureRunning == false &&
             m_startPictureInternal() == false) {
             CLOGE("ERR(%s):m_startPictureInternal() fail", __func__);
@@ -5641,16 +5800,16 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
         }
     }
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
+    if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
         if (m_pictureRunning == false &&
-            m_startPictureInternalReprocessing() == false) {
-            CLOGE("ERR(%s):m_startPictureInternalReprocessing() fail", __func__);
+            m_startPictureInternalLpzsl() == false) {
+            CLOGE("ERR(%s):m_startPictureInternalLpzsl() fail", __func__);
             goto out;
         }
     }
 
 #ifdef DYNAMIC_BAYER_BACK_REC
-        if ((m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK &&
+        if ((m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK &&
              m_secCamera->getRecordingHint() == true)
 #ifdef SCALABLE_SENSOR
          || (m_secCamera->getScalableSensorStart() == true)
@@ -5698,30 +5857,33 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
                 return false;
             }
 #endif
-
 #ifdef SCALABLE_SENSOR_CHKTIME
             gettimeofday(&end, NULL);
-            CLOGD("DEBUG(%s):CHKTIME Bayer buffer getting(%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
+            CLOGI("INFO(%s):CHKTIME Bayer buffer getting(%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
 #endif
         }
 #endif
-
 #ifdef FRONT_NO_ZSL
-        if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
+        if (m_secCamera->getCameraMode()== CAMERA_ACTIVATE_MODE_FRONT) {
             m_secCamera->setFrontCaptureCmd(1);
 
             if (m_secCamera->getPictureBuf(&m_pictureBuf[0]) == false) {
                 CLOGE("ERR(%s):getPictureBuf() fail", __func__);
+
                 return false;
             }
 
-            doPutPictureBuf = true;
+            if (m_secCamera->putPictureBuf(&m_pictureBuf[0]) == false) {
+                CLOGE("ERR(%s):putPictureBuf(%d) fail", __func__, m_pictureBuf[0].reserved.p);
+
+                return false;
+            }
         }
 #endif
 
     if ((m_flashMode == ExynosCamera::FLASH_MODE_AUTO ||
-         m_flashMode == ExynosCamera::FLASH_MODE_ON ||
-         m_flashMode == ExynosCamera::FLASH_MODE_RED_EYE) &&
+        m_flashMode == ExynosCamera::FLASH_MODE_ON ||
+        m_flashMode == ExynosCamera::FLASH_MODE_RED_EYE) &&
         (((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->getNeedCaptureFlash() == true)) {
 
         /* AE unlock for AE-haunting when zoom capture */
@@ -5739,12 +5901,10 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
             flashTurnOnHere = true;
 
             ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->getFlashTrigerPath(&tiggerPath);
-
             if (tiggerPath == ExynosCameraActivityFlash::FLASH_TRIGGER_TOUCH_DISPLAY) {
                 if (((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->waitMainReady() == false)
                     CLOGW("ERR(%s):waitMainReady() timeout", __func__);
             }
-
             ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())
                 ->setFlashStep(ExynosCameraActivityFlash::FLASH_STEP_MAIN_START);
         }
@@ -5754,13 +5914,12 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
         int totalWaitingTime = 0;
         int waitCount = 0;
         unsigned int waitFcount = 0;
-        unsigned int shotFcount = 0;
+        unsigned int ShotFcount = 0;
 
         ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->resetShotFcount();
-
         do {
             waitCount = ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->getWaitingCount();
-            if (0 < waitCount) {
+            if(0 < waitCount) {
                 usleep(FLASH_WAITING_SLEEP_TIME);
                 totalWaitingTime += FLASH_WAITING_SLEEP_TIME;
             }
@@ -5769,21 +5928,21 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
         if (0 < waitCount || FLASH_MAX_WAITING_TIME < totalWaitingTime)
             CLOGE("ERR(%s):waiting too much (%d msec)", __func__, totalWaitingTime);
 
-        shotFcount = ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->getShotFcount();
-        if (m_sharedBayerFcount != shotFcount)
+        ShotFcount = ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->getShotFcount();
+        if (m_sharedBayerFcount != ShotFcount)
             CLOGE("ERR(%s):shot frame count not mismatch (getShotFcount %d, m_sharedBayerFcount %d)",
-                __func__, shotFcount, m_sharedBayerFcount);
+                __func__, ShotFcount, m_sharedBayerFcount);
         else
-            CLOGD("DEBUG(%s):(%d) getShotFcount %d, m_sharedBayerFcount %d", __func__, __LINE__, shotFcount, m_sharedBayerFcount);
+            CLOGD("[%s], (%d) getShotFcount %d, m_sharedBayerFcount %d", __func__, __LINE__, ShotFcount, m_sharedBayerFcount);
 
         /* To check Flash Timing */
         waitFcount = ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->getShotFcount() + 1;
         totalWaitingTime= 0;
-        while (waitFcount > m_sharedBayerFcount && totalWaitingTime <= FLASH_CAPTURE_WAITING_TIME) {
+        while(waitFcount > m_sharedBayerFcount && totalWaitingTime <= FLASH_CAPTURE_WAITING_TIME) {
             usleep(FLASH_WAITING_SLEEP_TIME);
             totalWaitingTime += FLASH_WAITING_SLEEP_TIME;
 
-            CLOGD("DEBUG(%s):(%d) waitFcount %d, m_sharedBayerFcount %d",
+            CLOGD("[%s], (%d) waitFcount %d, m_sharedBayerFcount %d",
                 __func__, __LINE__, waitFcount, m_sharedBayerFcount);
         }
     }
@@ -5793,16 +5952,17 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
     pictureFormat = m_secCamera->getPictureFormat();
     pictureFramesize = FRAME_SIZE(V4L2_PIX_2_HAL_PIXEL_FORMAT(pictureFormat), m_orgPictureRect.w, m_orgPictureRect.h);
 
-    if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_FRONT) {
+    if (m_secCamera->getCameraMode()== CAMERA_ACTIVATE_MODE_FRONT) {
         m_secCamera->getCropRectAlign(pictureW,  pictureH,
                                       ispW,  ispH,
                                       &cropX, &cropY,
                                       &cropW, &cropH,
                                       CAMERA_MAGIC_ALIGN, 2,
                                       m_secCamera->getZoom());
-    } else if (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK) {
+
+    } else if (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
         for (int i = 0; i < numOfPictureBuf; i++) {
-            ExynosBuffer sensorBufReprocessing;
+            ExynosBuffer sensorBufLpzsl;
             ExynosBuffer ispBuf;
             unsigned int waitBayerFcount = 0;
             unsigned int normalCaptureFcount = 0;
@@ -5811,25 +5971,24 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
             do {
 #ifdef DYNAMIC_BAYER_BACK_REC
                 if (((m_secCamera->getRecordingHint() == true) &&
-                    (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK))
+                    (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK))
 #ifdef SCALABLE_SENSOR
                   || (m_secCamera->getScalableSensorStart() == true)
 #endif
                 )
-                    sensorBufReprocessing = dynamicSensorBuf;
+                    sensorBufLpzsl = dynamicSensorBuf;
                 else
 #endif
-                    sensorBufReprocessing = m_sharedISPBuffer;
-            } while (!m_checkPictureBufferVaild(&sensorBufReprocessing, retry++));
-
-            normalCaptureFcount = ((camera2_shot_ext *)sensorBufReprocessing.virt.extP[1])->shot.dm.request.frameCount;
+                    sensorBufLpzsl = m_sharedISPBuffer;
+            } while(!m_checkPictureBufferVaild(&sensorBufLpzsl, retry++));
+            normalCaptureFcount = ((camera2_shot_ext *)sensorBufLpzsl.virt.extP[1])->shot.dm.request.frameCount;
 
             ExynosBuffer *tempBuf = NULL;
 
-            CLOGD("DEBUG(%s):(%d) sensorBufReprocessing %d", __func__, __LINE__, sensorBufReprocessing.reserved.p);
+            CLOGD("[%s] (%d) sensorBufLpzsl %d", __func__, __LINE__, sensorBufLpzsl.reserved.p);
 
-            if (sensorBufReprocessing.reserved.p == -1) {
-                CLOGE("ERR(%s):Fail to get valid sensor buf(index %d)", __func__, sensorBufReprocessing.reserved.p);
+            if (sensorBufLpzsl.reserved.p == -1) {
+                CLOGE("ERR(%s): Fail to get valid sensor buf(index %d)", __func__, sensorBufLpzsl.reserved.p);
                 goto out;
             }
 
@@ -5838,77 +5997,80 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
 
                 tempBuf = m_secCamera->searchSensorBuffer(waitBayerFcount);
                 if (tempBuf == NULL) {
-                   CLOGE("[%s] (%d) sensorBufReprocessing is null (%d)", __func__, __LINE__, waitBayerFcount);
+                   CLOGE("[%s] (%d) sensorBufLpzsl is null (%d)", __func__, __LINE__, waitBayerFcount);
                    m_secCamera->printBayerLockStatus();
 
-                   sensorBufReprocessing = m_sharedBayerBuffer;
-                } else
-                   sensorBufReprocessing = *tempBuf;
+                   sensorBufLpzsl = m_sharedBayerBuffer;
+                } else {
+                   sensorBufLpzsl = *tempBuf;
+                }
 
                 m_secCamera->setBayerLock(waitBayerFcount, true);
-                CLOGD("DEBUG(%s):(%d) m_sharedBayerFcount %d", __func__, __LINE__, m_sharedBayerFcount);
+                CLOGD("[%s], (%d) m_sharedBayerFcount %d", __func__, __LINE__, m_sharedBayerFcount);
             } else {
                 tempBuf = m_secCamera->searchSensorBufferOnHal(normalCaptureFcount);
                 if (tempBuf == NULL) {
                     CLOGE("[%s] (%d) normalCaptureFcount is null (%d)", __func__, __LINE__, normalCaptureFcount);
                     m_secCamera->printBayerLockStatus();
 
-                    sensorBufReprocessing = m_sharedBayerBuffer;
+                    sensorBufLpzsl = m_sharedBayerBuffer;
                 } else {
-                    sensorBufReprocessing = *tempBuf;
-                    normalCaptureFcount = ((camera2_shot_ext *)sensorBufReprocessing.virt.extP[1])->shot.dm.request.frameCount;
+                    sensorBufLpzsl = *tempBuf;
+                    normalCaptureFcount = ((camera2_shot_ext *)sensorBufLpzsl.virt.extP[1])->shot.dm.request.frameCount;
                 }
 
                 m_secCamera->setBayerLock(normalCaptureFcount, true);
-                CLOGD("DEBUG(%s):(%d) normalCaptureFcount %d", __func__, __LINE__, normalCaptureFcount);
+                CLOGD("[%s], (%d) normalCaptureFcount %d", __func__, __LINE__, normalCaptureFcount);
             }
             m_secCamera->printBayerLockStatus();
 
 #ifdef SCALABLE_SENSOR
-            shot_ext = (struct camera2_shot_ext *)(sensorBufReprocessing.virt.extP[1]);
-            int bayerFcount = shot_ext->shot.dm.request.frameCount;
-            CLOGE("bayerFcount = (%d)", bayerFcount);
+                shot_ext = (struct camera2_shot_ext *)(sensorBufLpzsl.virt.extP[1]);
+                int bayerFcount = shot_ext->shot.dm.request.frameCount;
+                CLOGE("bayerFcount = (%d)", bayerFcount);
 #endif
-            ExynosCameraHWImpl::g_is3a0Mutex.lock();
+            ExynosCameraHWImpl::isCh0Mutex.lock();
 
-            if (m_secCamera->getIs3a0BufReprocessing(ExynosCamera::CAMERA_MODE_REPROCESSING, &sensorBufReprocessing, &ispBuf) == false) {
-                CLOGE("ERR(%s):getIs3a0BufReprocessing() fail(id:%d)", __func__, getCameraId());
+            if (m_secCamera->getIs3a0BufLpzsl(SENSOR_FAKE, &sensorBufLpzsl, &ispBuf) == false) {
+                CLOGE("ERR(%s):getIs3a0BufLpzsl() fail(id:%d)", __func__, getCameraId());
 
-                ExynosCameraHWImpl::g_is3a0Mutex.unlock();
+                ExynosCameraHWImpl::isCh0Mutex.unlock();
                 goto out;
             }
 
-            ExynosCameraHWImpl::g_is3a0Mutex.unlock();
+            ExynosCameraHWImpl::isCh0Mutex.unlock();
 
             if (ispBuf.reserved.p < 0) {
                 CLOGW("WRN(%s): ispBuf.reserved.p = %d", __func__, ispBuf.reserved.p);
                 goto out;
             }
 
-            m_secCamera->pictureOnReprocessing();
+            m_secCamera->pictureOnLpzsl();
 
-            if (m_secCamera->putISPBufReprocessing(&ispBuf) == false) {
-                CLOGE("ERR(%s):putISPBufReprocessing() fail", __func__);
+            isp_check++;
+            if (m_secCamera->putISPBufLpzsl(&ispBuf) == false) {
+                CLOGE("ERR(%s):putISPBufLpzsl() fail", __func__);
                 goto out;
             }
 
-            if (m_secCamera->getISPBufReprocessing(&ispBuf) == false) {
-                CLOGE("ERR(%s):getISPBufReprocessing() fail", __func__);
+            if (m_secCamera->getISPBufLpzsl(&ispBuf) == false) {
+                CLOGE("ERR(%s):getISPBufLpzsl() fail", __func__);
+                goto out;
+            }
+            isp_check--;
+
+            if (m_secCamera->getPictureBufLpzsl(&m_pictureBuf[i]) == false) {
+                CLOGE("ERR(%s):getPictureBufLpzsl() fail", __func__);
                 goto out;
             }
 
-            if (m_secCamera->getPictureBufReprocessing(&m_pictureBuf[i]) == false) {
-                CLOGE("ERR(%s):getPictureBufReprocessing() fail", __func__);
-                goto out;
-            }
-
-            if (m_secCamera->putPictureBufReprocessing(&m_pictureBuf[i]) == false) {
-                CLOGE("ERR(%s):putPictureBufReprocessing(%d) fail", __func__, m_pictureBuf[i].reserved.p);
+            if (m_secCamera->putPictureBufLpzsl(&m_pictureBuf[i]) == false) {
+                CLOGE("ERR(%s):putPictureBufLpzsl(%d) fail", __func__, m_pictureBuf[i].reserved.p);
                 goto out;
             }
                     m_secCamera->setBayerLock(normalCaptureFcount, false);
 
-                shot_ext = (struct camera2_shot_ext *)(sensorBufReprocessing.virt.extP[1]);
+                shot_ext = (struct camera2_shot_ext *)(sensorBufLpzsl.virt.extP[1]);
                 cropW = shot_ext->shot.ctl.scaler.cropRegion[2];
                 cropH = shot_ext->shot.ctl.scaler.cropRegion[3];
             }
@@ -5934,21 +6096,21 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
     for (int i = 0; i < numOfPictureBuf; i++) {
     // resize from pictureBuf(max size) to rawHeap(user's set size)
     if (m_exynosPictureCSC) {
-        CLOGD("DEBUG(%s):(%d) CSC start numOfPictureBuf %d", __func__, __LINE__, numOfPictureBuf);
+        CLOGD("[%s] (%d) CSC start numOfPictureBuf %d", __func__, __LINE__, numOfPictureBuf);
 
-            CLOGV("(%s): src(%d, %d), jpg(%d, %d)", __func__, cropW, cropH, m_orgPictureRect.w, m_orgPictureRect.h);
+            CLOGV("(%s): src(%d, %d), jpg(%d, %d)", __FUNCTION__, cropW, cropH, m_orgPictureRect.w, m_orgPictureRect.h);
             if ((cropW == m_orgPictureRect.w) &&
                 (cropH == m_orgPictureRect.h) &&
                 (m_secCamera->getZoom() == 0) &&
                 !m_flip_horizontal) {
-                CLOGD("(%s): Bypassing CSC", __func__);
+                CLOGD("(%s): Bypassing CSC", __FUNCTION__);
                 m_isCSCBypassed = true;
                 m_getAlignedYUVSize(JPEG_INPUT_COLOR_FMT, m_orgPictureRect.w, m_orgPictureRect.h, &pictureBuf);
                 pictureBuf.virt.extP[0] = m_pictureBuf[i].virt.extP[0];
                 pictureBuf.fd.extFd[0] = m_pictureBuf[i].fd.extFd[0];
             } else {
                 CLOGD("(%s): Capture crop size(%d, %d) Zoom(%d)",
-                    __func__, cropW, cropH, m_secCamera->getZoom());
+                    __FUNCTION__, cropW, cropH, m_secCamera->getZoom());
                 m_isCSCBypassed = false;
 
                 int csc_cropX = 0, csc_cropY = 0, csc_cropW = 0, csc_cropH = 0;
@@ -5964,13 +6126,19 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
                                    csc_cropX, csc_cropY, csc_cropW, csc_cropH,
                                    V4L2_PIX_2_HAL_PIXEL_FORMAT(pictureFormat),
                                    0);
-
+#if defined (CSC_SUPPORT_ROT) && defined(USE_S5K3H7_CAMERA)
+                csc_rot_set_dst_format(m_exynosPictureCSC,
+                               m_orgPictureRect.w, m_orgPictureRect.h,
+                               0, 0, m_orgPictureRect.w, m_orgPictureRect.h,
+                               V4L2_PIX_2_HAL_PIXEL_FORMAT(JPEG_INPUT_COLOR_FMT),
+                               0, capture_rotate);
+#else
                 csc_set_dst_format(m_exynosPictureCSC,
                                m_orgPictureRect.w, m_orgPictureRect.h,
                                0, 0, m_orgPictureRect.w, m_orgPictureRect.h,
                                V4L2_PIX_2_HAL_PIXEL_FORMAT(JPEG_INPUT_COLOR_FMT),
                                0);
-
+#endif
                 csc_set_src_buffer(m_exynosPictureCSC,
                                    (void **)m_pictureBuf[i].fd.extFd, CSC_MEMORY_TYPE);
 
@@ -6033,9 +6201,9 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
         CLOGV("(%s): pictureBuf.size.extS[%d] = %d", __func__, j, pictureBuf.size.extS[j]);
     }
 
-    if ((m_msgEnabled & CAMERA_MSG_COMPRESSED_IMAGE)) {
-        CLOGD("DEBUG(%s): time test  yuv2Jpeg - start %d\n", __func__, __LINE__);
+    CLOGE("time test  yuv2Jpeg - start %d\n", __LINE__);
 
+    if ((m_msgEnabled & CAMERA_MSG_COMPRESSED_IMAGE)) {
         jpegBuf.virt.p = (char *)m_jpegHeap->data;
         jpegBuf.size.s = m_jpegHeap->size;
         jpegBuf.fd.extFd[0] = m_jpegHeapFd;
@@ -6047,7 +6215,6 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
 
         if (m_secCamera->yuv2Jpeg(&pictureBuf, &jpegBuf, &jpegRect) == false) {
             CLOGE("ERR(%s):yuv2Jpeg() fail", __func__);
-
             {
                 m_stateLock.lock();
                 m_captureInProgress = false;
@@ -6059,25 +6226,19 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
                 }
                 m_stateLock.unlock();
             }
-
             goto out;
         }
-
-        CLOGD("DEBUG(%s): time test  yuv2Jpeg - end %d\n", __func__, __LINE__);
-
-#ifdef CHECK_TIME_SHOT2SHOT
-        m_shot2ShotTimer.stop();
-        long long shot2ShotDurationTime = m_shot2ShotTimer.durationUsecs();
-        CLOGD("DEBUG(%s):CHECK_TIME_SHOT2SHOT : %d msec", __func__, (int)shot2ShotDurationTime / 1000);
-#endif //CHECK_TIME_SHOT2SHOT
     }
+    CLOGE("time test  yuv2Jpeg - end %d\n", __LINE__);
 
-    if (doPutPictureBuf == true) {
-        if (m_secCamera->putPictureBuf(&m_pictureBuf[0]) == false)
-            CLOGE("ERR(%s):putPictureBuf(%d) fail", __func__, m_pictureBuf[0].reserved.p);
-        else
-            doPutPictureBuf = false;
-    }
+#ifdef FU_3INSTANCE
+#else
+    if (doPutPictureBuf == true &&
+        m_secCamera->putPictureBuf(&m_pictureBuf) == false)
+        CLOGE("ERR(%s):putPictureBuf(%d) fail", __func__, m_pictureBuf.reserved.p);
+    else
+        doPutPictureBuf = false;
+#endif
 
     m_stateLock.lock();
     m_waitForCapture = false;
@@ -6124,14 +6285,12 @@ bool ExynosCameraHWImpl::m_pictureThreadFunc(void)
         m_dataCb(CAMERA_MSG_COMPRESSED_IMAGE, JpegHeapOut, 0, NULL, m_callbackCookie);
     }
     }
+        flashTurnOnHere = false;
 
-    flashTurnOnHere = false;
-
-    ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())
-        ->setFlashTrigerPath(ExynosCameraActivityFlash::FLASH_TRIGGER_OFF);
-
-    ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())
-        ->setFlashStep(ExynosCameraActivityFlash::FLASH_STEP_OFF);
+        ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())
+            ->setFlashTrigerPath(ExynosCameraActivityFlash::FLASH_TRIGGER_OFF);
+        ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())
+            ->setFlashStep(ExynosCameraActivityFlash::FLASH_STEP_OFF);
 
     /* don't stop preview.. */
     /*
@@ -6151,7 +6310,7 @@ out:
 
     m_stateLock.lock();
 
-    m_captureInProgress = false;
+        m_captureInProgress = false;
 
     m_stateLock.unlock();
 
@@ -6163,15 +6322,15 @@ out:
 #endif
     if ((m_13MCaptureStart == true) &&
         (m_secCamera->getScalableSensorStart()) &&
-        (m_secCamera->getCameraMode() == ExynosCamera::CAMERA_MODE_BACK)) {
+        (m_secCamera->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK)) {
         if (m_chgScalableSensorSize(SCALABLE_SENSOR_SIZE_FHD) == false) {
-            CLOGE("ERR(%s):scalable sensor input change(SCALABLE_SENSOR_SIZE_FHD)!!", __func__);
+            CLOGE("ERR(%s): scalable sensor input change(SCALABLE_SENSOR_SIZE_FHD)!!", __func__);
             ret = false;
         }
     }
 #ifdef SCALABLE_SENSOR_CHKTIME
     gettimeofday(&end, NULL);
-    CLOGD("DEBUG(%s):CHKTIME m_chgScalableSensorSize all done total [to preview size](%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
+    CLOGI("INFO(%s):CHKTIME m_chgScalableSensorSize all done total [to preview size](%d)", __func__, (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec));
 #endif
 
     /* AE unlock for AE-haunting when zoom capture */
@@ -6185,18 +6344,20 @@ out:
 
     ((ExynosCameraActivityFlash *)m_secCamera->getFlashMgr())->setCaptureStatus(false);
 
+#ifdef CAPTURE_DELAY
+    capture_delay = 0;
+#endif
     usleep(10);
 
     m_captureMode = false;
     if (oldFocusMode != newFocusMode)
          m_secCamera->setFocusMode(oldFocusMode);
-
     return ret;
 }
 
-bool ExynosCameraHWImpl::m_startPictureInternalReprocessing(void)
+bool ExynosCameraHWImpl::m_startPictureInternalLpzsl(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGD("[%s] (%d)", __func__, __LINE__);
 
     if (m_pictureRunning == true) {
         CLOGE("ERR(%s):Aready m_pictureRunning is running", __func__);
@@ -6207,7 +6368,7 @@ bool ExynosCameraHWImpl::m_startPictureInternalReprocessing(void)
     ExynosBuffer nullBuf;
 
     pictureFormat = m_secCamera->getPictureFormat();
-    m_secCamera->getPictureSizeReprocessing(&pictureW, &pictureH);
+    m_secCamera->getPictureSizeLpzsl(&pictureW, &pictureH);
 
     pictureFramesize = FRAME_SIZE(V4L2_PIX_2_HAL_PIXEL_FORMAT(pictureFormat), ALIGN_UP(pictureW, CAMERA_MAGIC_ALIGN), ALIGN_UP(pictureH, CAMERA_MAGIC_ALIGN));
 
@@ -6236,7 +6397,7 @@ bool ExynosCameraHWImpl::m_startPictureInternalReprocessing(void)
 
         m_pictureHeap[i] = m_getMemoryCb(-1, pictureFramesize, 1, &(m_pictureHeapFd[i]));
         if (!m_pictureHeap[i] || m_pictureHeapFd[i] <= 0) {
-            CLOGE("ERR(%s):m_getMemoryCb(m_pictureHeap[%d], size(%d) fail", __func__, i, pictureFramesize);
+            CLOGE("ERR(%s):m_getMemoryCb(m_pictureHeap2[%d], size(%d) fail", __func__, i, pictureFramesize);
             return false;
         }
 
@@ -6247,35 +6408,33 @@ bool ExynosCameraHWImpl::m_startPictureInternalReprocessing(void)
 
         m_pictureBuf[0].reserved.p = i;
 
-        m_secCamera->setPictureBufReprocessing(&m_pictureBuf[0]);
+        m_secCamera->setPictureBufLpzsl(&m_pictureBuf[0]);
     }
 
-    if (m_secCamera->startPictureReprocessing() == false) {
-        CLOGE("ERR(%s):Fail on m_secCamera->startPictureReprocessing()", __func__);
+    if (m_secCamera->startPictureLpzsl() == false) {
+        CLOGE("ERR(%s):Fail on m_secCamera->startPictureLpzsl()", __func__);
         return false;
     }
 
     for (int i = 0; i < NUM_OF_FLASH_BUF; i++)
         m_pictureBuf[i] = nullBuf;
 
-    m_pictureRunning = true;
-
-    CLOGD("DEBUG(%s):out", __func__);
+    m_pictureRunning= true;
 
     return true;
 }
 
-bool ExynosCameraHWImpl::m_stopPictureInternalReprocessing(void)
+bool ExynosCameraHWImpl::m_stopPictureInternalLpzsl(void)
 {
-    CLOGD("DEBUG(%s):in", __func__);
+    CLOGD("[%s] (%d)", __func__, __LINE__);
 
     if (m_pictureRunning == false) {
-        CLOGE("ERR(%s):Aready m_pictureRunning is stop", __func__);
+        CLOGE("ERR(%s):Aready m_pictureRunning2 is stop", __func__);
         return false;
     }
 
-    if (m_secCamera->flagStartPictureReprocessing() == true
-        && m_secCamera->stopPictureReprocessing() == false)
+    if (m_secCamera->flagStartPictureLpzsl() == true
+        && m_secCamera->stopPictureLpzsl() == false)
         CLOGE("ERR(%s):Fail on m_secCamera->stopPicture()", __func__);
 
     for (int i = 0; i < NUM_OF_PICTURE_BUF; i++) {
@@ -6294,8 +6453,6 @@ bool ExynosCameraHWImpl::m_stopPictureInternalReprocessing(void)
     }
 
     m_pictureRunning = false;
-
-    CLOGD("DEBUG(%s):out", __func__);
 
     return true;
 }
@@ -6672,7 +6829,7 @@ bool ExynosCameraHWImpl::m_isSupportedPreviewSize(const int width,
             return true;
     }
 
-    CLOGE("ERR(%s):Invalid preview size(%dx%d)", __func__, width, height);
+    CLOGE("ERR(%s): Invalid preview size(%dx%d)", __func__, width, height);
 
     return false;
 }
@@ -6699,7 +6856,7 @@ bool ExynosCameraHWImpl::m_isSupportedPictureSize(const int width,
             return true;
     }
 
-    CLOGE("ERR(%s):Invalid picture size(%dx%d)", __func__, width, height);
+    CLOGE("ERR(%s): Invalid picture size(%dx%d)", __func__, width, height);
 
     return false;
 }
@@ -6726,7 +6883,7 @@ bool ExynosCameraHWImpl::m_isSupportedVideoSize(const int width,
             return true;
     }
 
-    CLOGE("ERR(%s):Invalid video size(%dx%d)", __func__, width, height);
+    CLOGE("ERR(%s): Invalid video size(%dx%d)", __func__, width, height);
 
     return false;
 }
@@ -7017,7 +7174,7 @@ bool ExynosCameraHWImpl::m_getMatchedPictureSize(const int src_w, const int src_
         }
     }
 
-    CLOGE("ERR(%s):Could not find matched ratio size(%dx%d)", __func__, src_w, src_h);
+    CLOGE("ERR(%s): Could not find matched ratio size(%dx%d)", __func__, src_w, src_h);
 
     return false;
 }
@@ -7212,13 +7369,13 @@ bool ExynosCameraHWImpl::m_checkPictureBufferVaild(ExynosBuffer *buf, int retry)
         if (((camera2_shot_ext *)buf->virt.extP[1])->shot.dm.request.frameCount != 0) {
             ret = true;
         } else {
-            CLOGW("WRN(%s): frame[%d] count is 0", __func__, buf->reserved.p);
+            CLOGW("WRN(%s): frame[%d] count is 0", __FUNCTION__, buf->reserved.p);
             m_secCamera->printBayerLockStatus();
         }
 
         goto out;
     } else if (retry > 30) {
-        CLOGE("ERR(%s):time out", __func__);
+        CLOGE("ERR(%s): time out", __func__);
         ret = true;
         goto out;
     }
@@ -7363,7 +7520,6 @@ void ExynosCameraHWImpl::m_releasePreviewQ(void)
         m_previewQ.erase(r);
     }
 }
-
 void ExynosCameraHWImpl::m_setPreviewBufStatus(int index, int status)
 {
     m_previewBufStatus[index] = status;
@@ -7372,36 +7528,24 @@ void ExynosCameraHWImpl::m_setPreviewBufStatus(int index, int status)
 int ExynosCameraHWImpl::m_getRecordingFrame(void)
 {
     Mutex::Autolock lock(m_recordingFrameMutex);
-
     for (int i = 0; i < NUM_OF_VIDEO_BUF; i++) {
         m_recordingFrameIndex++;
-
-        /* rotate index */
-        if (NUM_OF_VIDEO_BUF <= m_recordingFrameIndex)
+        if (m_recordingFrameIndex >= NUM_OF_VIDEO_BUF)
             m_recordingFrameIndex = 0;
-
         if (m_recordingFrameAvailable[m_recordingFrameIndex] == true) {
             m_availableRecordingFrameCnt--;
             m_recordingFrameAvailable[m_recordingFrameIndex] = false;
             return m_recordingFrameIndex;
         }
     }
-
-    for (int i = 0; i < NUM_OF_VIDEO_BUF; i++) {
-        CLOGD("DEBUG(%s:%d):m_recordingFrameAvailable[%d](%d) / m_availableRecordingFrameCnt(%d)",
-            __func__, __LINE__, i, m_recordingFrameAvailable[i], m_availableRecordingFrameCnt);
-    }
-
     return -1;
 }
 
 void ExynosCameraHWImpl::m_resetRecordingFrameStatus(void)
 {
     Mutex::Autolock lock(m_recordingFrameMutex);
-
     for (int i = 0; i < NUM_OF_VIDEO_BUF; i++)
         m_recordingFrameAvailable[i] = true;
-
     m_availableRecordingFrameCnt = NUM_OF_VIDEO_BUF;
     m_recordingFrameIndex = 0;
 }
@@ -7409,7 +7553,6 @@ void ExynosCameraHWImpl::m_resetRecordingFrameStatus(void)
 void ExynosCameraHWImpl::m_freeRecordingFrame(int index)
 {
     Mutex::Autolock lock(m_recordingFrameMutex);
-
     m_availableRecordingFrameCnt++;
     m_recordingFrameAvailable[index] = true;
 }
@@ -7440,17 +7583,15 @@ void ExynosCameraHWImpl::m_clearAllStartPreviewComplete(void)
 #ifdef SCALABLE_SENSOR
 bool ExynosCameraHWImpl::m_chgScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeMode)
 {
-    CLOGD("DEBUG(%s):in", __func__);
-
     Mutex::Autolock lock(m_13MCaptureLock);
 #ifdef SCALABLE_SENSOR_CHKTIME
     struct timeval start, end;
     int sec, usec;
 #endif
-    CLOGD("DEBUG(%s):start", __func__);
+    CLOGD("DEBUG(%s): Start", __func__);
 
     if (m_checkScalableSate(sizeMode) == false) {
-        CLOGE("ERR(%s):m_checkScalableSate() fail", __func__);
+        CLOGE("ERR(%s): m_checkScalableSate() fail", __FUNCTION__);
         return false;
     }
 
@@ -7465,17 +7606,15 @@ bool ExynosCameraHWImpl::m_chgScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeM
 #ifdef SCALABLE_SENSOR_CHKTIME
     gettimeofday(&start, NULL);
 #endif
-
     CLOGD("DEBUG(%s): 1. stop sensor Thread start", __func__);
-
 #if !defined(SCALABLE_SENSOR_FORCE_DONE)
     ExynosBuffer sensorBuf;
     ExynosBuffer ispBuf;
     m_secCamera->notifyStop(true);
     m_sensorThread->requestExitAndWait();
     while (m_secCamera->getNumOfShotedFrame() > 0) {
-        CLOGD("DEBUG %s(%d), stop phase - %d frames are remained", __func__, __LINE__, m_secCamera->getNumOfShotedFrame());
-        if (m_secCamera->getIs3a1Buf(ExynosCamera::CAMERA_MODE_BACK, &sensorBuf, &ispBuf) == false) {
+        CLOGD("DEBUG %s(%d), stop phase - %d frames are remained", __FUNCTION__, __LINE__, m_secCamera->getNumOfShotedFrame());
+        if (m_secCamera->getIs3a1Buf(SENSOR_BACK, &sensorBuf, &ispBuf) == false) {
             CLOGE("ERR(%s):getIs3a1Buf() fail(id:%d)", __func__, getCameraId());
         }
         if (ispBuf.reserved.p < 0) {
@@ -7485,48 +7624,44 @@ bool ExynosCameraHWImpl::m_chgScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeM
         if (m_secCamera->putISPBuf(&ispBuf) == false) {
             CLOGE("ERR(%s):putISPBuf() fail", __func__);
         }
+        isp_check++;
         isp_input_count++;
         m_ispCondition.signal();
     }
     if (0 < isp_input_count)
         usleep(5000);
-
     isp_input_count = 0;
+    isp_check = 0;
 #else
     m_sensorThread->requestExitAndWait();
 #endif
-
 #ifdef SCALABLE_SENSOR_CHKTIME
     gettimeofday(&end, NULL);
-    CLOGD("DEBUG(%s):CHKTIME 1. stop sensor Thread (%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
+    CLOGI("INFO(%s):CHKTIME 1. stop sensor Thread (%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
 #endif
 
     /* 2. Sensor size change */
 #ifdef SCALABLE_SENSOR_CHKTIME
     gettimeofday(&start, NULL);
 #endif
-
     CLOGD("DEBUG(%s): 2. Sensor size change start", __func__);
     if (!m_secCamera->setScalableSensorSize(sizeMode)) {
         CLOGE("ERR(%s):setScalableSensorSize fail", __func__);
         return false;
     }
-
 #ifdef SCALABLE_SENSOR_CHKTIME
     gettimeofday(&end, NULL);
-    CLOGD("DEBUG(%s):CHKTIME 2. Sensor size change (%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
+    CLOGI("INFO(%s):CHKTIME 2. Sensor size change (%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
 #endif
 
     /* 3. restart sensor thread */
 #ifdef SCALABLE_SENSOR_CHKTIME
     gettimeofday(&start, NULL);
 #endif
-
     CLOGD("DEBUG(%s): 3. restart sensor thread start ", __func__);
 #if !defined(SCALABLE_SENSOR_FORCE_DONE)
     m_secCamera->notifyStop(false);
 #endif
-
     m_sensorThread->run("CameraSensorThread", PRIORITY_DEFAULT);
 
     /* when m_13MCaptureStart is false, keep running previewThread */
@@ -7538,11 +7673,8 @@ bool ExynosCameraHWImpl::m_chgScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeM
 
 #ifdef SCALABLE_SENSOR_CHKTIME
     gettimeofday(&end, NULL);
-    CLOGD("DEBUG(%s):CHKTIME 3. restart sensor thread (%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
+    CLOGI("INFO(%s):CHKTIME 3. restart sensor thread (%d)", __func__, (end.tv_sec - start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec));
 #endif
-
-    CLOGD("DEBUG(%s):out", __func__);
-
     return true;
 }
 
@@ -7556,12 +7688,12 @@ bool ExynosCameraHWImpl::m_checkScalableSate(enum SCALABLE_SENSOR_SIZE sizeMode)
     } else if (sizeMode == SCALABLE_SENSOR_SIZE_FHD) {
         checkMode = false;
     } else {
-        CLOGE("ERR(%s):Unknown mode", __func__);
+        CLOGE("ERR(%s): Unknown mode", __FUNCTION__);
         return false;
     }
 
     if (checkMode == m_13MCaptureStart) {
-        CLOGE("ERR(%s):invalid scalable sensor mode(new = %x, cur = %x)", __func__, sizeMode, m_13MCaptureStart);
+        CLOGE("ERR(%s): invalid scalable sensor mode(new = %x, cur = %x)", __FUNCTION__, sizeMode, m_13MCaptureStart);
         ret = false;
     }
 
@@ -7579,23 +7711,23 @@ bool ExynosCameraHWImpl::m_checkAndWaitScalableSate(enum SCALABLE_SENSOR_SIZE si
     } else if (sizeMode == SCALABLE_SENSOR_SIZE_FHD) {
         checkMode = false;
     } else {
-        CLOGE("ERR(%s):Unknown mode", __func__);
+        CLOGE("ERR(%s): Unknown mode", __FUNCTION__);
         return false;
     }
 
-    while (0 < retryCnt) {
+    while (retryCnt > 0) {
         if (checkMode != m_13MCaptureStart) {
-            CLOGD("DEBUG(%s): HIT scalable sensor mode", __func__);
+            CLOGD("DEBUG(%s): HIT scalable sensor mode", __FUNCTION__);
             ret = true;
             break;
         }
-        CLOGD("DEBUG(%s): waiting change scalable sensor mode", __func__);
+        CLOGD("DEBUG(%s): waiting change scalable sensor mode", __FUNCTION__);
         retryCnt--;
         usleep(30000);
     }
 
     if (retryCnt == 0) {
-        CLOGE("ERR(%s):TIMEOUT!", __func__);
+        CLOGE("ERR(%s): TIMEOUT!", __FUNCTION__);
         ret = false;
     }
 

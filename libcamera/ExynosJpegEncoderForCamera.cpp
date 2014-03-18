@@ -21,6 +21,11 @@
 #include "ExynosCameraHWImpl.h"
 #include "exynos_format.h"
 
+#ifdef USE_CSC_FEATURE
+#include <cutils/properties.h>
+#include <SecNativeFeature.h>
+#endif
+
 #include "ExynosJpegEncoderForCamera.h"
 
 static const char ExifAsciiPrefix[] = { 0x41, 0x53, 0x43, 0x49, 0x49, 0x0, 0x0, 0x0 };
@@ -42,8 +47,6 @@ ExynosJpegEncoderForCamera::ExynosJpegEncoderForCamera()
     m_thumbnailQuality = JPEG_THUMBNAIL_QUALITY;
     m_exynosThumbCSC = NULL;
     m_ionJpegClient = 0;
-    memset(&m_stThumbInBuf, 0, sizeof(m_stThumbInBuf));
-    memset(&m_stThumbOutBuf, 0, sizeof(m_stThumbOutBuf));
     initJpegMemory(&m_stThumbInBuf, MAX_IMAGE_PLANE_NUM);
     initJpegMemory(&m_stThumbOutBuf, MAX_IMAGE_PLANE_NUM);
 }
@@ -139,6 +142,9 @@ int ExynosJpegEncoderForCamera::setQuality(int quality)
 {
     if (m_flagCreate == false)
         return ERROR_NOT_YET_CREATED;
+	
+	// ghcstop test
+	//quality = 95;
 
     return m_jpegMain->setQuality(quality);
 }
@@ -310,10 +316,9 @@ int ExynosJpegEncoderForCamera::encode(int *size, exif_attribute_t *exifInfo)
     }
 
     if (exifInfo != NULL) {
-        unsigned int thumbLen = 0;
-        unsigned int exifLen = 0;
-        unsigned int bufSize = 0;
+        unsigned int thumbLen, exifLen;
 
+        unsigned int bufSize = 0;
         if (exifInfo->enableThumb) {
             if (encodeThumbnail(&thumbLen)) {
                 ALOGE("ERR(%s):encodeThumbnail() fail", __func__);
@@ -529,15 +534,15 @@ int ExynosJpegEncoderForCamera::makeExif (unsigned char *exifOut,
     char interoperability_index_str[8];
 
     if (exifInfo->interoperability_index == 0)
-        strncpy(interoperability_index_str, "R98", 8);
+        strncpy(interoperability_index_str, "R98", 3);
     else
-        strncpy(interoperability_index_str, "THM", 8);
+        strncpy(interoperability_index_str, "THM", 3);
 
     writeExifIfd(&pCur, EXIF_TAG_INTEROPERABILITY_INDEX, EXIF_TYPE_ASCII,
                  4, (unsigned char *)interoperability_index_str);
 
     char interoperability_index_version[8];
-    strncpy(interoperability_index_version, "0100", 8);
+    strncpy(interoperability_index_version, "0100", 4);
 
     writeExifIfd(&pCur, EXIF_TAG_INTEROPERABILITY_VERSION, EXIF_TYPE_UNDEFINED,
                  4, (unsigned char *)interoperability_index_version);
@@ -1029,6 +1034,7 @@ int ExynosJpegEncoderForCamera::encodeThumbnail(unsigned int *size, bool useMain
             return ret;
         }
 
+#if 0
         if (m_jpegMain->checkInBufType() & JPEG_BUF_TYPE_DMA_BUF) {
             if (mmapJpegMemory(iMainInputBuf, pcMainInputBuf, iMainInputSize, MAX_INPUT_BUFFER_PLANE_NUM) == false) {
                 ALOGE("ERR(%s): mmapJpegMemory() fail", __func__);
@@ -1037,10 +1043,10 @@ int ExynosJpegEncoderForCamera::encodeThumbnail(unsigned int *size, bool useMain
                 return ERROR_MEM_ALLOC_FAIL;
             }
         }
+#endif
 
         pcThumbInputBuf[0] = m_stThumbInBuf.pcBuf[0];
         pcThumbInputBuf[1] = (char *)(MAP_FAILED);
-        pcThumbInputBuf[2] = (char *)(MAP_FAILED);
 
         /* using H/W scaler */
         CSC_METHOD cscMethod = CSC_METHOD_HW;
@@ -1073,14 +1079,14 @@ int ExynosJpegEncoderForCamera::encodeThumbnail(unsigned int *size, bool useMain
                 }
 #else
                 ALOGE("@ f_width = %d, f_height = %d, crop_width = %d, crop_height = %d",
-                    iTempWidth, iTempHeight, m_thumbnailW, m_thumbnailH);
+                       iTempWidth, iTempHeight, m_thumbnailW, m_thumbnailH);
 
                 ret = scaleDownYuv422(pcMainInputBuf,
-                                      iTempWidth,
-                                      iTempHeight,
-                                      m_stThumbInBuf.pcBuf,
-                                      m_thumbnailW,
-                                      m_thumbnailH);
+                                  iTempWidth,
+                                  iTempHeight,
+                                  m_stThumbInBuf.pcBuf,
+                                  m_thumbnailW,
+                                  m_thumbnailH);
 #endif
             } else if (m_jpegMain->checkInBufType() & JPEG_BUF_TYPE_USER_PTR) {
 #if 1
@@ -1103,11 +1109,11 @@ int ExynosJpegEncoderForCamera::encodeThumbnail(unsigned int *size, bool useMain
 #else
 
                 ret = scaleDownYuv422(pcMainInputBuf,
-                                      iTempWidth,
-                                      iTempHeight,
-                                      pcThumbInputBuf,
-                                      m_thumbnailW,
-                                      m_thumbnailH);
+                              iTempWidth,
+                              iTempHeight,
+                              pcThumbInputBuf,
+                              m_thumbnailW,
+                              m_thumbnailH);
 #endif
             } else {
 #if 1
@@ -1141,6 +1147,7 @@ int ExynosJpegEncoderForCamera::encodeThumbnail(unsigned int *size, bool useMain
                     csc_deinit(m_exynosThumbCSC);
                 m_exynosThumbCSC = NULL;
 #endif
+
                 return ERROR_BUFFR_IS_NULL;
             }
             break;
@@ -1150,14 +1157,15 @@ int ExynosJpegEncoderForCamera::encodeThumbnail(unsigned int *size, bool useMain
                 csc_deinit(m_exynosThumbCSC);
             m_exynosThumbCSC = NULL;
 #endif
+
             return ERROR_INVALID_COLOR_FORMAT;
             break;
         }
 
 #if 1
-            if (m_exynosThumbCSC)
-                csc_deinit(m_exynosThumbCSC);
-            m_exynosThumbCSC = NULL;
+    if (m_exynosThumbCSC)
+        csc_deinit(m_exynosThumbCSC);
+    m_exynosThumbCSC = NULL;
 #endif
 
         pcMainInputBuf[1] = (char *)(MAP_FAILED);
