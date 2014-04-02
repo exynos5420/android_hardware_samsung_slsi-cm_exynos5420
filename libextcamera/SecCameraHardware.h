@@ -206,7 +206,6 @@ public:
     SecCameraHardware(int cameraId, camera_device_t *dev);
     virtual ~SecCameraHardware();
     int mSaveDump(const char *filepath, ExynosBuffer *dstBuf, int index);
-
 private:
     static gralloc_module_t const* mGrallocHal;
 

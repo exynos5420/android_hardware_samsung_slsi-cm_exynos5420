@@ -743,6 +743,11 @@ private:
     /* Focus Area end */
 
     status_t    setIso(const CameraParameters& params);
+// Added by Louis
+	status_t	setContrast(const CameraParameters& params);
+	status_t	setSaturation(const CameraParameters& params);
+	status_t	setSharpness(const CameraParameters& params);
+// END
     status_t    setBrightness(const CameraParameters& params);
     status_t    setWhiteBalance(const CameraParameters& params);
     status_t    setFlash(const CameraParameters& params);

@@ -59,7 +59,12 @@ typedef enum {
     CAM_CID_ROTATION        = V4L2_CID_ROTATION,
     CAM_CID_SCENE_MODE      = V4L2_CID_SCENEMODE,
     CAM_CID_ISO             = V4L2_CID_CAM_ISO,
-    CAM_CID_BRIGHTNESS      = V4L2_CID_CAM_BRIGHTNESS,
+// Added by Louis
+	CAM_CID_CONTRAST		= V4L2_CID_CAM_CONTRAST,
+	CAM_CID_SATURATION		= V4L2_CID_CAM_SATURATION,
+	CAM_CID_SHARPNESS		= V4L2_CID_CAM_SHARPNESS,
+// End
+	CAM_CID_BRIGHTNESS      = V4L2_CID_CAM_BRIGHTNESS,
     CAM_CID_WHITE_BALANCE   = V4L2_CID_WHITE_BALANCE_PRESET,
     CAM_CID_FLASH           = V4L2_CID_CAM_FLASH_MODE,
     CAM_CID_METERING        = V4L2_CID_CAM_METERING,
@@ -125,6 +130,19 @@ public:
 
     static const char KEY_ISO[];
     static const char KEY_METERING[];
+// Added by Louis
+    static const char KEY_CONTRAST[];
+	static const char KEY_MAX_CONTRAST[];
+	static const char KEY_MIN_CONTRAST[];
+
+	static const char KEY_SATURATION[];
+	static const char KEY_MAX_SATURATION[];
+	static const char KEY_MIN_SATURATION[];
+
+	static const char KEY_SHARPNESS[];
+	static const char KEY_MAX_SHARPNESS[];
+	static const char KEY_MIN_SHARPNESS[];
+// End
     static const char KEY_AUTO_CONTRAST[];
     static const char KEY_ANTI_SHAKE[];
     static const char KEY_FACE_BEAUTY[];

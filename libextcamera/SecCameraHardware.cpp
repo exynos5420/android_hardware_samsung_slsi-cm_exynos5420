@@ -29,13 +29,6 @@
 #define LOG_NDEBUG 0
 #define LOG_TAG "SecCameraHardware"
 
-#if 0
-	#define gprintf(fmt, args...) ALOGE("%s(%d): " fmt, __FUNCTION__, __LINE__, ##args)
-#else
-	#define gprintf(fmt, args...)
-#endif
-
-
 #include "SecCameraHardware.h"
 
 #define CLEAR(x)                memset(&(x), 0, sizeof(x))
@@ -57,7 +50,6 @@
 
 #define FLITE0_DEV_PATH  "/dev/video36"
 #define FLITE1_DEV_PATH  "/dev/video37"
-#define FLITE2_DEV_PATH  "/dev/video38"
 
 #define MAX_THUMBNAIL_SIZE (60000)
 
@@ -80,14 +72,10 @@ gralloc_module_t const* SecCameraHardware::mGrallocHal;
 SecCameraHardware::SecCameraHardware(int cameraId, camera_device_t *dev)
     : ISecCameraHardware(cameraId, dev)
 {
-#if 1 // ghcstop fix	
     if (cameraId == CAMERA_FACING_BACK)
         mFliteFormat = CAM_PIXEL_FORMAT_YUV422I;
     else
         mFliteFormat = CAM_PIXEL_FORMAT_YUV422I;
-#else
-	mFliteFormat = CAM_PIXEL_FORMAT_YUV420SP; // ghcstop 
-#endif        
 
     mPreviewFormat      = CAM_PIXEL_FORMAT_YUV420SP;
     /* set suitably */
@@ -226,6 +214,8 @@ int SecCameraHardware::FLiteV4l2::startPreview(image_rect_type *fliteSize,
     fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
     fmtdesc.index = 0;
 
+ALOGI("Louis(startPreview) : pixel format (%c%c%c%c)", format, format >> 8, format >> 16, format >> 24);
+
     while ((err = ioctl(mCameraFd, VIDIOC_ENUM_FMT, &fmtdesc)) == 0) {
         if (fmtdesc.pixelformat == (uint32_t)format) {
             ALOGV("FLiteV4l2 start: %s", fmtdesc.description);
@@ -267,7 +257,7 @@ int SecCameraHardware::FLiteV4l2::startPreview(image_rect_type *fliteSize,
 
         err = ioctl(mCameraFd, VIDIOC_S_FMT, &v4l2_fmt);
         CHECK_ERR_N(err, ("FLiteV4l2 startPreview: error %d, VIDIOC_S_FMT", err));
-		ALOGI("Louis(%s) : FIMC IS width:%d, height:%d", __func__, v4l2_fmt.fmt.pix.width, v4l2_fmt.fmt.pix.height);
+
     } else {
         v4l2_fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
         v4l2_fmt.fmt.pix_mp.width = fliteSize->width;
@@ -276,7 +266,7 @@ int SecCameraHardware::FLiteV4l2::startPreview(image_rect_type *fliteSize,
         v4l2_fmt.fmt.pix_mp.field = field;
         err = ioctl(mCameraFd, VIDIOC_S_FMT, &v4l2_fmt);
         CHECK_ERR_N(err, ("FLiteV4l2 start: error %d, VIDIOC_S_FMT", err));
-		ALOGI("Louis(%s) : FIMC width:%d, height:%d", __func__, v4l2_fmt.fmt.pix_mp.width, v4l2_fmt.fmt.pix_mp.height);		
+		ALOGI("Louis(%s) : FIMC width:%d, height:%d", __func__, v4l2_fmt.fmt.pix_mp.width, v4l2_fmt.fmt.pix_mp.height);
     }
 
 #ifdef CACHEABLE
@@ -366,6 +356,11 @@ int SecCameraHardware::FLiteV4l2::startCapture(image_rect_type *img,
     }
 #endif
 
+#ifdef USE_CAPTURE_MODE
+    err = sctrl(CAM_CID_CAPTURE_MODE, true);
+    CHECK_ERR_N(err, ("ERR(%s): sctrl V4L2_CID_CAMERA_CAPTURE(%d) enable failed", __FUNCTION__, err));
+#endif
+
     ALOGV("DEBUG(%s): reqeusted capture size %dx%d %d", __FUNCTION__, img->width, img->height, format);
 
     if (!mIsInternalISP) {
@@ -377,11 +372,6 @@ int SecCameraHardware::FLiteV4l2::startCapture(image_rect_type *img,
         err = ioctl(mCameraFd, VIDIOC_S_FMT, &v4l2_fmt);
         CHECK_ERR_N(err, ("FLiteV4l2 start: error %d, VIDIOC_S_FMT", err));
     }
-
-#ifdef USE_CAPTURE_MODE
-    err = sctrl(CAM_CID_CAPTURE_MODE, true);
-    CHECK_ERR_N(err, ("ERR(%s): sctrl V4L2_CID_CAMERA_CAPTURE(%d) enable failed", __FUNCTION__, err));
-#endif
 
     if (mIsInternalISP)
         sctrl(V4L2_CID_IS_S_SCENARIO_MODE, IS_MODE_CAPTURE_STILL);
@@ -913,7 +903,8 @@ int SecCameraHardware::FLiteV4l2::sctrl(uint32_t id, int value)
     CLEAR(ctrl);
     ctrl.id = id;
     ctrl.value = value;
-
+	
+	ALOGI("FLiteV4l2 sctrl: id(%d), value(%d)", id, value);
     int err = ioctl(mCameraFd, VIDIOC_S_CTRL, &ctrl);
     CHECK_ERR_N(err, ("FLiteV4l2 sctrl: error %d, id %#x value %d", err, id, value));
 
@@ -1241,12 +1232,12 @@ bool SecCameraHardware::init()
     //    err = mFlite.init(FLITE0_DEV_PATH, mCameraId);
         err = mFlite.init(FLITE1_DEV_PATH, mCameraId);
     else
-        err = mFlite.init(FLITE2_DEV_PATH, mCameraId);
+	//    err = mFlite.init(FLITE1_DEV_PATH, mCameraId);
+        err = mFlite.init(FLITE0_DEV_PATH, mCameraId);
 
     if (CC_UNLIKELY(err < 0)) {
         ALOGE("initCamera X: error(%d), %s", err,
-        //    (mCameraId == CAMERA_FACING_BACK) ? FLITE0_DEV_PATH : FLITE2_DEV_PATH);
-            (mCameraId == CAMERA_FACING_BACK) ? FLITE1_DEV_PATH : FLITE2_DEV_PATH);
+            (mCameraId == CAMERA_FACING_BACK) ? FLITE0_DEV_PATH : FLITE1_DEV_PATH);
         goto fimc_out;
     }
     mFliteNode.fd = mFlite.getFd();
@@ -1254,9 +1245,9 @@ bool SecCameraHardware::init()
 
 #if 0
     if (!mEnableDZoom) {
-        err = mFimc1.init(FLITE2_DEV_PATH, mCameraId);
+        err = mFimc1.init(FLITE1_DEV_PATH, mCameraId);
         if (CC_UNLIKELY(err < 0)) {
-            ALOGE("initCamera X: error, %s", FLITE2_DEV_PATH);
+            ALOGE("initCamera X: error, %s", FLITE1_DEV_PATH);
             goto fimc1_out;
         }
 
@@ -1485,7 +1476,7 @@ bool SecCameraHardware::nativeFlushSurface(uint32_t width, uint32_t height, uint
                 csc_set_src_buffer(mFimc1CSC,
                                    (void **)mFliteNode.buffer[index].fd.extFd, CSC_MEMORY_DMABUF);
 
-            /*    mSaveDump("/data/camera_recording%d.yuv", &mFliteNode.buffer[index], index); */
+                /* mSaveDump("/data/camera_recording%d.yuv", &mFliteNode.buffer[index], index); */
 
                 int halPixelFormat = HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_FULL;
 
@@ -1665,7 +1656,7 @@ status_t SecCameraHardware::nativeStartPreviewZoom()
     ExynosBuffer nullBuf;
 
     /* YV12 */
-    ALOGE("nativeStartPreview: FLite Format = %s",
+    ALOGD("nativeStartPreview: FLite Format = %s",
         mFliteFormat == CAM_PIXEL_FORMAT_YVU420P ? "YV12" :
         mFliteFormat == CAM_PIXEL_FORMAT_YUV420SP ? "NV21" :
         mFliteFormat == CAM_PIXEL_FORMAT_YUV422I ? "YUYV" :
@@ -1675,16 +1666,16 @@ status_t SecCameraHardware::nativeStartPreviewZoom()
     CHECK_ERR_N(err, ("nativeStartPreviewZoom: error, mFlite.start"));
     mFliteNode.ionClient = mIonCameraClient;
 
-    ALOGE("INFO(%s): mFliteNode.fd     [%d]"   , __func__, mFliteNode.fd);
-    ALOGE("INFO(%s): mFliteNode.width  [%d]"   , __func__, mFliteNode.width);
-    ALOGE("INFO(%s): mFliteNode.height [%d]"   , __func__, mFliteNode.height);
-    ALOGE("INFO(%s): mFliteNode.format [%c%c%c%c]" , __func__, mFliteNode.format,
+    ALOGI("INFO(%s): mFliteNode.fd     [%d]"   , __func__, mFliteNode.fd);
+    ALOGI("INFO(%s): mFliteNode.width  [%d]"   , __func__, mFliteNode.width);
+    ALOGI("INFO(%s): mFliteNode.height [%d]"   , __func__, mFliteNode.height);
+    ALOGI("INFO(%s): mFliteNode.format [%c%c%c%c]" , __func__, mFliteNode.format,
                 mFliteNode.format >> 8, mFliteNode.format >> 16, mFliteNode.format >> 24);
-    ALOGE("INFO(%s): mFliteNode.planes [%d]"   , __func__, mFliteNode.planes);
-    ALOGE("INFO(%s): mFliteNode.buffers[%d]"   , __func__, mFliteNode.buffers);
-    ALOGE("INFO(%s): mFliteNode.memory [%d]"   , __func__, mFliteNode.memory);
-    ALOGE("INFO(%s): mFliteNode.type   [%d]"   , __func__, mFliteNode.type);
-    ALOGE("INFO(%s): mFliteNode.ionClient [%d]", __func__, mFliteNode.ionClient);
+    ALOGI("INFO(%s): mFliteNode.planes [%d]"   , __func__, mFliteNode.planes);
+    ALOGI("INFO(%s): mFliteNode.buffers[%d]"   , __func__, mFliteNode.buffers);
+    ALOGI("INFO(%s): mFliteNode.memory [%d]"   , __func__, mFliteNode.memory);
+    ALOGI("INFO(%s): mFliteNode.type   [%d]"   , __func__, mFliteNode.type);
+    ALOGI("INFO(%s): mFliteNode.ionClient [%d]", __func__, mFliteNode.ionClient);
 
 #ifdef USE_USERPTR
     /* For FLITE buffer */
@@ -2429,7 +2420,7 @@ bool SecCameraHardware::nativeGetRecordingJpeg(uint8_t *rawSrc, uint32_t srcSize
     jpegParam.height = mThumbnailSize.height;
     jpegParam.in_fmt = YUV_422;
     jpegParam.out_fmt = JPEG_422;
-    jpegParam.quality = 42;
+    jpegParam.quality = QUALITY_LEVEL_4;
     api_jpeg_set_encode_param(&jpegParam);
 
     inBuf = (uint8_t *)api_jpeg_get_encode_in_buf(jpegFd, jpegSrcFrameSize);
@@ -2483,7 +2474,7 @@ encode_jpeg:
     jpegParam.height = height;
     jpegParam.in_fmt = YUV_422;
     jpegParam.out_fmt = JPEG_422;
-    jpegParam.quality = 90;
+    jpegParam.quality = QUALITY_LEVEL_1;
     api_jpeg_set_encode_param(&jpegParam);
 
     inBuf = (uint8_t *)api_jpeg_get_encode_in_buf(jpegFd, srcSize);
@@ -2722,7 +2713,7 @@ bool SecCameraHardware::getZSLJpeg()
                         CAM_PIXEL_FORMAT_YUV422I,
                         (unsigned char*)thumbnailJpeg->base(),
                         &thumbSize,
-                        90);
+                        (int)ExynosJpegEncoder::QUALITY_LEVEL_1);
 
     if (ret != NO_ERROR) {
         ALOGE("thumbnail:EncodeToJpeg failed\n");
@@ -2750,9 +2741,6 @@ encode_jpeg:
     unsigned char *jpeg;
     int jpegSize = 0;
     int jpegQuality = mParameters.getInt(CameraParameters::KEY_JPEG_QUALITY);
-    	
-    gprintf("CameraParameters::KEY_JPEG_QUALITY = %d\n", jpegQuality);
-    	
 
     sp<MemoryHeapBase> JpegHeap = new MemoryHeapBase(mPictureSize.width * mPictureSize.height * 2);
     sp<MemoryHeapBase> exifHeap = new MemoryHeapBase(EXIF_MAX_LEN);
@@ -2766,8 +2754,20 @@ encode_jpeg:
     else
         exifSize = exif.make(exifHeap->base(), &mExifInfo, exifHeap->getSize(), thumb, thumbSize);
 
-	gprintf("============> jpegQuality = %d\n", jpegQuality);
-    
+    switch (jpegQuality) {
+    case 100:
+        jpegQuality = (int)ExynosJpegEncoder::QUALITY_LEVEL_1;
+        break;
+    case 70:
+        jpegQuality = (int)ExynosJpegEncoder::QUALITY_LEVEL_2;
+        break;
+    case 40:
+        jpegQuality = (int)ExynosJpegEncoder::QUALITY_LEVEL_3;
+        break;
+    default:
+        jpegQuality = (int)ExynosJpegEncoder::QUALITY_LEVEL_1;
+        break;
+    }
 #ifdef CHG_ENCODE_JPEG
     ret = EncodeToJpeg((unsigned char*)rawImageMem->base(),
                         mPictureSize.width,
@@ -2971,11 +2971,12 @@ retry:
         ALOGV("DEBUG(%s) (%d): dqbufForCapture dq(%d)", __FUNCTION__, __LINE__, i);
     }
 
+//	mSaveDump("/data/before_camera_capture%d.yuv", &mPictureBuf, 1);
     /* last capture was stored dummy buffer due to zoom.
      * and zoom applied to capture image by fimc */
     err = nativeCSCCapture(&mPictureBufDummy[i-1], &mPictureBuf);
     CHECK_ERR_N(err, ("nativeGetSnapshot: error, nativeCSCCapture"));
-
+//	mSaveDump("/data/after_camera_capture%d.yuv", &mPictureBuf, 1);
     /* Stop capturing stream(or frame) data. */
     err = mFlite.stream(false);
     CHECK_ERR(err, ("nativeGetSnapshot: error, mFlite.stream"));
@@ -2995,6 +2996,7 @@ retry:
     }
 
 #ifdef DUMP_JPEG_FILE
+//#if 1
     ExynosBuffer jpegBuf;
     ALOGV("DEBUG(%s): (%d) %d", __FUNCTION__, __LINE__, mPictureFrameSize);
     jpegBuf.size.extS[0] = mPictureFrameSize;
@@ -3100,13 +3102,13 @@ int SecCameraHardware::nativeGetAutoFocus()
     int status, i, err;
     /* AF completion takes more much time in case of night mode.
      So be careful if you modify tryCount. */
-    const int tryCount = 300;
+    const int tryCount = 25;
 
     for (i = 0; i < tryCount; i ++) {
-        usleep(20000);
+        usleep(200000);
         err = mFlite.gctrl(V4L2_CID_CAM_AUTO_FOCUS_RESULT, &status);
         CHECK_ERR_N(err, ("nativeGetAutofocus: error %d", err));
-        if (status != 0x08) break;
+        if (status != 0x01)  break;
     }
 
     if (i == tryCount)
@@ -3521,7 +3523,7 @@ int SecCameraHardware::internalGetJpegForSocJpeg(int *postviewOffset)
     encodeThumbParam.srcHeight = mThumbnailSize.height;
     encodeThumbParam.srcBufSize = rawThumbSize;
     encodeThumbParam.srcFormat = V4L2_PIX_FMT_UYVY;
-    encodeThumbParam.destJpegQuality = 45;
+    encodeThumbParam.destJpegQuality = QUALITY_LEVEL_4;
 
     if (!jpegExecuteEncoding(encodeThumbParam)) {
         ALOGE("internalGetJpegForSocJpeg: error, jpegStartEncoding");
@@ -3615,7 +3617,7 @@ int SecCameraHardware::internalGetJpegForSocYuv(int *postviewOffset)
     jpegParam.height = mThumbnailSize.height;
     jpegParam.in_fmt = YUV_422;
     jpegParam.out_fmt = JPEG_422;
-    jpegParam.quality = 42;
+    jpegParam.quality = QUALITY_LEVEL_4;
     api_jpeg_set_encode_param(&jpegParam);
 
     inBuf = (uint8_t *)api_jpeg_get_encode_in_buf(jpegFd, jpegSrcFrameSize);
@@ -3667,7 +3669,7 @@ encode_jpeg:
     jpegParam.height = mPictureSize.height;
     jpegParam.in_fmt = YUV_422;
     jpegParam.out_fmt = JPEG_422;
-    jpegParam.quality = 90;
+    jpegParam.quality = QUALITY_LEVEL_1;
     api_jpeg_set_encode_param(&jpegParam);
 
     jpegSrcFrameSize = mPictureSize.width * mPictureSize.height * 2;
@@ -3717,7 +3719,6 @@ out:
     return -1;
 }
 #else /* !SAMSUNG_EXYNOS4210 */
-
 int SecCameraHardware::internalGetJpegForSocYuvWithZoom(int *postviewOffset)
 {
     ExynosBuffer thumbnailJpeg;
@@ -3801,7 +3802,7 @@ int SecCameraHardware::internalGetJpegForSocYuvWithZoom(int *postviewOffset)
                         mThumbnailSize.height,
                         CAM_PIXEL_FORMAT_YUV422I,
                         &thumbSize,
-                        30);
+                        (int)ExynosJpegEncoder::QUALITY_LEVEL_5);
     CHECK_ERR_GOTO(encodeJpeg, err, ("getJpeg: error, EncodeToJpeg(thumbnail)"));
 
     thumb = (uint8_t *)thumbnailJpeg.virt.extP[0];
@@ -3838,6 +3839,15 @@ encodeJpeg:
         goto destroyMem;
     }
 
+    int jpegQuality;
+    if (mJpegQuality >= 90)
+        jpegQuality = ExynosJpegEncoder::QUALITY_LEVEL_1;
+    else if (mJpegQuality >= 70)
+        jpegQuality = ExynosJpegEncoder::QUALITY_LEVEL_2;
+    else
+        jpegQuality = ExynosJpegEncoder::QUALITY_LEVEL_3;
+
+
     /* alloc jpegOutBuf */
     jpegOutBuf.size.extS[0] = mPictureSize.width * mPictureSize.height * 2;
     if (allocMem(mIonCameraClient, &jpegOutBuf, 1 << 1) == false) {
@@ -3848,6 +3858,9 @@ encodeJpeg:
             jpegOutBuf.virt.extP[0], jpegOutBuf.size.extS[0], mIonCameraClient);
         memset(jpegOutBuf.virt.extP[0], 0, jpegOutBuf.size.extS[0]);
     }
+	
+	ALOGI("internalGetJpegForSocYuvWithZoom : jpegQuality (%d), jpegLevel (%d)", mJpegQuality, jpegQuality);
+//	dumpToFile(mPictureBuf.virt.extP[0], mPictureBuf.size.extS[0], "/data/capture.yuv");
 
     /* Making main jpeg image */
     err = EncodeToJpeg(&mPictureBuf,
@@ -3856,7 +3869,9 @@ encodeJpeg:
                         mPictureSize.height,
                         CAM_PIXEL_FORMAT_YUV422I,
                         &jpegSize,
-                        mJpegQuality);
+                        jpegQuality);
+	ALOGI("internalGetJpegForSocYuvWithZoom : width (%d), height (%d), size (%d), jpegQuality (%d)", 
+		mPictureSize.width, mPictureSize.height, jpegSize, jpegQuality);
 
     CHECK_ERR_GOTO(destroyMem, err, ("getJpeg: error, EncodeToJpeg(Main)"));
 
@@ -3918,7 +3933,7 @@ int SecCameraHardware::internalGetJpegForSocYuv(int *postviewOffset)
                         CAM_PIXEL_FORMAT_YUV422I,
                         (unsigned char*)thumbnailJpeg->base(),
                         &thumbSize,
-                        30); /* DSLIM fix lelvel*/
+                        (int)ExynosJpegEncoder::QUALITY_LEVEL_5); /* DSLIM fix lelvel*/
     if (CC_UNLIKELY(err)) {
         ALOGE("getJpeg: error, EncodeToJpeg(thumbnail)");
         goto encodeJpeg;
@@ -3956,6 +3971,14 @@ encodeJpeg:
         return UNKNOWN_ERROR;
     }
 
+    int jpegQuality = 0;
+    if (mJpegQuality >= 90)
+        jpegQuality = ExynosJpegEncoder::QUALITY_LEVEL_1;
+    else if (mJpegQuality >= 70)
+        jpegQuality = ExynosJpegEncoder::QUALITY_LEVEL_2;
+    else
+        jpegQuality = ExynosJpegEncoder::QUALITY_LEVEL_3;
+
     /* Making main jpeg image */
 #ifdef CHG_ENCODE_JPEG
     err = EncodeToJpeg((unsigned char *)mRawHeap->data,
@@ -3964,7 +3987,7 @@ encodeJpeg:
                         CAM_PIXEL_FORMAT_YUV422I,
                         (unsigned char *)jpegHeap->base(),
                         &jpegSize,
-                        mJpegQuality);
+                        jpegQuality);
     CHECK_ERR_N(err, ("getJpeg: error, EncodeToJpeg(Main)"));
 #endif
     /* Finally, Creating Jpeg image file including EXIF */
@@ -4014,7 +4037,20 @@ int SecCameraHardware::EncodeToJpeg(ExynosBuffer *yuvBuf, ExynosBuffer *jpegBuf,
     }
 
     /* 3. set quality */
-    gprintf("=====================> quality = %d\n", quality); // ghcstop_caution.....This value must be 0 ~ 99
+	// Added by Louis
+#if 1
+	switch (quality)
+	{
+		case ExynosJpegEncoder::QUALITY_LEVEL_1 : quality = 100; break;
+		case ExynosJpegEncoder::QUALITY_LEVEL_2 : quality =  95; break;
+		case ExynosJpegEncoder::QUALITY_LEVEL_3 : quality =  70; break;
+		case ExynosJpegEncoder::QUALITY_LEVEL_4 : quality =  40; break;
+		case ExynosJpegEncoder::QUALITY_LEVEL_5 : quality =  30; break;
+		case ExynosJpegEncoder::QUALITY_LEVEL_6 : 
+		default : quality =  10; break;
+	}
+#endif
+	ALOGI("(EncodeToJpeg) : quality : (%d)", quality);
     ret = jpegEnc->setQuality(quality);
     if (ret < 0) {
         ALOGE("ERR(%s):jpegEnc.setQuality(%d) fail", __func__, ret);
@@ -4721,7 +4757,7 @@ int SecCameraHardware::mSaveDump(const char *filepath, ExynosBuffer *dstBuf, int
         else
             vadr[i] = NULL;
 
-        ALOGD("DEBUG(%s): vadr[%d][0x%x] size=%d", __FUNCTION__, i, (unsigned int)vadr[i], dstBuf->size.extS[i]);
+        ALOGD("DEBUG(%s): vadr[%d][0x%x]", __FUNCTION__, i, (unsigned int)vadr[i]);
     }
 
     /* file create/open, note to "wb" */

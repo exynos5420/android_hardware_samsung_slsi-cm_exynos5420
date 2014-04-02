@@ -142,9 +142,6 @@ int ExynosJpegEncoderForCamera::setQuality(int quality)
 {
     if (m_flagCreate == false)
         return ERROR_NOT_YET_CREATED;
-	
-	// ghcstop test
-	//quality = 95;
 
     return m_jpegMain->setQuality(quality);
 }

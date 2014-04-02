@@ -356,9 +356,10 @@ void ISecCameraHardware::initDefaultParameters()
     mParameters.set(CameraParameters::KEY_SUPPORTED_WHITE_BALANCE,
         SecCameraParameters::createValuesStr(whiteBalances, ARRAY_SIZE(whiteBalances)).string());
 
-    mParameters.set(CameraParameters::KEY_EFFECT, effects[0].desc);
-    mParameters.set(CameraParameters::KEY_SUPPORTED_EFFECTS,
-       SecCameraParameters::createValuesStr(effects, ARRAY_SIZE(effects)).string());
+	// Louis : Temporary closed
+//    mParameters.set(CameraParameters::KEY_EFFECT, effects[0].desc);
+//    mParameters.set(CameraParameters::KEY_SUPPORTED_EFFECTS,
+//       SecCameraParameters::createValuesStr(effects, ARRAY_SIZE(effects)).string());
 
     if (mCameraId == CAMERA_FACING_BACK) {
         mParameters.set(CameraParameters::KEY_SCENE_MODE, sceneModes[0].desc);
@@ -411,9 +412,9 @@ void ISecCameraHardware::initDefaultParameters()
     mParameters.set(CameraParameters::KEY_MAX_NUM_METERING_AREAS, "0");
 
     mParameters.set(CameraParameters::KEY_EXPOSURE_COMPENSATION, 0);
-    mParameters.set(CameraParameters::KEY_MAX_EXPOSURE_COMPENSATION, 4);
-    mParameters.set(CameraParameters::KEY_MIN_EXPOSURE_COMPENSATION, -4);
-    mParameters.setFloat(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP, 0.5);
+    mParameters.set(CameraParameters::KEY_MAX_EXPOSURE_COMPENSATION, 2);
+    mParameters.set(CameraParameters::KEY_MIN_EXPOSURE_COMPENSATION, -2);
+    mParameters.setFloat(CameraParameters::KEY_EXPOSURE_COMPENSATION_STEP, 1.0);
 
     /* AE, AWB Lock */
     if (mCameraId == CAMERA_FACING_BACK) {
@@ -446,15 +447,20 @@ void ISecCameraHardware::initDefaultParameters()
     */
 
 	//mhjang temp add for param error
-	mParameters.set("brightness-min",100);
-	mParameters.set("brightness-max",100);
-	mParameters.set("saturation-min",100);
-	mParameters.set("saturation-max",100);
-	mParameters.set("sharpness-min",100);
-	mParameters.set("sharpness-max",100);
-	mParameters.set("hue-min",100);
-	mParameters.set("hue-max",100);
-	
+	mParameters.set(SecCameraParameters::KEY_CONTRAST, 0);
+    mParameters.set(SecCameraParameters::KEY_MAX_CONTRAST, 2);
+    mParameters.set(SecCameraParameters::KEY_MIN_CONTRAST, -2);
+
+	mParameters.set(SecCameraParameters::KEY_ISO, "auto");
+
+    mParameters.set(SecCameraParameters::KEY_SATURATION, 0);
+    mParameters.set(SecCameraParameters::KEY_MAX_SATURATION, 2);
+    mParameters.set(SecCameraParameters::KEY_MIN_SATURATION, -2);
+
+    mParameters.set(SecCameraParameters::KEY_SHARPNESS, 0);
+    mParameters.set(SecCameraParameters::KEY_MAX_SHARPNESS, 2);
+    mParameters.set(SecCameraParameters::KEY_MIN_SHARPNESS, -2);
+
 
     ALOGV("initDefaultParameters EX: %s", mParameters.flatten().string());
 }
@@ -474,7 +480,6 @@ status_t ISecCameraHardware::setPreviewWindow(preview_stream_ops *w)
 	int halPixelFormat = HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP;
 #else
     int halPixelFormat = HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP;
-//	int halPixelFormat = HAL_PIXEL_FORMAT_YV12;
 
     if (mMovieMode)
         halPixelFormat = V4L2_PIX_2_HAL_PIXEL_FORMAT(V4L2_PIX_FMT_NV12);
@@ -730,8 +735,6 @@ bool ISecCameraHardware::previewZoomThread()
     int index = nativeGetPreview();
     int err = -1;
 
-ALOGE("+++ previewZoomThread()");
-
     if (CC_UNLIKELY(index < 0)) {
         ALOGE("previewZoomThread: error, nativeGetPreview in %s", recordingEnabled() ? "recording" : "preview");
         if (!mPreviewZoomThread->exitRequested()) {
@@ -828,8 +831,6 @@ ALOGE("+++ previewZoomThread()");
         ALOGE("previewZoomThread: error, nativeReleasePreviewFrame");
         return false;
     }
-
-ALOGE("--- previewZoomThread()");
 
     return true;
 }
@@ -1183,8 +1184,8 @@ bool ISecCameraHardware::autoFocusThread()
         goto out;
     }
 
-    ALOGV("autoFocusThread X: AF success");
-    mNotifyCb(CAMERA_MSG_FOCUS, true, 0, mCallbackCookie);
+//    ALOGV("autoFocusThread X: AF success");
+//    mNotifyCb(CAMERA_MSG_FOCUS, true, 0, mCallbackCookie);
 
 #if 1//NOTDEFINED
     if (mMsgEnabled & CAMERA_MSG_FOCUS) {
@@ -1197,7 +1198,7 @@ bool ISecCameraHardware::autoFocusThread()
         case 0x04:
             ALOGV("autoFocusThread X: AF cancel");
             nativeSetParameters(CAM_CID_FOCUS_MODE, mFocusMode | FOCUS_MODE_DEFAULT);
-            mNotifyCb(CAMERA_MSG_FOCUS, true, 0, mCallbackCookie);
+            mNotifyCb(CAMERA_MSG_FOCUS, false, 0, mCallbackCookie);
             break;
 
         default:
@@ -1748,8 +1749,16 @@ status_t ISecCameraHardware::setParameters(const CameraParameters &params)
             final_rc = rc;
         if ((rc = setFocusAreas(params)))
             final_rc = rc;
-        if ((rc = setIso(params)))
+        if ((rc = setSharpness(params)))
             final_rc = rc;
+// Added by Louis
+		if ((rc = setContrast(params)))
+            final_rc = rc;
+		if ((rc = setSaturation(params)))
+            final_rc = rc;
+		if ((rc = setIso(params)))
+            final_rc = rc;
+// END
         if ((rc = setFlash(params)))
             final_rc = rc;
         if ((rc = setMetering(params)))
@@ -2681,7 +2690,10 @@ status_t ISecCameraHardware::setFocusAreas(const CameraParameters &params)
 
     mParameters.set(CameraParameters::KEY_FOCUS_AREAS, str);
 
-#ifdef ENABLE_TOUCH_AF
+	if (strcmp(str, "(0,0,0,0,0)") == 0)
+		return NO_ERROR;
+
+//#ifdef ENABLE_TOUCH_AF
     err = nativeSetParameters(CAM_CID_SET_TOUCH_AF_POSX, center.x);
     if (CC_UNLIKELY(err < 0)) {
         ALOGE("setFocusAreas: error, SET_TOUCH_AF_POSX");
@@ -2694,8 +2706,8 @@ status_t ISecCameraHardware::setFocusAreas(const CameraParameters &params)
         return UNKNOWN_ERROR;
     }
 
-    return nativeSetParameters(CAM_CID_SET_TOUCH_AF, 1);
-#endif
+//    return nativeSetParameters(CAM_CID_SET_TOUCH_AF, 1);
+//#endif
 
     return NO_ERROR;
 }
@@ -2727,6 +2739,130 @@ retry:
 
     return nativeSetParameters(CAM_CID_ISO, val);
 }
+
+// Added by Louis
+status_t ISecCameraHardware::setContrast(const CameraParameters &params)
+{
+    const char* Strval = params.get(SecCameraParameters::KEY_CONTRAST);
+    const char* Strpre = mParameters.get(SecCameraParameters::KEY_CONTRAST);
+
+    if (!strcmp(Strval, Strpre))
+	{
+		ALOGE("setContrast: Same Value(%s == %s)", Strval, Strpre);
+        return NO_ERROR;
+	}
+
+	int val;
+	if (!strcmp(Strval, "auto"))
+		val = 0;
+	else if (!strcmp(Strval, "-2"))
+		val = 3;
+	else if (!strcmp(Strval, "-1"))
+		val = 4;
+	else if (!strcmp(Strval, "0"))
+		val = 5;
+	else if (!strcmp(Strval, "1"))
+		val = 6;
+	else if (!strcmp(Strval, "2"))
+		val = 7;
+	else {
+		ALOGE("ERR(%s):Invalid contrast value(%s)", __func__, Strval);
+		return UNKNOWN_ERROR;
+	}
+
+    ALOGV("setContrast: %d", val);
+    mParameters.set(SecCameraParameters::KEY_CONTRAST, Strval);
+	
+/*
+	enum v4l2_contrast {
+		V4L2_CONTRAST_AUTO,
+		V4L2_CONTRAST_MINUS_4,
+		V4L2_CONTRAST_MINUS_3,
+		V4L2_CONTRAST_MINUS_2,
+		V4L2_CONTRAST_MINUS_1,
+		V4L2_CONTRAST_DEFAULT,
+		V4L2_CONTRAST_PLUS_1,
+		V4L2_CONTRAST_PLUS_2,
+		V4L2_CONTRAST_PLUS_3,
+		V4L2_CONTRAST_PLUS_4,
+		V4L2_CONTRAST_MAX
+	};
+	DEFAULT = 5
+*/
+	val += 5;
+    return nativeSetParameters(CAM_CID_CONTRAST, val);
+}
+
+status_t ISecCameraHardware::setSaturation(const CameraParameters &params)
+{
+    int val		= params.getInt(SecCameraParameters::KEY_SATURATION);
+    int pre		= mParameters.getInt(SecCameraParameters::KEY_SATURATION);
+
+    int max		= mParameters.getInt(SecCameraParameters::KEY_MAX_SATURATION);
+    int min		= mParameters.getInt(SecCameraParameters::KEY_MIN_SATURATION);
+
+    if (val == pre)
+        return NO_ERROR;
+
+    if (CC_UNLIKELY(val < min || val > max)) {
+        ALOGE("setSaturation: error, invalid value(%d)", val);
+        return BAD_VALUE;
+    }
+
+    ALOGV("setSaturation: %d", val);
+    mParameters.set(SecCameraParameters::KEY_SATURATION, val);
+
+/*
+	enum v4l2_saturation {
+		V4L2_SATURATION_MINUS_3,
+		V4L2_SATURATION_MINUS_2,
+		V4L2_SATURATION_MINUS_1,
+		V4L2_SATURATION_DEFAULT,
+		V4L2_SATURATION_PLUS_1,
+		V4L2_SATURATION_PLUS_2,
+		V4L2_SATURATION_PLUS_3,
+		V4L2_SATURATION_MAX
+	};
+	DEFAULT = 3
+*/
+	val += 3;
+    return nativeSetParameters(CAM_CID_SATURATION, val);
+}
+
+status_t ISecCameraHardware::setSharpness(const CameraParameters &params)
+{
+    int val		= params.getInt(SecCameraParameters::KEY_SHARPNESS);
+    int pre		= mParameters.getInt(SecCameraParameters::KEY_SHARPNESS);
+
+    int max		= mParameters.getInt(SecCameraParameters::KEY_MAX_SHARPNESS);
+    int min		= mParameters.getInt(SecCameraParameters::KEY_MIN_SHARPNESS);
+
+    if (val == pre)
+        return NO_ERROR;
+
+    if (CC_UNLIKELY(val < min || val > max)) {
+        ALOGE("setSharpness: error, invalid value(%d)", val);
+        return BAD_VALUE;
+    }
+
+    ALOGV("setSharpness: %d", val);
+    mParameters.set(SecCameraParameters::KEY_SHARPNESS, val);
+
+/*
+enum v4l2_sharpness {
+    V4L2_SHARPNESS_MINUS_2,
+    V4L2_SHARPNESS_MINUS_1,
+    V4L2_SHARPNESS_DEFAULT,
+    V4L2_SHARPNESS_PLUS_1,
+    V4L2_SHARPNESS_PLUS_2,
+    V4L2_SHARPNESS_MAX,
+};
+DEFAULT = 2
+*/
+	val += 2;
+    return nativeSetParameters(CAM_CID_SHARPNESS, val);
+}
+// END
 
 status_t ISecCameraHardware::setBrightness(const CameraParameters &params)
 {

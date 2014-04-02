@@ -43,6 +43,19 @@ const char SecCameraParameters::KEY_MOVIE_MODE[] = "cam_mode";
 
 const char SecCameraParameters::KEY_ISO[] = "iso";
 const char SecCameraParameters::KEY_METERING[] = "metering";
+// Added by Louis
+const char SecCameraParameters::KEY_CONTRAST[] = "contrast";
+const char SecCameraParameters::KEY_MAX_CONTRAST[] = "contrast-max";
+const char SecCameraParameters::KEY_MIN_CONTRAST[] = "contrast-min";
+
+const char SecCameraParameters::KEY_SATURATION[] = "saturation";
+const char SecCameraParameters::KEY_MAX_SATURATION[] = "saturation-max";
+const char SecCameraParameters::KEY_MIN_SATURATION[] = "saturation-min";
+
+const char SecCameraParameters::KEY_SHARPNESS[] = "sharpness";
+const char SecCameraParameters::KEY_MAX_SHARPNESS[] = "sharpness-max";
+const char SecCameraParameters::KEY_MIN_SHARPNESS[] = "sharpness-min";
+// End
 const char SecCameraParameters::KEY_AUTO_CONTRAST[] = "wdr";
 const char SecCameraParameters::KEY_ANTI_SHAKE[] = "anti-shake";
 const char SecCameraParameters::KEY_FACE_BEAUTY[] = "face_beauty";

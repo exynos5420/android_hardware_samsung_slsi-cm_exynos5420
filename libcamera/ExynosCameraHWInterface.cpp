@@ -242,12 +242,17 @@ if(cameraId == 0) //rear camera(4ec)
 else
 #endif	
 {
-    ALOGI("[INFO] (%s:%d): in", __func__, __LINE__);
-    if (device) {
-        camera_device_t *cam_device = (camera_device_t *)device;
-        cameraId = obj(cam_device)->getCameraId();
-
+	camera_device_t *cam_device = (camera_device_t *)device;
+	cameraId = obj(cam_device)->getCameraId();
+	ALOGI("[INFO] (%s:%d): in", __func__, __LINE__);
+    if (g_cam_device[cameraId]) {
         ALOGI("[INFO] (%s:%d):camera(%d)", __func__, __LINE__, cameraId);
+        
+		g_cam_openLock[cameraId].lock();
+        ALOGI("[INFO] (%s:%d):camera(%d) locked..", __func__, __LINE__, cameraId);
+        g_cam_device[cameraId] = NULL;
+        g_cam_openLock[cameraId].unlock();
+        ALOGI("[INFO] (%s:%d):camera(%d) unlocked..", __func__, __LINE__, cameraId);
 
         state = CAMERA_CLOSED;
         if (check_camera_state(state, cameraId) == false) {
@@ -255,13 +260,10 @@ else
             return -1;
         }
 
-        g_cam_openLock[cameraId].lock();
-        ALOGI("[INFO] (%s:%d):camera(%d) locked..", __func__, __LINE__, cameraId);
-        g_cam_device[cameraId] = NULL;
-        g_cam_openLock[cameraId].unlock();
-        ALOGI("[INFO] (%s:%d):camera(%d) unlocked..", __func__, __LINE__, cameraId);
-
-        delete static_cast<ExynosCameraHWImpl *>(cam_device->priv);
+		if (cameraId == 0)
+	        delete static_cast<SecCameraHardware *>(cam_device->priv);
+		else
+			delete static_cast<ExynosCameraHWImpl *>(cam_device->priv);
         free(cam_device);
 
         cam_stateLock[cameraId].lock();

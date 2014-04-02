@@ -37,7 +37,7 @@
 #define IsZoomSupported()                   (true)
 #define IsAPZoomSupported()                 (ZOOM_FUNCTION)
 #define IsAutoFocusSupported()              (true)
-#define IsFlashSupported()                  (true)
+#define IsFlashSupported()                  (false)
 #define IsFastCaptureSupportedOnRear()      (false)
 #define IsFastCaptureSupportedOnFront()     (false)
 
@@ -115,16 +115,16 @@ const int Exif::DEFAULT_FRONT_FOCAL_LEN_DEN = 100;
 
 
 static const image_rect_type backFLiteSizes[] = {
-//    { 1280,   960 }, /* default */
-/*    { 2560,   1920 },
+    { 1280,   960 }, /* default */
+    { 2560,   1920 },
     { 2048,   1536 },
     { 1920,   1080 },
     { 1600,   1200 },
     { 1280,   720 },
     { 1024,   768 },
-    { 720,    480 },*/
+//    { 720,    480 },
     { 640,    480 },
-//   { 176,    144 },
+    { 176,    144 },
 };
 
 static const image_rect_type frontFLiteSizes[] = {
@@ -132,12 +132,11 @@ static const image_rect_type frontFLiteSizes[] = {
 };
 
 static const image_rect_type backPreviewSizes[] = {
-//    { 1280,   960 }, /* default */
-//    { 1280,   720 },
-//    { 1024,   768 },
+    { 1280,   960 }, /* default */
+    { 1920,  1080 },
+    { 1280,   720 },
 //    { 720,    480 },
     { 640,    480 },
-//    { 320,    240 },
 };
 
 static const image_rect_type hiddenBackPreviewSizes[0] = {
@@ -146,29 +145,23 @@ static const image_rect_type hiddenBackPreviewSizes[0] = {
 static const image_rect_type backRecordingSizes[] = {
     { 1280,   720 }, /* default */
     { 1920,   1080 },
-    { 720,    480 },
+//    { 720,    480 },
+    { 640,    480 },
 };
 
 static const image_rect_type hiddenBackRecordingSizes[0] = {
 };
 
-#if 1
 static const image_rect_type backPictureSizes[] = {
     { 2560,   1920 }, /* default */
     { 2048,   1536 },
     { 1600,   1200 },
-    { 1280,   960 },
+//    { 1280,   960 },
     { 1024,   768 },
     { 640,    480 },
-    { 320,    240 },
-    { 176,    144 },
+//    { 320,    240 },
+//    { 176,    144 },
 };
-#else  // ghcstop fix
-static const image_rect_type backPictureSizes[] = {
-    { 640,    480 },
-};
-#endif
-
 
 static const image_rect_type hiddenBackPictureSizes[0] = {
 };
@@ -247,8 +240,8 @@ static const cam_strmap_t flashModes[] = {
 
 static const cam_strmap_t previewPixelFormats[] = {
     { CameraParameters::PIXEL_FORMAT_YUV420SP,  CAM_PIXEL_FORMAT_YUV420SP },
-    { CameraParameters::PIXEL_FORMAT_YUV420P,   CAM_PIXEL_FORMAT_YVU420P },
-/*  { CameraParameters::PIXEL_FORMAT_YUV422I,   CAM_PIXEL_FORMAT_YUV422I },
+	{ CameraParameters::PIXEL_FORMAT_YUV420P,   CAM_PIXEL_FORMAT_YVU420P },
+/*	{ CameraParameters::PIXEL_FORMAT_YUV422I,   CAM_PIXEL_FORMAT_YUV422I },
     { CameraParameters::PIXEL_FORMAT_YUV422SP,  CAM_PIXEL_FORMAT_YUV422SP },
     { CameraParameters::PIXEL_FORMAT_RGB565,    CAM_PIXEL_FORMAT_RGB565, }, */
 };
