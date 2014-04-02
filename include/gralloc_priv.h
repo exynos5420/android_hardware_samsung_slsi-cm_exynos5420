@@ -42,6 +42,7 @@ struct private_module_t {
     uint32_t numBuffers;
     uint32_t bufferMask;
     pthread_mutex_t lock;
+    unsigned int refcount;
     buffer_handle_t currentBuffer;
     int ionfd;
 
