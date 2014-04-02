@@ -105,6 +105,7 @@ flags: 0,
 numBuffers: 0,
 bufferMask: 0,
 lock: PTHREAD_MUTEX_INITIALIZER,
+refcount: 0,
 currentBuffer: 0,
 ionfd: -1,
 };
@@ -400,6 +401,14 @@ static int gralloc_close(struct hw_device_t *dev)
 {
     gralloc_context_t* ctx = reinterpret_cast<gralloc_context_t*>(dev);
     if (ctx) {
+        private_module_t *p = reinterpret_cast<private_module_t*>(ctx->device.common.module);
+        pthread_mutex_lock(&p->lock);
+        LOG_ALWAYS_FATAL_IF(!p->refcount);
+        p->refcount--;
+        if (!p->refcount)
+            close(p->ionfd);
+        pthread_mutex_unlock(&p->lock);
+
         /* TODO: keep a list of all buffer_handle_t created, and free them
          * all here.
          */
@@ -429,7 +438,11 @@ int gralloc_device_open(const hw_module_t* module, const char* name,
         dev->device.free = gralloc_free;
 
         private_module_t *p = reinterpret_cast<private_module_t*>(dev->device.common.module);
-        p->ionfd = ion_open();
+        pthread_mutex_lock(&p->lock);
+        if (!p->refcount)
+            p->ionfd = ion_open();
+        p->refcount++;
+        pthread_mutex_unlock(&p->lock);
 
         *device = &dev->device.common;
         status = 0;
