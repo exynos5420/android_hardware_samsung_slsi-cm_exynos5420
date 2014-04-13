@@ -1930,6 +1930,13 @@ bool SecCameraHardware::allocateRecordingHeap()
     int framePlaneSize1 = ALIGN(mVideoSize.width, 16) * ALIGN(mVideoSize.height, 16);
     int framePlaneSize2 = ALIGN(mVideoSize.width, 16) * ALIGN(mVideoSize.height, 16) / 2;
 
+	// jhlee - add extention buffer size for MFC v7 ... 256 byte
+	// endcorder prepare 2plane buffer Y(1280x720), CbCr(1280x720/2) 
+	// and GSC output dump image also OK! (in recroding thread) - nativeCSCRecording()
+	// but ~ when OMX recoding - src in process , ioctl fail(qbuf to video6(mfc encoder)
+	// Exynos_H264Enc_SrcIn ...
+	framePlaneSize1+=256;framePlaneSize2+=256;
+
     if (mRecordingHeap != NULL) {
         mRecordingHeap->release(mRecordingHeap);
         mRecordingHeap = 0;

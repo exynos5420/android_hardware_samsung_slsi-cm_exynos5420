@@ -89,7 +89,7 @@
 #define NUM_OF_DETECTED_FACES (16)
 
 #define FIMC1_NODE_NUM (1) /* for preview */
-#define FIMC2_NODE_NUM (2) /* for recording */
+#define FIMC2_NODE_NUM (1) /* for recording */
 #define GRALLOC_SET_USAGE_FOR_CAMERA \
     (GRALLOC_USAGE_SW_READ_NEVER | \
      GRALLOC_USAGE_SW_WRITE_OFTEN | \
