@@ -33,10 +33,10 @@
 #ifndef _LINUX_TYPES_H
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
-typedef signed short 	int16_t;
-typedef signed int 	int32_t;
-typedef unsigned int 	uint32_t;
-typedef unsigned long long 		uint64_t;
+typedef signed short int16_t;
+typedef signed int int32_t;
+typedef unsigned int uint32_t;
+typedef unsigned long long uint64_t;
 #endif
 
 struct rational {
@@ -63,10 +63,16 @@ enum metadata_mode {
 };
 
 enum is_subscenario_id {
-	ISS_SUB_SCENARIO_STILL     = 0,			// 0: still preview
-	ISS_SUB_SCENARIO_VIDEO     = 1,			// 1: video
-	ISS_SUB_SCENARIO_FRONT_VT1 = 4,			// 4: front camera VT1 (Temporary)
-	ISS_SUB_SCENARIO_FRONT_VT2 = 5,			// 5: front camera VT2 (Temporary)
+	ISS_SUB_SCENARIO_STILL_PREVIEW = 0,	// 0: still preview
+	ISS_SUB_SCENARIO_VIDEO = 1,		// 1: video
+	ISS_SUB_SCENARIO_DUAL_STILL = 2,	// 2: dual still preview
+	ISS_SUB_SCENARIO_DUAL_VIDEO = 3,	// 3: dual video
+	ISS_SUB_SCENARIO_VIDEO_HIGH_SPEED = 4,	// 4: video high speed
+	ISS_SUB_SCENARIO_STILL_CAPTURE = 5,	// 5: still capture
+
+	ISS_SUB_SCENARIO_FRONT_VT1 = 4,		// 4: front camera VT1 (Temporary)
+	ISS_SUB_SCENARIO_FRONT_VT2 = 5,		// 5: front camera VT2 (Temporary)
+	ISS_SUB_SCENARIO_FRONT_SMART_STAY = 6,	// 6: front camera smart stay (Temporary)
 	ISS_SUB_END,
 };
 
@@ -216,6 +222,7 @@ enum flash_mode {
 	CAM2_FLASH_MODE_OFF = 1,
 	CAM2_FLASH_MODE_SINGLE,
 	CAM2_FLASH_MODE_TORCH,
+	CAM2_FLASH_MODE_BEST
 };
 
 struct camera2_flash_ctl {
@@ -338,7 +345,8 @@ enum colorcorrection_mode {
 	COLORCORRECTION_MODE_EFFECT_MAGENTA_POINT,
 	COLORCORRECTION_MODE_EFFECT_WARM_VINTAGE,
 	COLORCORRECTION_MODE_EFFECT_COLD_VINTAGE,
-	COLORCORRECTION_MODE_EFFECT_WASHED
+	COLORCORRECTION_MODE_EFFECT_WASHED,
+	TOTAOCOUNT_COLORCORRECTION_MODE_EFFECT
 };
 
 
@@ -487,6 +495,12 @@ enum stats_mode {
 	STATS_MODE_ON
 };
 
+enum stats_lowlightmode {
+	STATE_LLS_NONE = 0,
+	STATE_LLS_LEVEL_LOW,
+	STATE_LLS_LEVEL_HIGH
+};
+
 struct camera2_stats_ctl {
 	enum facedetect_mode	faceDetectMode;
 	enum stats_mode		histogramMode;
@@ -507,7 +521,7 @@ struct camera2_stats_dm {
 /* PAYTON_CHECK_20120712 : sharpnessmap_mode -> stats_mode */
 	enum stats_mode		sharpnessMapMode;
 	/*sharpnessMap*/
-	uint32_t		reserved[1];
+	enum stats_lowlightmode LowLightMode;
 };
 
 
@@ -539,29 +553,32 @@ enum aa_mode {
 };
 
 enum aa_scene_mode {
-	AA_SCENE_MODE_UNSUPPORTED      = 1,
-	AA_SCENE_MODE_FACE_PRIORITY    = 2,
-	AA_SCENE_MODE_ACTION           = 3,
-	AA_SCENE_MODE_PORTRAIT         = 4,
-	AA_SCENE_MODE_LANDSCAPE        = 5,
-	AA_SCENE_MODE_NIGHT            = 6,
-	AA_SCENE_MODE_NIGHT_PORTRAIT   = 7,
-	AA_SCENE_MODE_THEATRE          = 8,
-	AA_SCENE_MODE_BEACH            = 9,
-	AA_SCENE_MODE_SNOW             = 10,
-	AA_SCENE_MODE_SUNSET           = 11,
-	AA_SCENE_MODE_STEADYPHOTO      = 12,
-	AA_SCENE_MODE_FIREWORKS        = 13,
-	AA_SCENE_MODE_SPORTS           = 14,
-	AA_SCENE_MODE_PARTY            = 15,
-	AA_SCENE_MODE_CANDLELIGHT      = 16,
-	AA_SCENE_MODE_BARCODE          = 17,
-	AA_SCENE_MODE_NIGHT_CAPTURE    = 18,
-	AA_SCENE_MODE_ANTISHAKE        = 19,
-	AA_SCENE_MODE_FDAE             = 22,
-	AA_SCENE_MODE_DRAMA            = 24,
-	AA_SCENE_MODE_ANIMATED         = 25,
-	AA_SCENE_MODE_PANAROMA         = 26
+	AA_SCENE_MODE_UNSUPPORTED = 1,
+	AA_SCENE_MODE_FACE_PRIORITY,
+	AA_SCENE_MODE_ACTION,
+	AA_SCENE_MODE_PORTRAIT,
+	AA_SCENE_MODE_LANDSCAPE,
+	AA_SCENE_MODE_NIGHT,
+	AA_SCENE_MODE_NIGHT_PORTRAIT,
+	AA_SCENE_MODE_THEATRE,
+	AA_SCENE_MODE_BEACH,
+	AA_SCENE_MODE_SNOW,
+	AA_SCENE_MODE_SUNSET,
+	AA_SCENE_MODE_STEADYPHOTO,
+	AA_SCENE_MODE_FIREWORKS,
+	AA_SCENE_MODE_SPORTS,
+	AA_SCENE_MODE_PARTY,
+	AA_SCENE_MODE_CANDLELIGHT,
+	AA_SCENE_MODE_BARCODE,
+	AA_SCENE_MODE_NIGHT_CAPTURE,
+	AA_SCENE_MODE_ANTISHAKE,
+	AA_SCENE_MODE_HDR,
+	AA_SCENE_MODE_LLS,
+	AA_SCENE_MODE_FDAE,
+	AA_SCENE_MODE_DUAL,
+	AA_SCENE_MODE_DRAMA,
+	AA_SCENE_MODE_ANIMATED,
+	AA_SCENE_MODE_PANAROMA
 };
 
 enum aa_effect_mode {
@@ -692,27 +709,27 @@ struct camera2_aa_ctl {
 };
 
 struct camera2_aa_dm {
-	enum aa_mode			mode;
-	enum aa_effect_mode		effectMode;
-	enum aa_scene_mode		sceneMode;
-	uint32_t			videoStabilizationMode;
-	enum aa_aemode			aeMode;
+	enum aa_mode				mode;
+	enum aa_effect_mode			effectMode;
+	enum aa_scene_mode			sceneMode;
+	uint32_t				videoStabilizationMode;
+	enum aa_aemode				aeMode;
 	/*needs check*/
-	uint32_t			aeRegions[5];
+	uint32_t				aeRegions[5];
 	/*5 per region(x1,y1,x2,y2,weight). currently assuming 1 region.*/
-	enum ae_state			aeState;
-	enum aa_ae_flashmode		aeflashMode;
+	enum ae_state				aeState;
+	enum aa_ae_flashmode			aeflashMode;
 	/*needs check*/
-	enum aa_awbmode			awbMode;
-	uint32_t			awbRegions[5];
-	enum awb_state			awbState;
+	enum aa_awbmode				awbMode;
+	uint32_t				awbRegions[5];
+	enum awb_state				awbState;
 	/*5 per region(x1,y1,x2,y2,weight). currently assuming 1 region.*/
-	enum aa_afmode			afMode;
-	uint32_t			afRegions[5];
+	enum aa_afmode				afMode;
+	uint32_t				afRegions[5];
 	/*5 per region(x1,y1,x2,y2,weight). currently assuming 1 region*/
-	enum aa_afstate			afState;
-	enum aa_isomode			isoMode;
-	uint32_t			isoValue;
+	enum aa_afstate				afState;
+	enum aa_isomode				isoMode;
+	uint32_t				isoValue;
 };
 
 struct camera2_aa_sm {
@@ -815,10 +832,8 @@ struct camera2_sm {
 struct camera2_lens_uctl {
 	struct camera2_lens_ctl ctl;
 
-	/** It depends by af algorithm(AF pos bit. normally 8 or 9 or 10) */
-	uint32_t        posSize;
-	/** It depends by af algorithm */
-	uint32_t        direction;
+	/** It depends by af algorithm(normally 255 or 1023) */
+	uint32_t        maxPos;
 	/** Some actuator support slew rate control. */
 	uint32_t        slewRate;
 };
@@ -827,10 +842,8 @@ struct camera2_lens_uctl {
 	User-defined metadata for lens.
 */
 struct camera2_lens_udm {
-	/** It depends by af algorithm(AF pos bit. normally 8 or 9 or 10) */
-	uint32_t        posSize;
-	/** It depends by af algorithm */
-	uint32_t        direction;
+	/** It depends by af algorithm(normally 255 or 1023) */
+	uint32_t        maxPos;
 	/** Some actuator support slew rate control. */
 	uint32_t        slewRate;
 };
@@ -842,7 +855,7 @@ struct camera2_ae_udm {
 	/** vendor specific length */
 	uint32_t	vsLength;
 	/** vendor specific data array */
-	uint32_t vendorSpecific[CAMERA2_MAX_VENDER_LENGTH];
+	uint32_t	vendorSpecific[CAMERA2_MAX_VENDER_LENGTH];
 };
 
 /** \brief
@@ -852,7 +865,7 @@ struct camera2_awb_udm {
 	/** vendor specific length */
 	uint32_t	vsLength;
 	/** vendor specific data array */
-	uint32_t vendorSpecific[CAMERA2_MAX_VENDER_LENGTH];
+	uint32_t	vendorSpecific[CAMERA2_MAX_VENDER_LENGTH];
 };
 
 /** \brief
@@ -862,7 +875,7 @@ struct camera2_af_udm {
 	/** vendor specific length */
 	uint32_t	vsLength;
 	/** vendor specific data array */
-	uint32_t vendorSpecific[CAMERA2_MAX_VENDER_LENGTH];
+	uint32_t	vendorSpecific[CAMERA2_MAX_VENDER_LENGTH];
 };
 
 /** \brief
@@ -879,9 +892,16 @@ struct camera2_as_udm {
  User-defined metadata for aa.
 */
 struct camera2_internal_udm {
-	/** vendor specific data array */
-	uint32_t vendorSpecific1[CAMERA2_MAX_VENDER_LENGTH];
-	uint32_t vendorSpecific2[CAMERA2_MAX_VENDER_LENGTH];
+ /** vendor specific data array */
+ uint32_t vendorSpecific1[CAMERA2_MAX_VENDER_LENGTH];
+ uint32_t vendorSpecific2[CAMERA2_MAX_VENDER_LENGTH];
+ /*
+  * vendorSpecific2[0] : info
+  * vendorSpecific2[100] : 0:sirc 1:cml
+  * vendorSpecific2[101] : cml exposure
+  * vendorSpecific2[102] : cml iso(gain)
+  * vendorSpecific2[103] : cml Bv
+  */
 };
 
 /** \brief
@@ -959,7 +979,7 @@ struct camera2_udm {
 	struct camera2_af_udm		af;
 	struct camera2_as_udm		as;
 	/* KJ_121129 : Add udm for sirc sdk. */
-	struct camera2_internal_udm		internal;
+	struct camera2_internal_udm	internal;
 	/* Add udm for bayer down size. */
 	struct camera2_bayer_udm	bayer;
 };
@@ -1199,7 +1219,6 @@ typedef struct camera2_uctl camera2_uctl_t;
 typedef struct camera2_dm camera2_dm_t;
 typedef struct camera2_sm camera2_sm_t;
 
-// PAYTON_CHECK_20120712 : Added omitted typedef struct
 typedef struct camera2_scaler_sm camera2_scaler_sm_t;
 typedef struct camera2_scaler_uctl camera2_scaler_uctl_t;
 

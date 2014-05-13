@@ -36,6 +36,7 @@ ExynosCameraVDis::ExynosCameraVDis()
     m_numOfDisShotedFrame = 0;
     m_numOfSrcShotedFrame = 4;
     m_isHWVDis = true;
+    m_secCamera = NULL;
 }
 
 ExynosCameraVDis::~ExynosCameraVDis()

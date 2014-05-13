@@ -83,29 +83,18 @@
 
 using namespace android;
 
-#define USE_TF4_SENSOR  //##mm78.kim
-///#define USE_S5K3L2_CAMERA //mhjang del
-//#define USE_S5K3H7_CAMERA
-
 #define FU_3INSTANCE
 //#define DUMP_BAYER_IMAGE
-//#define CHECK_BUFFER_OVERFLOW
-#ifndef USE_TF4_SENSOR
-#define DIVIDE_PREVIEW_THREAD
-#define MULTI_INSTANCE_CHECK
-#endif
+
 #define CAPTURE_BUF_GET 1
 
 #define TRACE_COUNT 10
 
-#ifndef USE_TF4_SENSOR
 #define SCALABLE_SENSOR
 #define SCALABLE_SENSOR_FORCE_DONE
 #define SCALABLE_SENSOR_CHKTIME
 #define SCALABLE_SENSOR_CTRL_ISP
-#endif
-//#define NON_BLOCK_MODE
-#define OTF_SENSOR_LPZSL
+#define OTF_SENSOR_REPROCESSING
 
 /* #define BAYER_TRACKING */
 #define DYNAMIC_BAYER_BACK_REC
@@ -161,19 +150,8 @@ using namespace android;
 #define CLOG_ASSERT(fmt, ...) \
     android_printAssert(NULL, LOG_TAG, Paste2(CAM0, fmt), ##__VA_ARGS__);
 
-#ifdef USE_S5K3L2_CAMERA   //##mm78.kim
-#define BACK_CAMERA_SENSOR_NAME  (SENSOR_NAME_S5K3L2)
-#elif defined (USE_S5K3H7_CAMERA)
-#define BACK_CAMERA_SENSOR_NAME  (SENSOR_NAME_S5K3H7_SUNNY)
-#else
 #define BACK_CAMERA_SENSOR_NAME  (SENSOR_NAME_IMX135)
-#endif
-
-#ifdef USE_S5K3H7_CAMERA  //##mm78.kim
-#define FRONT_CAMERA_SENSOR_NAME (SENSOR_NAME_S5K3H7_SUNNY_2M)
-#else
 #define FRONT_CAMERA_SENSOR_NAME (SENSOR_NAME_S5K6B2)
-#endif
 
 #define NUM_BAYER_BUFFERS           (6)
 #define META_DATA_SIZE              (16 *1024)
@@ -203,12 +181,17 @@ using namespace android;
 #define MODULE_MASK                 0x000000FF
 
 #define NODE_PREFIX                 "/dev/video"
-#define PICTURE_GSC_NODE_NUM        (2)
 
 #define CAMERA_ISP_ALIGN            (4)
 #define CAMERA_MAGIC_ALIGN          (16)
 
 #define UNIQUE_ID_BUF_SIZE          (32)
+
+#define CAMERA_Q_WATING_TIME          (1000)   /*   1msec */
+#define CAMERA_Q_TATOL_WATING_TIME  (300000)   /* 300msec */
+
+#define ROUND_OFF(x, dig)           (floor((x) * pow(10, dig)) / pow(10, dig))
+#define ROUND_OFF_HALF(x, dig)      (floor((x) * pow(10.0f, dig) + 0.5) / pow(10.0f, dig))
 
 enum fimc_is_video_dev_num {
     FIMC_IS_VIDEO_SEN0_NUM = 40,
@@ -234,8 +217,9 @@ enum sensor_name {
     SENSOR_NAME_S5K3H7_SUNNY_2M,
     SENSOR_NAME_IMX135,
     SENSOR_NAME_S5K6B2,
-    SENSOR_NAME_S5K3L2=13,
-
+    SENSOR_NAME_FAKE_S5K6A3 = 90,
+    SENSOR_NAME_FAKE_S5K6B2,
+    SENSOR_NAME_FAKE_IMX135 = 99,
     SENSOR_NAME_CUSTOM=100,
     SENSOR_NAME_END
 };
@@ -289,7 +273,7 @@ static int PICTURE_LIST[][2] =
     { 1920, 1080},
     { 1600, 1200},
     { 1440, 1080},
-    { 1392, 1392},
+    /* { 1392, 1392}, */ /* remove for CTS */
     { 1280,  960},
     { 1280,  720},
     { 1024,  768},
@@ -297,14 +281,14 @@ static int PICTURE_LIST[][2] =
     {  800,  480},
     {  720,  480},
     {  640,  480},
-    {  528,  432},
+    /* {  528,  432}, */ /* remove for CTS */
     {  512,  384},
     {  512,  288},
     {  480,  320},
-    {  352,  288},
+    /* {  352,  288}, */ /* remove for CTS */
     {  320,  240},
     {  320,  180},
-// TODO : will be support after enable LPZSL
+// TODO : will be support after enable REPROCESSING
 //        {  176,  144}
 };
 
@@ -337,32 +321,25 @@ static int FPS_RANGE_LIST[][2] =
 };
 
 typedef struct node_info {
-    int fd;
-    int width;
-    int height;
-    int format;
-    int planes;
-    int buffers;
+    int                fd;
+    int                width;
+    int                height;
+    int                format;
+    int                planes;
+    int                buffers;
     enum v4l2_memory   memory;
     enum v4l2_buf_type type;
+    pollfd             events;
+
     ion_client         ionClient;
     ExynosBuffer       buffer[VIDEO_MAX_FRAME];
+    bool               flagQ[VIDEO_MAX_FRAME];
+    Mutex              QLock;
+
+    bool               flagDup;
+
     bool               flagStart;
-    pollfd             events;
 } node_info_t;
-
-enum CAMERA_SENSOR {
-    SENSOR_FRONT,
-    SENSOR_BACK,
-    SENSOR_FAKE,
-    SENSOR_MAX_NUM,
-};
-
-enum CAMERA_ACTIVATE_MODE {
-    CAMERA_ACTIVATE_MODE_FRONT,
-    CAMERA_ACTIVATE_MODE_BACK,
-    CAMERA_ACTIVATE_MODE_MAX_NUM,
-};
 
 #ifdef SCALABLE_SENSOR
 enum SCALABLE_SENSOR_SIZE {
@@ -370,12 +347,13 @@ enum SCALABLE_SENSOR_SIZE {
     SCALABLE_SENSOR_SIZE_FHD,
 };
 #endif
+
 typedef struct camera_hw_info {
     node_info_t sensor;
-    node_info_t is3a0Output;
-    node_info_t is3a0Capture;
-    node_info_t is3a1Output;
-    node_info_t is3a1Capture;
+    node_info_t is3a0Src;
+    node_info_t is3a0Dst;
+    node_info_t is3a1Src;
+    node_info_t is3a1Dst;
     node_info_t isp;
     node_info_t picture;
     node_info_t preview;
@@ -537,72 +515,30 @@ public:
     ExynosCameraInfoS5K3H7();
 };
 
-#ifdef USE_TF4_SENSOR
-struct ExynosCameraInfoS5K3H7_SUNNY : public ExynosCameraInfo
-{
-public:
-    ExynosCameraInfoS5K3H7_SUNNY();
-};
-
-struct ExynosCameraInfoS5K3H7_SUNNY_2M : public ExynosCameraInfo
-{
-public:
-    ExynosCameraInfoS5K3H7_SUNNY_2M();
-};
-#endif
-#ifdef USE_S5K3L2_CAMERA
-struct ExynosCameraInfoS5K3L2 : public ExynosCameraInfo
-{
-public:
-    ExynosCameraInfoS5K3L2();
-};
-#endif
-
 struct ExynosCameraInfoIMX135 : public ExynosCameraInfo
 {
 public:
     ExynosCameraInfoIMX135();
 };
 
-struct ExynosCameraInfoIMX135Fake : public ExynosCameraInfoIMX135
+struct ExynosCameraInfoIMX135Reprocessing : public ExynosCameraInfoIMX135
 {
 public:
-    ExynosCameraInfoIMX135Fake();
+    ExynosCameraInfoIMX135Reprocessing();
 };
 
-struct ExynosCameraInfoS5K6B2Fake : public ExynosCameraInfoS5K6B2
+struct ExynosCameraInfoS5K6B2Reprocessing : public ExynosCameraInfoS5K6B2
 {
 public:
-    ExynosCameraInfoS5K6B2Fake();
+    ExynosCameraInfoS5K6B2Reprocessing();
 };
 
-struct ExynosCameraInfoS5K4E5Fake : public ExynosCameraInfoS5K4E5
+struct ExynosCameraInfoS5K4E5Reprocessing : public ExynosCameraInfoS5K4E5
 {
 public:
-    ExynosCameraInfoS5K4E5Fake();
+    ExynosCameraInfoS5K4E5Reprocessing();
 };
 
-#ifdef USE_TF4_SENSOR
-struct ExynosCameraInfoS5K3H7_SUNNYFake : public ExynosCameraInfoS5K3H7_SUNNY
-{
-public:
-    ExynosCameraInfoS5K3H7_SUNNYFake();
-};
-
-struct ExynosCameraInfoS5K3H7_SUNNY_2MFake : public ExynosCameraInfoS5K3H7_SUNNY_2M
-{
-public:
-    ExynosCameraInfoS5K3H7_SUNNY_2MFake();
-};
-#endif
-
-#ifdef USE_S5K3L2_CAMERA
-struct ExynosCameraInfoS5K3L2Fake : public ExynosCameraInfoS5K3L2
-{
-public:
-    ExynosCameraInfoS5K3L2Fake();
-};
-#endif
 //! ExynosCamera
 /*!
  * \ingroup Exynos
@@ -618,6 +554,15 @@ public:
     enum CAMERA_ID {
         CAMERA_ID_BACK  = 0,   //!<
         CAMERA_ID_FRONT = 1,   //!<
+        CAMERA_ID_MAX,         //!<
+    };
+
+    //! Camera Mode
+    enum CAMERA_MODE {
+        CAMERA_MODE_BACK          = 0,   //!<
+        CAMERA_MODE_FRONT         = 1,   //!<
+        CAMERA_MODE_REPROCESSING  = 2,   //!<
+        CAMERA_MODE_MAX,                 //!<
     };
 
     //! Anti banding
@@ -710,43 +655,31 @@ public:
 
     //! Create the instance
     bool            create(int cameraId);
-    //! Open camera
-    bool            openCamera(int cameraId);
-    //! Open internal ISP
-    bool            openInternalISP(int cameraId);
-    //! Open external ISP
-    bool            openExternalISP(int cameraId);
     //! Destroy the instance
     bool            destroy(void);
     //! Check if the instance was created
     bool            flagCreate(void);
+
+    //! Open camera
+    bool            openCamera(int cameraId);
     //! Check if the instance was opened
     bool            flagOpen(int cameraId);
 
     //! Gets current camera_id
     int             getCameraId(void);
+    //! Gets current camera mode
+    int             getCameraMode();
     //! Gets camera sensor name
     char           *getCameraName(void);
 
-    //! Gets file descriptor by gotten open() for preview
-    int             getPreviewFd(void);
-    //! Gets file descriptor by gotten open() for recording
-    int             getVideoFd(void);
-    //! Gets file descriptor by gotten open() for snapshot
-    int             getPictureFd(void);
-
     bool            qAll3a1Buf(void);
-#if 0	
     bool            dqAll3a1Buf(void);
-#endif
-    bool            dq3a1Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inBuf, ExynosBuffer *outBuf);
-    bool            q3a1Buf(enum CAMERA_SENSOR sensor_enum);
+    bool            dq3a1Buf(enum CAMERA_MODE cameraMode, ExynosBuffer *inBuf, ExynosBuffer *outBuf);
+    bool            q3a1Buf(enum CAMERA_MODE cameraMode);
 
     //! Starts capturing and drawing preview frames to the screen.
     bool            startPreview(void);
-    bool            startPreviewOn(void);
     //! Stop preview
-    bool            stopPreviewOff(void);
     bool            stopPreview(void);
     //! Check preview start
     bool            flagStartPreview(void);
@@ -756,6 +689,8 @@ public:
     bool            setPreviewBuf(ExynosBuffer *buf);
     //! Gets preview's buffer
     bool            getPreviewBuf(ExynosBuffer *buf, bool *isValid, nsecs_t *timestamp);
+    //! Put(dq) preview's buffer
+    bool            putPreviewBuf(ExynosBuffer *buf);
     //! Cancel preview's buffer
     bool            cancelPreviewBuf(int index);
     //! Deinitialize preview's buffer
@@ -770,84 +705,75 @@ public:
     void            setFlagInternalPreviewBuf(bool flag);
     //! get flag preview's internal buffer
     bool            getFlagInternalPreviewBuf(void);
-    //! Put(dq) preview's buffer
-    bool            putPreviewBuf(ExynosBuffer *buf);
-
-    //! Gets pre chain's buffer
-    bool            getIs3a0Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inBuf, ExynosBuffer *outBuf);
-    //! Put(dq) pre chain's buffer
-    bool            putIs3a0Buf(ExynosBuffer *buf);
-
-    //! Gets pre chain's buffer
-    bool            getIs3a0BufLpzsl(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inBuf, ExynosBuffer *outBuf);
-
-    //! Gets pre chain's buffer
-    bool            getIs3a1Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inBuf, ExynosBuffer *outBuf);
-    //! Put(dq) pre chain's buffer
-    bool            putIs3a1Buf(ExynosBuffer *buf);
-
-    //! Gets ISP's buffer
-    bool            getISPBuf(ExynosBuffer *buf);
-    //! Put(dq) ISP's buffer
-    bool            putISPBuf(ExynosBuffer *buf);
-
-    //! Gets ISPLpzsl's buffer
-    bool            getISPBufLpzsl(ExynosBuffer *buf);
-    //! Put(dq) ISPLpzsl's buffer
-    bool            putISPBufLpzsl(ExynosBuffer *buf);
 
     //! Start sensor
     bool            startSensor(void);
     //! Stop sensor
     bool            stopSensor(void);
     //! Start sensor on
-    bool            startSensorOn(enum CAMERA_SENSOR sensor_enum);
+    bool            startSensorOn(enum CAMERA_MODE cameraMode);
     //! Stop sensor off
-    bool            stopSensorOff(enum CAMERA_SENSOR sensor_enum);
+    bool            stopSensorOff(enum CAMERA_MODE cameraMode);
     //! Check sensor start
     bool            flagStartSensor(void);
     //! Check sensor buffer empty
-    bool            flagEmptySensorBuf(ExynosBuffer *buf);
+    bool			flagEmptySensorBuf(ExynosBuffer *buf);
     //! Gets sensor buffer
     bool            getSensorBuf(ExynosBuffer *buf);
     //! Put sensor buffer
     bool            putSensorBuf(ExynosBuffer *buf);
 
-    bool            putFixedSensorBuf(ExynosBuffer *buf);
     bool            getFixedSensorBuf(ExynosBuffer *buf);
+    bool            putFixedSensorBuf(ExynosBuffer *buf);
+
+    bool            StartStream(void);
 
     //! Start isp
     bool            startIsp(void);
     //! Stop isp
     bool            stopIsp(void);
-    //! Start isp on
-    bool            startIspOn(void);
-    //! Stop isp off
-    bool            stopIspOff(void);
-
-    bool            stopIspForceOff(void);
-
-    bool            stopSensorForceOff(void);
-
     //! Check isp start
     bool            flagStartIsp(void);
+    //! Stop isp force off
+    bool            stopIspForceOff(void);
+    //! Stop isp force off
+    bool            stopSensorForceOff(void);
+    //! Gets ISP's buffer
+    bool            getISPBuf(ExynosBuffer *buf);
+    //! Put(dq) ISP's buffer
+    bool            putISPBuf(ExynosBuffer *buf);
+    //! Gets ISPReprocessing's buffer
+    bool            getISPBufReprocessing(ExynosBuffer *buf);
+    //! Put(dq) ISPReprocessing's buffer
+    bool            putISPBufReprocessing(ExynosBuffer *buf);
+
     //! Start is3a0
-    bool            startIs3a0(enum CAMERA_SENSOR sensor_enum);
+    bool            startIs3a0(enum CAMERA_MODE cameraMode);
     //! Stop is3a0
-    bool            stopIs3a0(enum CAMERA_SENSOR sensor_enum);
-    //! Check is3a1Output start
-    bool            flagStartIs3a0Output(enum CAMERA_SENSOR sensor_enum);
-    //! Check is3a1Capture start
-    bool            flagStartIs3a0Capture(enum CAMERA_SENSOR sensor_enum);
+    bool            stopIs3a0(enum CAMERA_MODE cameraMode);
+    //! Check is3a1Src start
+    bool            flagStartIs3a0Src(enum CAMERA_MODE cameraMode);
+    //! Check is3a1Dst start
+    bool            flagStartIs3a0Dst(enum CAMERA_MODE cameraMode);
 
     //! Start is3a1
-    bool            startIs3a1(enum CAMERA_SENSOR sensor_enum);
+    bool            startIs3a1(enum CAMERA_MODE cameraMode);
     //! Stop is3a1
-    bool            stopIs3a1(enum CAMERA_SENSOR sensor_enum);
-    //! Check is3a1Output start
-    bool            flagStartIs3a1Output(enum CAMERA_SENSOR sensor_enum);
-    //! Check is3a1Capture start
-    bool            flagStartIs3a1Capture(enum CAMERA_SENSOR sensor_enum);
+    bool            stopIs3a1(enum CAMERA_MODE cameraMode);
+    //! Check is3a1Src start
+    bool            flagStart3a1Src(enum CAMERA_MODE cameraMode);
+    //! Check is3a1Dst start
+    bool            flagStart3a1Dst(enum CAMERA_MODE cameraMode);
+    //! Gets pre chain's buffer
+    bool            getIs3a0Buf(enum CAMERA_MODE cameraMode, ExynosBuffer *inBuf, ExynosBuffer *outBuf);
+    //! Put(dq) pre chain's buffer
+    bool            putIs3a0Buf(ExynosBuffer *buf);
+    //! Gets pre chain's buffer
+    bool            getIs3a0BufReprocessing(enum CAMERA_MODE cameraMode, ExynosBuffer *inBuf, ExynosBuffer *outBuf);
+    //! Gets pre chain's buffer
+    bool            getIs3a1Buf(enum CAMERA_MODE cameraMode, ExynosBuffer *inBuf, ExynosBuffer *outBuf);
+    //! Put(dq) pre chain's buffer
+    bool            putIs3a1Buf(ExynosBuffer *buf);
 
 #ifdef USE_VDIS
     void            setVdisInStatus(bool toggle);
@@ -914,9 +840,7 @@ public:
 
     //! Start snapshot
     bool            startPicture(void);
-    bool            startPictureOn(void);
     //! Stop snapshot
-    bool            stopPictureOff(void);
     bool            stopPicture(void);
     //! Check snapshot start
     bool            flagStartPicture(void);
@@ -930,6 +854,7 @@ public:
     bool            putPictureBuf(ExynosBuffer *buf);
     //! Set Picture Req
     void            pictureOn(void);
+
     //! Encode JPEG from YUV
     bool            yuv2Jpeg(ExynosBuffer *yuvBuf, ExynosBuffer *jpegBuf, ExynosRect *rect);
 
@@ -937,7 +862,7 @@ public:
     bool            autoFocus(void);
     //! Cancel auto-focus operation
     bool            cancelAutoFocus(void);
-    int            getCAFResult(void);
+    int             getCAFResult(void);
 
     //! Starts the face detection.
     bool            startFaceDetection(void);
@@ -1236,32 +1161,6 @@ public:
 
     //void            unflatten(String flattened)
 
-    bool            initSensor(void);
-    bool            deinitSensor(void);
-
-    bool            openSensor(void);
-    bool            closeSensor(void);
-
-    bool            openIs3a0(enum CAMERA_SENSOR sensor_enum);
-    bool            closeIs3a0(enum CAMERA_SENSOR sensor_enum);
-
-    bool            openIs3a1(enum CAMERA_SENSOR sensor_enum);
-    bool            closeIs3a1(enum CAMERA_SENSOR sensor_enum);
-
-    bool            openIsp(void);
-    bool            closeIsp(void);
-#ifdef USE_VDIS
-    bool            openVdisOut(void);
-    bool            closeVdisOut(void);
-#endif
-    bool            openPreview(void);
-    bool            closePreview(void);
-
-    bool            openPicture(void);
-    bool            closePicture(void);
-
-    bool            StartStream();
-
     bool            DvfsLock();
     bool            DvfsUnLock();
 
@@ -1270,6 +1169,11 @@ public:
                                 int *crop_x, int *crop_y,
                                 int *crop_w, int *crop_h,
                                 int  zoom);
+    bool            getCropRect2(int  src_w,     int   src_h,
+                                 int  dst_w,     int   dst_h,
+                                 int *new_src_x, int *new_src_y,
+                                 int *new_src_w, int *new_src_h,
+                                 int  zoom);
     bool            getCropRectAlign(int  src_w,  int   src_h,
                                      int  dst_w,  int   dst_h,
                                      int *crop_x, int *crop_y,
@@ -1283,57 +1187,39 @@ public:
                              char *srcBuf,
                              int w, int h, unsigned int size);
 
-    bool            initSensorLpzsl();
-    bool            deinitSensorLpzsl(void);
-    bool            openSensorLpzsl();
-    bool            closeSensorLpzsl(void);
-    bool            openIspLpzsl(void);
-    bool            closeIspLpzsl(void);
-    bool            openPreviewLpzsl(void);
-    bool            closePreviewLpzsl(void);
-    bool            openPictureLpzsl(void);
-    bool            closePictureLpzsl(void);
-    bool            startSensorLpzsl(void);
-    bool            stopSensorLpzsl(void);
-    bool            flagStartSensorLpzsl(void);
-    bool            startPreviewLpzsl(void);
-    bool            stopPreviewLpzsl(void);
-    bool            flagStartPreviewLpzsl(void);
-    bool            startIspLpzsl(void);
-    bool            stopIspLpzsl(void);
-    bool            startIspLpzslOn(void);
-    bool            stopIspLpzslOff(void);
-    bool            flagStartIspLpzsl(void);
-    bool            startPictureLpzsl(void);
-    bool            startPictureLpzslOn(void);
-    bool            stopPictureLpzslOff(void);
-    bool            stopPictureLpzsl(void);
-    void            pictureOnLpzsl(void);
-    bool            setPictureBufLpzsl(ExynosBuffer *buf);
-    bool            getPictureBufLpzsl(ExynosBuffer *buf);
-    bool            putPictureBufLpzsl(ExynosBuffer *buf);
-    bool            flagStartPictureLpzsl(void);
-    bool            getPictureSizeLpzsl(int *w, int *h);
-    bool            getPreviewSizeLpzsl(int *w, int *h);
-    bool            startVideoLpzsl(void);
-    bool            stopVideoLpzsl(void);
-    void            StartStreamLpzsl();
-    int             getCameraMode();
+    bool            startSensorReprocessing(void);
+    bool            stopSensorReprocessing(void);
+    bool            getSensorBufReprocessing(ExynosBuffer *buf);
+    bool            putSensorBufReprocessing(ExynosBuffer *buf);
+    bool            flagStartSensorReprocessing(void);
+    bool            startPreviewReprocessing(void);
+    bool            stopPreviewReprocessing(void);
+    bool            flagStartPreviewReprocessing(void);
+    bool            startIspReprocessing(void);
+    bool            stopIspReprocessing(void);
+    bool            m_startIspReprocessingOn(void);
+    bool            m_stopIspReprocessingOff(void);
+    bool            flagStartIspReprocessing(void);
+    bool            startPictureReprocessing(void);
+    bool            m_startPictureReprocessing(void);
+    bool            m_stopPictureReprocessing(void);
+    bool            stopPictureReprocessing(void);
+    void            pictureOnReprocessing(void);
+    bool            setPictureBufReprocessing(ExynosBuffer *buf);
+    bool            getPictureBufReprocessing(ExynosBuffer *buf);
+    bool            putPictureBufReprocessing(ExynosBuffer *buf);
+    bool            flagStartPictureReprocessing(void);
+    bool            getPictureSizeReprocessing(int *w, int *h);
+    bool            getPreviewSizeReprocessing(int *w, int *h);
+    void            StartStreamReprocessing();
+
     int             getNumOfShotedFrame(void);
     int             getNumOfShotedIspFrame(void);
     void            notifyStop(bool msg);
     bool            getNotifyStopMsg(void);
+    bool            setSensorStreamOff(enum CAMERA_MODE cameraMode);
 
-    bool            allocMemSinglePlane(ion_client ionClient, ExynosBuffer *buf, int index, bool flagCache = true);
-    void            freeMemSinglePlane(ExynosBuffer *buf, int index);
-    bool            allocMem(ion_client ionClient, ExynosBuffer *buf, int cacheIndex = 0xff);
-    void            freeMem(ExynosBuffer *buf);
-    bool            allocMemSinglePlaneCache(ion_client ionClient, ExynosBuffer *buf, int index, bool flagCache = true);
-    bool            allocMemCache(ion_client ionClient, ExynosBuffer *buf, int cacheIndex = 0xff);
-    ion_client      getIonClient(void);
-    int             setFPSParam(int fps);
-    bool            setSensorStreamOff(enum CAMERA_SENSOR sensor_enum);
-    bool            setSensorStreamOn(enum CAMERA_SENSOR sensor_enum, int width, int height, bool isSetFps);
+public:
 #ifdef SCALABLE_SENSOR
     bool            setScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeMode);
     bool            getScalableSensorStart(void);
@@ -1352,18 +1238,22 @@ public:
     ExynosCameraActivitySpecialCapture *getSpecialCaptureMgr(void);
     bool            fileDump(char *filename, char *srcBuf, unsigned int size);
 
+#ifdef USE_CAMERA_ESD_RESET
+    bool		  stateESDReset(void);
+    int 		getPlaneSizePackedFLiteOutput(int width, int heiht);
+#endif
+
 private:
     bool            m_flagCreate;
-    bool            m_flagOpen[SENSOR_MAX_NUM];
 
-    int             m_cameraId;
-    int             m_camera_default;
-    int             m_camera_mode;
+    int             m_cameraId;    /* set by service */
+    int             m_cameraMode;  /* set by hal */
 
     int             m_needCallbackCSC;
 
-    ExynosCameraInfo  *m_defaultCameraInfo[SENSOR_MAX_NUM];
-    ExynosCameraInfo  *m_curCameraInfo[SENSOR_MAX_NUM];
+    ExynosCameraInfo  *m_defaultCameraInfo[CAMERA_MODE_MAX];
+    ExynosCameraInfo  *m_curCameraInfo[CAMERA_MODE_MAX];
+    bool            m_flagOpen[CAMERA_MODE_MAX];
 
     int             m_jpegQuality;
     int             m_jpegThumbnailQuality;
@@ -1372,13 +1262,22 @@ private:
     bool            m_recordingHint;
     bool            m_isHWVDis;
 
-    bool            m_tryPreviewStop;
-    bool            m_tryVideoStop;
-    bool            m_tryPictureStop;
+    bool            m_isFirtstSensorStart;
+    bool            m_isFirtstIs3a1SrcStart;
+    bool            m_isFirtstIs3a1DstStart;
+    bool            m_isFirtstIs3a0SrcStart;
+    bool            m_isFirtstIs3a0DstStart;
+    bool            m_isFirtstIspStart;
 
-    bool            m_tryPreviewStopLpzsl;
-    bool            m_tryVideoStopLpzsl;
-    bool            m_tryPictureStopLpzsl;
+    bool            m_isFirtstIspStartReprocessing;
+    bool            m_isFirtstSensorStartReprocessing;
+
+    bool            m_isFirtstIs3a1StreamOn;
+    bool            m_isFirtstIs3a0StreamOn;
+    bool            m_isIs3a1ParamChanged;
+    bool            m_isIs3a0ParamChanged;
+
+    int             m_cameraModeIs3a0;
 
     char            m_cameraName[32];
 #ifdef USE_VDIS
@@ -1412,17 +1311,17 @@ private:
 
     struct ExynosBuffer m_videoBuf[VIDEO_MAX_FRAME];
 
-    int beforeBufOut;
-    int beforeBufCap;
-    int g3a1FrameCount;
+    int              m_is3a1SrcLastBufIndex;
+    int              m_is3a1DstLastBufIndex;
+    int              m_is3a1FrameCount;
 
     exif_attribute_t mExifInfo;
     char             m_imageUniqueIdBuf[UNIQUE_ID_BUF_SIZE];
 
     ion_client       m_ionCameraClient;
-    camera_hw_info_t m_camera_info[SENSOR_MAX_NUM];
+    camera_hw_info_t m_camera_info[CAMERA_MODE_MAX];
     mutable Mutex    m_sensorLock;
-    mutable Mutex    m_sensorLockLpzsl;
+    mutable Mutex    m_sensorLockReprocessing;
 
     bool             m_internalISP;
 #ifdef FD_ROTATION
@@ -1433,20 +1332,7 @@ private:
     bool             m_touchAFMode;
     bool             m_touchAFModeForFlash;
     int              m_oldMeteringMode;
-    bool             m_isFirtstIspStart;
-    bool             m_isFirtstIs3a1OutputStart;
-    bool             m_isFirtstIs3a1CaptureStart;
-    bool             m_isFirtstIs3a0OutputStart;
-    bool             m_isFirtstIs3a0CaptureStart;
-    bool             m_isFirtstSensorStart;
-    bool             m_isFirtstIspStartLpzsl;
-    bool             m_isFirtstSensorStartLpzsl;
 
-    bool             m_isFirtstIs3a1StreamOn;
-    bool             m_isFirtstIs3a0StreamOn;
-    bool             m_isIs3a1ParamChanged;
-    bool             m_isIs3a0ParamChanged;
-    enum CAMERA_SENSOR activatedIs3a0;
 #ifdef USE_CAMERA_ESD_RESET
     bool m_stateESDReset;
 #endif
@@ -1462,38 +1348,82 @@ private:
 
     bool             m_previewInternalMemAlloc;
 
-    ExynosBuffer     previewMetaBuffer[VIDEO_MAX_FRAME];
-    int              pictureMetaBuffer[VIDEO_MAX_FRAME];
+    ExynosBuffer     m_previewMetaBuffer[VIDEO_MAX_FRAME];
 
     mutable Mutex    m_dvfsLock;
     bool             m_isDVFSLocked;
 
-    struct camera2_udm m_udm;
-    struct camera2_udm *m_udmArr[NUM_BAYER_BUFFERS];
 #if CAPTURE_BUF_GET
     #define MAX_CAPTURE_BAYER_COUNT 0
     #define MIN_CAPTURE_BAYER_COUNT 2
-    int recent_get_sensor_buf_index;
+    int              m_recentCaptureBayerBufIndex;
 
-    Mutex m_bayerMutex;
-    List<int> m_captureBayerQ;
-    bool notInsertBayer;
-    int minCaptureBayerBuf;
-    int captureBayerBufCount;
-    int captureBayerIndex[NUM_BAYER_BUFFERS];
-    bool captureBayerLock[NUM_BAYER_BUFFERS];
-    bool waitCAptureBayer;
-
-    int debugCount;
+    Mutex            m_bayerMutex;
+    List<int>        m_captureBayerQ;
+    bool             m_notInsertBayer;
+    int              m_minCaptureBayerBuf;
+    int              m_captureBayerIndex[NUM_BAYER_BUFFERS];
+    bool             m_captureBayerLock[NUM_BAYER_BUFFERS];
+    bool             m_waitCaptureBayer;
 #endif
+
     ExynosCameraActivityFlash *m_flashMgr;
     ExynosCameraActivityAutofocus *m_autofocusMgr;
     ExynosCameraActivitySpecialCapture *m_sCaptureMgr;
     //metadata buffer
-    ExynosBuffer metaBuffer[VIDEO_MAX_FRAME];
+    ExynosBuffer     m_metaBuf[VIDEO_MAX_FRAME];
+
+#ifdef THREAD_PROFILE
+    struct timeval   mTimeStart;
+    struct timeval   mTimeStop;
+    unsigned long    timeUs;
+#endif
+
+#ifdef FRONT_NO_ZSL
+    int m_frontCaptureStatus;
+#endif
+
+#ifdef FORCE_LEADER_OFF
+    int m_forceIspOff;
+#endif
 
 private:
-    bool            m_setSetfile(int cameraSensorId);
+    bool            m_openInternalISP(int cameraMode);
+    bool            m_openExternalISP(int cameraMode);
+
+    bool            m_initSensor(int cameraMode);
+
+    bool            m_openSensor(int cameraMode);
+    bool            m_closeSensor(int cameraMode);
+
+    bool            m_openIs3a0(int cameraMode);
+    bool            m_closeIs3a0(int cameraMode);
+
+    bool            m_openIs3a1(int cameraMode);
+    bool            m_closeIs3a1(int cameraMode);
+
+    bool            m_openIsp(int cameraMode);
+    bool            m_closeIsp(int cameraMode);
+
+#ifdef USE_VDIS
+    bool            m_openVdisOut(void);
+    bool            m_closeVdisOut(void);
+#endif
+
+    bool            m_openPreview(int cameraMode);
+    bool            m_closePreview(int cameraMode);
+
+    bool            m_openPicture(int cameraMode);
+    bool            m_closePicture(int cameraMode);
+
+    bool            m_startIsp(void);
+    bool            m_stopIsp(void);
+    bool            m_startPreview(void);
+    bool            m_stopPreview(void);
+    bool            m_startPicture(void);
+    bool            m_stopPicture(void);
+
+    bool            m_setSetfile(int cameraMode);
     bool            m_setZoom(int zoom, int srcW, int srcH, int dstW, int dstH, void *ptr);
     void            m_setExifFixedAttribute(void);
     void            m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosRect *rect);
@@ -1507,37 +1437,51 @@ private:
     void            m_printSensorQ(void);
     void            m_releaseSensorQ(void);
     int             m_getSensorId(int cameraId);
-    int             m_getSensorIdLpzsl(int cameraId);
     void            m_turnOffEffectByFps(camera2_shot_ext *shot_ext, int fps);
     ExynosRect2     m_AndroidArea2HWArea(ExynosRect2 *rect2);
     ExynosRect2     m_AndroidArea2HWArea(ExynosRect2 *rect2, int w, int h);
-    bool            m_startFaceDetection(enum CAMERA_SENSOR sensor_enum, bool toggle);
+    bool            m_startFaceDetection(enum CAMERA_MODE cameraMode, bool toggle);
     bool            m_getImageUniqueId(void);
 #if CAPTURE_BUF_GET
-    void m_setBayerQ(int index);
-    int m_checkLastBayerQ(void);
-    int m_getBayerQ(void);
-    void m_printBayerQ(void);
-    void m_releaseBayerQ(void);
+    void            m_setBayerQ(int index);
+    int             m_checkLastBayerQ(void);
+    int             m_getBayerQ(void);
+    void            m_printBayerQ(void);
+    void            m_releaseBayerQ(void);
 #endif
 
     /* For v4l2_ioctls interfaces */
+    int             cam_int_s_input(node_info_t *node, int index);
+    int             cam_int_s_fmt(node_info_t *node);
+    int             cam_int_querybuf(node_info_t *node);
+    int             cam_int_reqbufs(node_info_t *node);
+    int             cam_int_clrbufs(node_info_t *node);
+    int             cam_int_streamon(node_info_t *node);
+    int             cam_int_streamoff(node_info_t *node);
+    int             cam_int_qbuf(node_info_t *node, int index);
+    int             cam_int_qbuf(node_info_t *node, int index, node_info_t *srcNode);
+    int             cam_int_qbuf(node_info_t *node, int index, node_info_t *srcNode, ExynosBuffer mataBuf);
+    int             cam_int_dqbuf(node_info_t *node);
 #ifdef USE_CAMERA_ESD_RESET
-    int polling(int node_fd);
+    int             cam_int_polling(node_info_t *node);
 #endif
-    int get_pixel_depth(uint32_t fmt);
-    int cam_int_s_fmt(node_info_t *node);
-    int cam_int_reqbufs(node_info_t *node);
-    int cam_int_qbuf(node_info_t *node, int index);
-    int cam_int_m2m_qbuf(node_info_t *srcNode, int srcIndex, node_info_t *ctlNode, int ctlIndex);
-    int cam_int_m2m_qbuf_for_3a0(node_info_t *srcNode, int srcIndex, node_info_t *ctlNode, int ctlIndex, ExynosBuffer tempMeta);
-    int cam_int_m2m_qbuf_for_3a1(node_info_t *srcNode, int srcIndex, node_info_t *ctlNode, int ctlIndex, ExynosBuffer tempMeta);
-    int cam_int_streamon(node_info_t *node);
-    int cam_int_streamoff(node_info_t *node);
-    int cam_int_dqbuf(node_info_t *node);
-    int cam_int_s_input(node_info_t *node, int index);
-    int cam_int_querybuf(node_info_t *stream);
-    int cam_int_clrbufs(node_info_t *node);
+    int             cam_int_get_pixel_depth(node_info_t *node);
+    bool            cam_int_m_flagQ(node_info_t *node, int index);
+    void            cam_int_m_setQ(node_info_t *node, int index, bool toggle);
+
+private:
+    bool            allocMemSinglePlane(ion_client ionClient, ExynosBuffer *buf, int index, bool flagCache = true);
+    bool            allocMemSinglePlaneReserved(ion_client ionClient, ExynosBuffer *buf, int index, bool flagCache = true,  unsigned int heap_mask = 0, unsigned int flags = 0);
+    void            freeMemSinglePlane(ExynosBuffer *buf, int index);
+    bool            allocMem(ion_client ionClient, ExynosBuffer *buf, int cacheIndex = 0xff);
+    bool            allocMemReserved(ion_client ionClient, ExynosBuffer *buf, int cacheIndex = 0xff,  unsigned int heap_mask = 0, unsigned int flags = 0);
+    void            freeMem(ExynosBuffer *buf);
+    bool            allocMemSinglePlaneCache(ion_client ionClient, ExynosBuffer *buf, int index, bool flagCache = true);
+    bool            allocMemCache(ion_client ionClient, ExynosBuffer *buf, int cacheIndex = 0xff);
+    ion_client      getIonClient(void);
+    int             setFPSParam(int fps);
+
+    bool            setSensorStreamOn(enum CAMERA_MODE cameraMode, int width, int height, bool isSetFps);
 
 ///////////////////////////////////////////////////
 // Additional API.
@@ -1681,24 +1625,11 @@ public:
 
     bool            setAutoFocusMacroPosition(int autoFocusMacroPosition);
 
-    ExynosBuffer *searchSensorBuffer(unsigned int fcount);
-    ExynosBuffer *searchSensorBufferOnHal(unsigned int fcount);
+    ExynosBuffer   *searchSensorBuffer(unsigned int fcount);
+    ExynosBuffer   *searchSensorBufferOnHal(unsigned int fcount);
+
 #ifdef FRONT_NO_ZSL
-    void             setFrontCaptureCmd(int captureCmd);
-#endif
-#ifdef MULTI_INSTANCE_CHECK
-    int multi_instance;
-#endif
-#ifdef THREAD_PROFILE
-    struct timeval mTimeStart;
-    struct timeval mTimeStop;
-    unsigned long timeUs;
-#endif
-#ifdef FRONT_NO_ZSL
-    int m_frontCaptureStatus;
-#endif
-#ifdef FORCE_LEADER_OFF
-    int m_forceIspOff;
+    void            setFrontCaptureCmd(int captureCmd);
 #endif
 };
 

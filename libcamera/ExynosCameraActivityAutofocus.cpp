@@ -22,7 +22,13 @@
 
 namespace android {
 
-#define WAIT_COUNT_FAIL_STATE (7)
+#define WAIT_COUNT_FAIL_STATE                (7)
+#define AUTOFOCUS_WAIT_COUNT_STEP_REQUEST    (3)
+
+#define AUTOFOCUS_WAIT_COUNT_FRAME_COUNT_NUM (3)       /* n + x frame count */
+#define AUTOFOCUS_WATING_TIME_LOCK_AF        (10000)   /* 10msec */
+#define AUTOFOCUS_TOTAL_WATING_TIME_LOCK_AF  (300000)  /* 300msec */
+#define AUTOFOCUS_SKIP_FRAME_LOCK_AF         (6)       /* == NUM_BAYER_BUFFERS */
 
 ExynosCameraActivityAutofocus::ExynosCameraActivityAutofocus()
 {
@@ -33,13 +39,17 @@ ExynosCameraActivityAutofocus::ExynosCameraActivityAutofocus()
     /* m_autoFocusMode = AUTOFOCUS_MODE_BASE; */
     m_autoFocusMode = AUTOFOCUS_MODE_INFINITY;
     m_interenalAutoFocusMode = AUTOFOCUS_MODE_BASE;
+
     m_focusWeight = 0;
     /* first AF operation is trigger infinity mode */
     /* m_autofocusStep = AUTOFOCUS_STEP_STOP; */
     m_autofocusStep = AUTOFOCUS_STEP_REQUEST;
     m_aaAfState = ::AA_AFSTATE_INACTIVE;
     m_afState = AUTOFOCUS_STATE_NONE;
+    m_aaAFMode = ::AA_AFMODE_OFF;
     m_waitCountFailState = 0;
+    m_stepRequestCount = 0;
+    m_frameCount = 0;
 
     m_recordingHint = false;
     m_flagFaceDetection = false;
@@ -99,7 +109,25 @@ int ExynosCameraActivityAutofocus::t_func3ABefore(void *args)
     case AUTOFOCUS_STEP_REQUEST:
         shot_ext->shot.ctl.aa.afMode = ::AA_AFMODE_OFF;
         shot_ext->shot.ctl.aa.afTrigger = 0;
-        m_autofocusStep = AUTOFOCUS_STEP_START;
+
+        /*
+         * assure triggering is valid
+         * case 0 : adjusted m_aaAFMode is AA_AFMODE_OFF
+         * case 1 : AUTOFOCUS_STEP_REQUESTs more than 3 times.
+         */
+        if (m_aaAFMode == ::AA_AFMODE_OFF ||
+            AUTOFOCUS_WAIT_COUNT_STEP_REQUEST < m_stepRequestCount) {
+
+            if (AUTOFOCUS_WAIT_COUNT_STEP_REQUEST < m_stepRequestCount)
+                ALOGD("[%s] (%d) m_stepRequestCount(%d), force AUTOFOCUS_STEP_START", __func__, __LINE__, m_stepRequestCount);
+
+            m_stepRequestCount = 0;
+
+            m_autofocusStep = AUTOFOCUS_STEP_START;
+        } else {
+            m_stepRequestCount++;
+        }
+
         break;
     case AUTOFOCUS_STEP_START:
         aaAFMode = m_AUTOFOCUS_MODE2AA_AFMODE(m_autoFocusMode);
@@ -217,7 +245,12 @@ int ExynosCameraActivityAutofocus::t_func3AAfter(void *args)
 
     camera2_shot_ext *shot_ext;
     shot_ext = (struct camera2_shot_ext *)(buf->virt.extP[1]);
+
     m_aaAfState = shot_ext->shot.dm.aa.afState;
+
+    m_aaAFMode  = shot_ext->shot.ctl.aa.afMode;
+
+    m_frameCount = shot_ext->shot.dm.request.frameCount;
 
     return true;
 }
@@ -267,7 +300,6 @@ bool ExynosCameraActivityAutofocus::setAutofocusMode(int autoFocusMode)
     case AUTOFOCUS_MODE_CONTINUOUS_PICTURE_MACRO:
     case AUTOFOCUS_MODE_TOUCH:
         m_autoFocusMode = autoFocusMode;
-        ALOGD("[%s] (%d) autoFocusMode %d", __func__, __LINE__, autoFocusMode);
         break;
     default:
         ALOGE("ERR(%s):invalid focus mode(%d) fail", __func__, autoFocusMode);
@@ -331,6 +363,60 @@ bool ExynosCameraActivityAutofocus::lockAutofocus()
     /* HACK : it may some f/w api rather than stop */
     this->stopAutofocus();
 
+    if (m_aaAfState == AA_AFSTATE_INACTIVE ||
+        m_aaAfState == AA_AFSTATE_PASSIVE_SCAN ||
+        m_aaAfState == AA_AFSTATE_ACTIVE_SCAN) {
+        /*
+         * hold, until + 3 Frame
+         * n (lockFrameCount) : n - 1's state
+         * n + 1              : adjust on f/w
+         * n + 2              : adjust on sensor
+         * n + 3              : result
+         */
+        int lockFrameCount = m_frameCount;
+        unsigned int i = 0;
+        bool flagScanningDetected = false;
+        int  scanningDetectedFrameCount = 0;
+
+        for (i = 0; i < AUTOFOCUS_TOTAL_WATING_TIME_LOCK_AF; i++) {
+            if (lockFrameCount + AUTOFOCUS_WAIT_COUNT_FRAME_COUNT_NUM <= m_frameCount) {
+                ALOGD("DEBUG(%s):find lockFrameCount(%d) + %d, m_frameCount(%d), m_aaAfState(%d)",
+                    __func__, lockFrameCount, AUTOFOCUS_WAIT_COUNT_FRAME_COUNT_NUM, m_frameCount, m_aaAfState);
+                break;
+            }
+
+            if (flagScanningDetected == false) {
+                if (m_aaAfState == AA_AFSTATE_PASSIVE_SCAN ||
+                    m_aaAfState == AA_AFSTATE_ACTIVE_SCAN) {
+                    flagScanningDetected = true;
+                    scanningDetectedFrameCount = m_frameCount;
+                }
+            }
+
+            usleep(AUTOFOCUS_WATING_TIME_LOCK_AF);
+        }
+
+        if (AUTOFOCUS_TOTAL_WATING_TIME_LOCK_AF <= i) {
+            ALOGW("WARN(%s):AF lock time out (%d)msec", __func__, i / 1000);
+        } else {
+            /* skip bayer frame when scanning detected */
+            if (flagScanningDetected == true) {
+                for (i = 0; AUTOFOCUS_TOTAL_WATING_TIME_LOCK_AF; i++) {
+                    if (scanningDetectedFrameCount + AUTOFOCUS_SKIP_FRAME_LOCK_AF <= m_frameCount) {
+                        ALOGD("DEBUG(%s):kcoolsw find scanningDetectedFrameCount(%d) + %d, m_frameCount(%d), m_aaAfState(%d)",
+                            __func__, scanningDetectedFrameCount, AUTOFOCUS_SKIP_FRAME_LOCK_AF, m_frameCount, m_aaAfState);
+                        break;
+                    }
+
+                    usleep(AUTOFOCUS_WATING_TIME_LOCK_AF);
+                }
+
+                if (AUTOFOCUS_TOTAL_WATING_TIME_LOCK_AF <= i)
+                    ALOGW("WARN(%s):kcoolsw scanningDectected skip time out (%d)msec", __func__, i / 1000);
+            }
+        }
+    }
+
     m_flagAutofocusLock = true;
 
     return true;
@@ -360,6 +446,7 @@ bool ExynosCameraActivityAutofocus::getAutofocusResult(void)
     bool af_over = false;
     bool flagCheckStep = false;
     int  currentState = AUTOFOCUS_STATE_NONE;
+    bool flagScanningStarted = false;
 
     unsigned int i = 0;
 
@@ -404,8 +491,17 @@ bool ExynosCameraActivityAutofocus::getAutofocusResult(void)
         if (flagCheckStep == true) {
             switch (currentState) {
             case AUTOFOCUS_STATE_NONE:
+                if (flagScanningStarted == true)
+                    ALOGW("WARN(%s):AF restart is detected(%d)", __func__, i / 1000);
+
+                if (m_interenalAutoFocusMode == AUTOFOCUS_MODE_CONTINUOUS_PICTURE) {
+                    ALOGD("DEBUG(%s):AF force-success on AUTOFOCUS_MODE_CONTINUOUS_PICTURE (%d)", __func__, i / 1000);
+                    af_over = true;
+                    ret = true;
+                }
                 break;
             case AUTOFOCUS_STATE_SCANNING:
+                flagScanningStarted = true;
                 break;
             case AUTOFOCUS_STATE_SUCCEESS:
                 af_over = true;
@@ -486,6 +582,7 @@ bool ExynosCameraActivityAutofocus::setFaceDetection(bool toggle)
     m_flagFaceDetection = toggle;
     return true;
 }
+
 
 bool ExynosCameraActivityAutofocus::setMacroPosition(int macroPosition)
 {

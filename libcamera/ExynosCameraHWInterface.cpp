@@ -42,50 +42,6 @@
 
 #include "exynos_format.h"
 
-#include "SecCameraHardware.h"  //mhjang add
-
-/*
-#define CHECK_PREVIEW_TIME 0
-
-#if ((CHECK_PREVIEW_TIME))
-struct timeval oldtime, curtime;
-#endif
-
-#define VIDEO_COMMENT_MARKER_H          (0xFFBE)
-#define VIDEO_COMMENT_MARKER_L          (0xFFBF)
-#define VIDEO_COMMENT_MARKER_LENGTH     (4)
-#define JPEG_EOI_MARKER                 (0xFFD9)
-#define HIBYTE(x) (((x) >> 8) & 0xFF)
-#define LOBYTE(x) ((x) & 0xFF)
-
-//TODO: This values will be changed
-#define BACK_CAMERA_AUTO_FOCUS_DISTANCES_STR       "0.10,1.20,Infinity"
-#define FRONT_CAMERA_FOCUS_DISTANCES_STR           "0.20,0.25,Infinity"
-
-#define BACK_CAMERA_MACRO_FOCUS_DISTANCES_STR      "0.10,0.20,Infinity"
-#define BACK_CAMERA_INFINITY_FOCUS_DISTANCES_STR   "0.10,1.20,Infinity"
-
-#define BACK_CAMERA_FOCUS_DISTANCE_INFINITY        "Infinity"
-#define FRONT_CAMERA_FOCUS_DISTANCE_INFINITY       "Infinity"
-
-#define PREVIEW_GSC_NODE_NUM (1)
-#define PICTURE_GSC_NODE_NUM (2)
-*/
-// This hack does two things:
-// -- it sets preview to NV21 (YUV420SP)
-// -- it sets gralloc to YV12
-//
-// The reason being: the samsung encoder understands only yuv420sp, and gralloc
-// does yv12 and rgb565.  So what we do is we break up the interleaved UV in
-// separate V and U planes, which makes preview look good, and enabled the
-// encoder as well.
-//
-// FIXME: Samsung needs to enable support for proper yv12 coming out of the
-//        camera, and to fix their video encoder to work with yv12.
-// FIXME: It also seems like either Samsung's YUV420SP (NV21) or img's YV12 has
-//        the color planes switched.  We need to figure which side is doing it
-//        wrong and have the respective party fix it.
-
 #define MAX_NUM_OF_CAMERA 2
 
 namespace android {
@@ -93,20 +49,20 @@ namespace android {
 static CameraInfo sCameraInfo[] = {
     {
         CAMERA_FACING_BACK,
-        BACK_ROTATION  /* orientation */
+        BACK_ROTATION,  /* orientation */
     },
     {
         CAMERA_FACING_FRONT,
-        FRONT_ROTATION  /* orientation */
+        FRONT_ROTATION,  /* orientation */
     }
 };
 
 /** Close this device */
 
 static camera_device_t *g_cam_device[MAX_NUM_OF_CAMERA];
-static Mutex g_cam_openLock[MAX_NUM_OF_CAMERA];
-static Mutex g_cam_previewLock[MAX_NUM_OF_CAMERA];
-static Mutex g_cam_recordingLock[MAX_NUM_OF_CAMERA];
+static Mutex            g_cam_openLock[MAX_NUM_OF_CAMERA];
+static Mutex            g_cam_previewLock[MAX_NUM_OF_CAMERA];
+static Mutex            g_cam_recordingLock[MAX_NUM_OF_CAMERA];
 
 enum CAMERA_STATE {
     CAMERA_NONE,
@@ -130,7 +86,7 @@ static char *camera_state_enum2str[40] = {
     "RECORDING_STOPPED"
 };
 
-static Mutex cam_stateLock[3];
+static Mutex        cam_stateLock[3];
 static CAMERA_STATE cam_state[3];
 
 static inline ExynosCameraHWImpl *obj(struct camera_device *dev)
@@ -138,63 +94,58 @@ static inline ExynosCameraHWImpl *obj(struct camera_device *dev)
     return reinterpret_cast<ExynosCameraHWImpl *>(dev->priv);
 }
 
-#if 1//mhjang
-static inline SecCameraHardware *obj_ext(struct camera_device *dev)
-{
-    return reinterpret_cast<SecCameraHardware *>(dev->priv);
-}
-#endif
-
 static int check_camera_state(CAMERA_STATE state, int cameraId)
 {
     bool ret = false;
     cam_stateLock[cameraId].lock();
 
     ALOGD("DEBUG(%s):camera(%d) state(%d) checking...", __func__, cameraId, state);
+
     switch (state) {
     case CAMERA_NONE:
         ret = true;
         break;
     case CAMERA_OPENED:
-        if (cam_state[cameraId] == CAMERA_NONE
-            || cam_state[cameraId] == CAMERA_CLOSED)
+        if (cam_state[cameraId] == CAMERA_NONE ||
+            cam_state[cameraId] == CAMERA_CLOSED)
             ret = true;
         break;
     case CAMERA_RELEASED:
-        if (cam_state[cameraId] == state
-            || cam_state[cameraId] == CAMERA_OPENED
-            || cam_state[cameraId] == CAMERA_PREVIEWSTOPPED)
+        if (cam_state[cameraId] == state ||
+            cam_state[cameraId] == CAMERA_OPENED ||
+            cam_state[cameraId] == CAMERA_PREVIEWSTOPPED)
             ret = true;
         break;
     case CAMERA_CLOSED:
-        if (cam_state[cameraId] == state
-            || cam_state[cameraId] == CAMERA_OPENED
-            || cam_state[cameraId] == CAMERA_PREVIEWSTOPPED
-            || cam_state[cameraId] == CAMERA_RELEASED)
+        if (cam_state[cameraId] == state ||
+            cam_state[cameraId] == CAMERA_OPENED ||
+            cam_state[cameraId] == CAMERA_PREVIEWSTOPPED ||
+            cam_state[cameraId] == CAMERA_RELEASED)
             ret = true;
         break;
     case CAMERA_PREVIEW:
-        if (cam_state[cameraId] == CAMERA_OPENED
-            || cam_state[cameraId] == CAMERA_PREVIEWSTOPPED)
+        if (cam_state[cameraId] == CAMERA_OPENED ||
+            cam_state[cameraId] == CAMERA_PREVIEWSTOPPED)
             ret = true;
         break;
     case CAMERA_PREVIEWSTOPPED:
-        if (cam_state[cameraId] == state
-            || cam_state[cameraId] == CAMERA_OPENED
-            || cam_state[cameraId] == CAMERA_PREVIEW
-            || cam_state[cameraId] == CAMERA_RECORDINGSTOPPED)
+        if (cam_state[cameraId] == state ||
+            cam_state[cameraId] == CAMERA_OPENED ||
+            cam_state[cameraId] == CAMERA_PREVIEW ||
+            cam_state[cameraId] == CAMERA_RECORDINGSTOPPED)
             ret = true;
+
         if (cam_state[cameraId] == CAMERA_OPENED)
             usleep(100*1000); /* for Preview Thread running */
         break;
     case CAMERA_RECORDING:
-        if (cam_state[cameraId] == CAMERA_PREVIEW
-            || cam_state[cameraId] == CAMERA_RECORDINGSTOPPED)
+        if (cam_state[cameraId] == CAMERA_PREVIEW ||
+            cam_state[cameraId] == CAMERA_RECORDINGSTOPPED)
             ret = true;
         break;
     case CAMERA_RECORDINGSTOPPED:
-        if (cam_state[cameraId] == state
-            || cam_state[cameraId] == CAMERA_RECORDING)
+        if (cam_state[cameraId] == state ||
+            cam_state[cameraId] == CAMERA_RECORDING)
             ret = true;
         break;
     default:
@@ -204,16 +155,17 @@ static int check_camera_state(CAMERA_STATE state, int cameraId)
         break;
     }
 
-    if (ret == true)
+    if (ret == true) {
         ALOGD("DEBUG(%s):camera(%d) state(%d:%s->%d:%s) is valid",
                 __func__, cameraId,
                 cam_state[cameraId], camera_state_enum2str[cam_state[cameraId]],
                 state, camera_state_enum2str[state]);
-    else
+    } else {
         ALOGE("ERR(%s):camera(%d) state(%d:%s->%d:%s) is INVALID",
                 __func__, cameraId,
                 cam_state[cameraId], camera_state_enum2str[cam_state[cameraId]],
                 state, camera_state_enum2str[state]);
+    }
 
     cam_stateLock[cameraId].unlock();
     return ret;
@@ -221,38 +173,18 @@ static int check_camera_state(CAMERA_STATE state, int cameraId)
 
 static int HAL_camera_device_close(struct hw_device_t* device)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     int cameraId;
     enum CAMERA_STATE state;
 
-#if 0//mhjang 
-if(cameraId == 0) //rear camera(4ec)
-{
-	///if (!g_cam_device)//mhjang del
-        ///ALOGI("camera device already closed");
+    ALOGI("[INFO] (%s:%d): in", __func__, __LINE__);
 
     if (device) {
         camera_device_t *cam_device = (camera_device_t *)device;
-        ALOGI("camera device closed %d", obj_ext(cam_device)->getCameraId());
-        delete static_cast<SecCameraHardware *>(cam_device->priv);
-        free(cam_device);
-        ///g_cam_device = 0;//mhjang
-        g_cam_device[cameraId] = NULL;        
-    }
-}
-else
-#endif	
-{
-	camera_device_t *cam_device = (camera_device_t *)device;
-	cameraId = obj(cam_device)->getCameraId();
-	ALOGI("[INFO] (%s:%d): in", __func__, __LINE__);
-    if (g_cam_device[cameraId]) {
+        cameraId = obj(cam_device)->getCameraId();
+
         ALOGI("[INFO] (%s:%d):camera(%d)", __func__, __LINE__, cameraId);
-        
-		g_cam_openLock[cameraId].lock();
-        ALOGI("[INFO] (%s:%d):camera(%d) locked..", __func__, __LINE__, cameraId);
-        g_cam_device[cameraId] = NULL;
-        g_cam_openLock[cameraId].unlock();
-        ALOGI("[INFO] (%s:%d):camera(%d) unlocked..", __func__, __LINE__, cameraId);
 
         state = CAMERA_CLOSED;
         if (check_camera_state(state, cameraId) == false) {
@@ -260,10 +192,13 @@ else
             return -1;
         }
 
-		if (cameraId == 0)
-	        delete static_cast<SecCameraHardware *>(cam_device->priv);
-		else
-			delete static_cast<ExynosCameraHWImpl *>(cam_device->priv);
+        g_cam_openLock[cameraId].lock();
+        ALOGI("[INFO] (%s:%d):camera(%d) locked..", __func__, __LINE__, cameraId);
+        g_cam_device[cameraId] = NULL;
+        g_cam_openLock[cameraId].unlock();
+        ALOGI("[INFO] (%s:%d):camera(%d) unlocked..", __func__, __LINE__, cameraId);
+
+        delete static_cast<ExynosCameraHWImpl *>(cam_device->priv);
         free(cam_device);
 
         cam_stateLock[cameraId].lock();
@@ -273,8 +208,6 @@ else
     }
 
     ALOGI("[INFO] (%s:%d): out", __func__, __LINE__);
-}
-
     return 0;
 }
 
@@ -282,22 +215,15 @@ else
 static int HAL_camera_device_set_preview_window(struct camera_device *dev,
                                                 struct preview_stream_ops *buf)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     static int ret;
     int cameraId = obj(dev)->getCameraId();
 
-    if(cameraId == 0) //rear camera(4ec)
-    {
-    	HALDBG("%s", __FUNCTION__);
-    	return obj_ext(dev)->setPreviewWindow(buf);
-    }
-    else
-    {
-    	ALOGI("[INFO] (%s:%d):camera(%d) in", __func__, __LINE__, cameraId);
-   	 ret = obj(dev)->setPreviewWindowLocked(buf);
-    	ALOGI("[INFO] (%s:%d):camera(%d) out", __func__, __LINE__, cameraId);
-    	return ret;
-    }
-
+    ALOGI("[INFO] (%s:%d):camera(%d) in", __func__, __LINE__, cameraId);
+    ret = obj(dev)->setPreviewWindowLocked(buf);
+    ALOGI("[INFO] (%s:%d):camera(%d) out", __func__, __LINE__, cameraId);
+    return ret;
 }
 
 /** Set the notification and data callbacks */
@@ -308,23 +234,12 @@ static void HAL_camera_device_set_callbacks(struct camera_device *dev,
         camera_request_memory get_memory,
         void* user)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-{
-	obj_ext(dev)->setCallbacks(notify_cb, data_cb, data_cb_timestamp,
-							  get_memory,
-							  user);
-}
-else
-{
     obj(dev)->setCallbacks(notify_cb, data_cb, data_cb_timestamp,
                            get_memory,
                            user);
-}
-
 }
 
 /**
@@ -337,16 +252,10 @@ else
  */
 static void HAL_camera_device_enable_msg_type(struct camera_device *dev, int32_t msg_type)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-	int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-	obj_ext(dev)->enableMsgType(msg_type);
-else
     obj(dev)->enableMsgType(msg_type);
-
-
 }
 
 /**
@@ -361,15 +270,10 @@ else
  */
 static void HAL_camera_device_disable_msg_type(struct camera_device *dev, int32_t msg_type)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-	int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-	obj_ext(dev)->disableMsgType(msg_type);
-else
     obj(dev)->disableMsgType(msg_type);
-
 }
 
 /**
@@ -379,16 +283,10 @@ else
  */
 static int HAL_camera_device_msg_type_enabled(struct camera_device *dev, int32_t msg_type)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-	int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-	return obj_ext(dev)->msgTypeEnabled(msg_type);
-else
     return obj(dev)->msgTypeEnabled(msg_type);
-
-
 }
 
 /**
@@ -396,28 +294,12 @@ else
  */
 static int HAL_camera_device_start_preview(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     static int ret;
     int cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
-if(cameraId == 0) //rear camera(4ec)
-{
-	HALDBG("%s", __FUNCTION__);
-	state = CAMERA_PREVIEW;
-    if (check_camera_state(state, cameraId) == false) {
-        ALOGE("ERR(%s):camera(%d) state(%d) is INVALID", __func__, cameraId, state);
-        return -1;
-    }
-
-    ret = obj_ext(dev)->startPreview();
-	if (ret == OK) {
-		cam_state[cameraId] = state;
-	}
-	return ret;
-
-}
-else
-{
     ALOGI("[INFO] (%s:%d):camera(%d) in", __func__, __LINE__, cameraId);
 
     state = CAMERA_PREVIEW;
@@ -446,33 +328,17 @@ else
     return ret;
 }
 
-	
-}
-
 /**
  * Stop a previously started preview.
  */
 static void HAL_camera_device_stop_recording(struct camera_device *dev);
 static void HAL_camera_device_stop_preview(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     int cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
-
-if(cameraId == 0) //rear camera(4ec)
-{
-	 HALDBG("%s", __FUNCTION__);
-	  state = CAMERA_PREVIEWSTOPPED;
-    if (check_camera_state(state, cameraId) == false) {
-        ALOGE("ERR(%s):camera(%d) state(%d) is INVALID", __func__, cameraId, state);
-        return;
-    }
-
-    obj_ext(dev)->stopPreview();
-	cam_state[cameraId] = state;
-}
-else
-{
     ALOGI("[INFO] (%s:%d):camera(%d) in", __func__, __LINE__, cameraId);
 /* HACK : If camera in recording state, */
 /*        CameraService have to call the stop_recording before the stop_preview */
@@ -516,22 +382,15 @@ else
     ALOGI("[INFO] (%s:%d):camera(%d) out", __func__, __LINE__, cameraId);
 }
 
-}
-
 /**
  * Returns true if preview is enabled.
  */
 static int HAL_camera_device_preview_enabled(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-	return obj_ext(dev)->previewEnabled();
-else
     return obj(dev)->previewEnabled();
-
 }
 
 /**
@@ -566,15 +425,10 @@ else
  */
 static int HAL_camera_device_store_meta_data_in_buffers(struct camera_device *dev, int enable)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-	int cameraId = obj(dev)->getCameraId();
-
-///if(cameraId == 0) //rear camera(4ec)
-///	return obj_ext(dev)->storeMetaDataInBuffers(enable);
-///else
     return obj(dev)->storeMetaDataInBuffers(enable);
-
 }
 
 /**
@@ -589,6 +443,8 @@ static int HAL_camera_device_store_meta_data_in_buffers(struct camera_device *de
  */
 static int HAL_camera_device_start_recording(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     static int ret;
     int cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
@@ -626,6 +482,8 @@ static int HAL_camera_device_start_recording(struct camera_device *dev)
  */
 static void HAL_camera_device_stop_recording(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     int cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
@@ -657,6 +515,8 @@ static void HAL_camera_device_stop_recording(struct camera_device *dev)
  */
 static int HAL_camera_device_recording_enabled(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
     return obj(dev)->recordingEnabled();
 }
@@ -673,6 +533,8 @@ static int HAL_camera_device_recording_enabled(struct camera_device *dev)
 static void HAL_camera_device_release_recording_frame(struct camera_device *dev,
                                 const void *opaque)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
     obj(dev)->releaseRecordingFrame(opaque);
 }
@@ -684,15 +546,10 @@ static void HAL_camera_device_release_recording_frame(struct camera_device *dev,
  */
 static int HAL_camera_device_auto_focus(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-	return obj_ext(dev)->autoFocus();
-else	
     return obj(dev)->autoFocus();
-
 }
 
 /**
@@ -703,15 +560,10 @@ else
  */
 static int HAL_camera_device_cancel_auto_focus(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-	int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-	return obj_ext(dev)->cancelAutoFocus();
-else
     return obj(dev)->cancelAutoFocus();
-
 }
 
 /**
@@ -719,15 +571,10 @@ else
  */
 static int HAL_camera_device_take_picture(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-	int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-	return obj_ext(dev)->takePicture();
-else
     return obj(dev)->takePicture();
-
 }
 
 /**
@@ -736,14 +583,10 @@ else
  */
 static int HAL_camera_device_cancel_picture(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-	int cameraId = obj(dev)->getCameraId();
-
-if(cameraId == 0) //rear camera(4ec)
-	return obj_ext(dev)->cancelPicture();
-else
     return obj(dev)->cancelPicture();
-
 }
 
 /**
@@ -753,43 +596,30 @@ else
 static int HAL_camera_device_set_parameters(struct camera_device *dev,
                                             const char *parms)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
     String8 str(parms);
     CameraParameters p(str);
-
-	int cameraId = obj(dev)->getCameraId(); //mhjang add
-
-if(cameraId == 0) //rear camera(4ec)
-{
-	return obj_ext(dev)->setParameters(p);
-
-}
-else
-{
     return obj(dev)->setParametersLocked(p);
-}
-	
 }
 
 /** Return the camera parameters. */
 char *HAL_camera_device_get_parameters(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
     String8 str;
-
-///int cameraId = obj(dev)->getCameraId(); //mhjang add
-
-///if(cameraId == 0)  //rear camera(4ec)
-///	CameraParameters parms = obj_ext(dev)->getParameters();
-///else
     CameraParameters parms = obj(dev)->getParameters();
-
     str = parms.flatten();
     return strdup(str.string());
 }
 
 static void HAL_camera_device_put_parameters(struct camera_device *dev, char *parms)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
     free(parms);
 }
@@ -800,13 +630,9 @@ static void HAL_camera_device_put_parameters(struct camera_device *dev, char *pa
 static int HAL_camera_device_send_command(struct camera_device *dev,
                     int32_t cmd, int32_t arg1, int32_t arg2)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-	int cameraId = obj(dev)->getCameraId(); //mhjang add
-
-if(cameraId == 0) //rear camera(4ec)
-	return obj_ext(dev)->sendCommand(cmd, arg1, arg2);
-else
     return obj(dev)->sendCommand(cmd, arg1, arg2);
 }
 
@@ -816,23 +642,11 @@ else
  */
 static void HAL_camera_device_release(struct camera_device *dev)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     int cameraId = obj(dev)->getCameraId();
     enum CAMERA_STATE state;
 
-
-if(cameraId == 0) //rear camera(4ec)
-{
-	HALDBG("%s", __FUNCTION__);
-	state = CAMERA_RELEASED;
-    if (check_camera_state(state, cameraId) == false) {
-        ALOGE("ERR(%s):camera(%d) state(%d) is INVALID", __func__, cameraId, state);
-        return;
-    }
-		obj_ext(dev)->release();
-		cam_state[cameraId] = state;
-}
-else
-{
     ALOGI("[INFO] (%s:%d):camera(%d) in", __func__, __LINE__, cameraId);
 
     state = CAMERA_RELEASED;
@@ -856,31 +670,29 @@ else
     ALOGI("[INFO] (%s:%d):camera(%d) out", __func__, __LINE__, cameraId);
 }
 
-}
-
 /**
  * Dump state of the camera hardware
  */
 static int HAL_camera_device_dump(struct camera_device *dev, int fd)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
-
-	int cameraId = obj(dev)->getCameraId(); //mhjang add
-
-if(cameraId == 0) //rear camera(4ec)
-	return obj_ext(dev)->dump(fd);
-else
     return obj(dev)->dump(fd);
 }
 
 static int HAL_getNumberOfCameras()
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
     return sizeof(sCameraInfo) / sizeof(sCameraInfo[0]);
 }
 
 static int HAL_getCameraInfo(int cameraId, struct camera_info *info)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     ALOGV("DEBUG(%s):", __func__);
     if (cameraId < 0 || cameraId >= HAL_getNumberOfCameras()) {
         ALOGE("ERR(%s):Invalid camera ID %d", __func__, cameraId);
@@ -928,6 +740,8 @@ static int HAL_camera_device_open(const struct hw_module_t* module,
                                   const char *id,
                                   struct hw_device_t** device)
 {
+    ExynosCameraAutoTimer autoTimer(__func__);
+
     int cameraId = atoi(id);
     enum CAMERA_STATE state;
 
@@ -938,7 +752,6 @@ static int HAL_camera_device_open(const struct hw_module_t* module,
     }
 
     state = CAMERA_OPENED;
-
     if (check_camera_state(state, cameraId) == false) {
         ALOGE("ERR(%s):camera(%d) state(%d) is INVALID", __func__, cameraId, state);
         return -1;
@@ -964,16 +777,7 @@ static int HAL_camera_device_open(const struct hw_module_t* module,
         g_cam_device[cameraId]->ops = &camera_device_ops;
 
         ALOGE("DEBUG(%s):open camera %s", __func__, id);
-	
-#if 1//mhjang	
-	if(cameraId == 0) //rear camera(4ec)
-        	g_cam_device[cameraId]->priv = new SecCameraHardware(cameraId, g_cam_device[cameraId]);
-	else
-		g_cam_device[cameraId]->priv = new ExynosCameraHWImpl(cameraId, g_cam_device[cameraId]);
-#else
-	g_cam_device[cameraId]->priv = new ExynosCameraHWImpl(cameraId, g_cam_device[cameraId]);
-#endif
-		
+        g_cam_device[cameraId]->priv = new ExynosCameraHWImpl(cameraId, g_cam_device[cameraId]);
         *device = (hw_device_t *)g_cam_device[cameraId];
         ALOGI("[INFO] (%s:%d):camera(%d) out from new g_cam_device[%d]->priv()", __func__, __LINE__, cameraId, cameraId);
 

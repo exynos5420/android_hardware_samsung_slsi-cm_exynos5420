@@ -143,20 +143,23 @@ private:
     bool m_flagAutofocusStart;
     bool m_flagAutofocusLock;
 
-    int  m_autoFocusMode;
-    int  m_interenalAutoFocusMode;
+    int  m_autoFocusMode;           /* set by user */
+    int  m_interenalAutoFocusMode;  /* set by this */
+
     ExynosRect2 m_focusArea;
     int  m_focusWeight;
 
     int  m_autofocusStep;
     int  m_aaAfState;
     int  m_afState;
+    int  m_aaAFMode;                /* set on h/w */
+    int  m_waitCountFailState;
+    int  m_stepRequestCount;
+    int  m_frameCount;
 
     bool m_recordingHint;
     bool m_flagFaceDetection;
     int  m_macroPosition;
-
-    int  m_waitCountFailState;
 
     int  m_AUTOFOCUS_MODE2AA_AFMODE(int autoFocusMode);
 };

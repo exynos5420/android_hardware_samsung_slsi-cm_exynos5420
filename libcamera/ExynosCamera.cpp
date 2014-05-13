@@ -190,6 +190,8 @@ ExynosCameraInfo::ExynosCameraInfo()
 #endif
     focalLengthIn35mmLength = 31;
     autoFocusMacroPosition = 0;
+    ispW = 0;
+    ispH = 0;
 }
 
 ExynosCameraInfoM5M0::ExynosCameraInfoM5M0()
@@ -565,384 +567,6 @@ ExynosCameraInfoS5K3H7::ExynosCameraInfoS5K3H7()
     gpsTimestamp = 0;
 }
 
-#ifdef USE_S5K3H7_CAMERA
-ExynosCameraInfoS5K3H7_SUNNY::ExynosCameraInfoS5K3H7_SUNNY()
-{
-    previewW = 1920;
-    previewH = 1080;
-    previewColorFormat = V4L2_PIX_FMT_NV21M;
-    previewBufPlane = 3;
-    videoW = 1920;
-    videoH = 1080;
-    ispW = 1920;
-    ispH = 1080;
-    videoColorFormat = V4L2_PIX_FMT_NV12M;
-    videoBufPlane = 3;
-    pictureW = 3200;
-    pictureH = 2400;
-    pictureColorFormat = V4L2_PIX_FMT_YUYV;
-    pictureBufPlane = 2;
-    thumbnailW = 512;
-    thumbnailH = 384;
-    antiBandingList =
-          ExynosCamera::ANTIBANDING_AUTO
-        | ExynosCamera::ANTIBANDING_50HZ
-        | ExynosCamera::ANTIBANDING_60HZ
-        | ExynosCamera::ANTIBANDING_OFF
-        ;
-    antiBanding = ExynosCamera::ANTIBANDING_AUTO;
-
-    effectList =
-          ExynosCamera::EFFECT_NONE
-        | ExynosCamera::EFFECT_MONO
-        | ExynosCamera::EFFECT_NEGATIVE
-        //| ExynosCamera::EFFECT_SOLARIZE
-        | ExynosCamera::EFFECT_SEPIA
-        //| ExynosCamera::EFFECT_POSTERIZE
-        //| ExynosCamera::EFFECT_WHITEBOARD
-        //| ExynosCamera::EFFECT_BLACKBOARD
-        //| ExynosCamera::EFFECT_AQUA
-        ;
-    effect = ExynosCamera::EFFECT_NONE;
-
-    flashModeList =
-          ExynosCamera::FLASH_MODE_OFF
-        | ExynosCamera::FLASH_MODE_AUTO
-        | ExynosCamera::FLASH_MODE_ON
-        //| ExynosCamera::FLASH_MODE_RED_EYE
-        | ExynosCamera::FLASH_MODE_TORCH;
-    flashMode = ExynosCamera::FLASH_MODE_OFF;
-
-    focusModeList =
-          ExynosCamera::FOCUS_MODE_AUTO
-        | ExynosCamera::FOCUS_MODE_INFINITY
-        | ExynosCamera::FOCUS_MODE_MACRO
-        //| ExynosCamera::FOCUS_MODE_FIXED
-        //| ExynosCamera::FOCUS_MODE_EDOF
-        | ExynosCamera::FOCUS_MODE_CONTINUOUS_VIDEO
-        | ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE
-        | ExynosCamera::FOCUS_MODE_TOUCH
-        ;
-    focusMode = ExynosCamera::FOCUS_MODE_AUTO;
-
-    sceneModeList =
-          ExynosCamera::SCENE_MODE_AUTO
-        //| ExynosCamera::SCENE_MODE_ACTION
-        | ExynosCamera::SCENE_MODE_PORTRAIT
-        | ExynosCamera::SCENE_MODE_LANDSCAPE
-        | ExynosCamera::SCENE_MODE_NIGHT
-        //| ExynosCamera::SCENE_MODE_NIGHT_PORTRAIT
-        //| ExynosCamera::SCENE_MODE_THEATRE
-        | ExynosCamera::SCENE_MODE_BEACH
-        | ExynosCamera::SCENE_MODE_SNOW
-        | ExynosCamera::SCENE_MODE_SUNSET
-        | ExynosCamera::SCENE_MODE_STEADYPHOTO
-        | ExynosCamera::SCENE_MODE_FIREWORKS
-        | ExynosCamera::SCENE_MODE_SPORTS
-        | ExynosCamera::SCENE_MODE_PARTY
-        | ExynosCamera::SCENE_MODE_CANDLELIGHT;
-    sceneMode = ExynosCamera::SCENE_MODE_AUTO;
-
-    whiteBalanceList =
-          ExynosCamera::WHITE_BALANCE_AUTO
-        | ExynosCamera::WHITE_BALANCE_INCANDESCENT
-        | ExynosCamera::WHITE_BALANCE_FLUORESCENT
-        //| ExynosCamera::WHITE_BALANCE_WARM_FLUORESCENT
-        | ExynosCamera::WHITE_BALANCE_DAYLIGHT
-        | ExynosCamera::WHITE_BALANCE_CLOUDY_DAYLIGHT
-        //| ExynosCamera::WHITE_BALANCE_TWILIGHT
-        //| ExynosCamera::WHITE_BALANCE_SHADE
-        ;
-    whiteBalance = ExynosCamera::WHITE_BALANCE_AUTO;
-
-    autoWhiteBalanceLockSupported = true;
-    autoWhiteBalanceLock = false;
-
-    rotation = 0;
-    minExposure = -4;
-    maxExposure = 4;
-    exposure = 0;
-
-    autoExposureLockSupported = true;
-    autoExposureLock = false;
-
-    fpsRange[0] =  1000;
-    fpsRange[1] = 30000;
-
-    fNumberNum = 26;
-    fNumberDen = 10;
-    focalLengthNum = 9;
-    focalLengthDen = 10;
-    apertureNum = 27;
-    apertureDen = 10;
-    supportVideoStabilization = true;
-    applyVideoStabilization = false;
-    videoStabilization = false;
-    maxNumMeteringAreas = 64;
-    maxNumDetectedFaces = 16;
-    maxNumFocusAreas = 2;
-    maxZoom = ZOOM_LEVEL_MAX;
-    hwZoomSupported = false;
-    zoom = 0;
-    gpsAltitude = 0;
-    gpsLatitude = 0;
-    gpsLongitude = 0;
-    gpsTimestamp = 0;
-}
-
-
-ExynosCameraInfoS5K3H7_SUNNY_2M::ExynosCameraInfoS5K3H7_SUNNY_2M()
-{
-    previewW = 1920;
-    previewH = 1080;
-    previewColorFormat = V4L2_PIX_FMT_NV21M;
-    previewBufPlane = 3;
-    videoW = 1920;
-    videoH = 1080;
-    videoColorFormat = V4L2_PIX_FMT_NV12M;
-    videoBufPlane = 3;
-    pictureW = 1920;
-    pictureH = 1080;
-    pictureColorFormat = V4L2_PIX_FMT_YUYV;
-    pictureBufPlane = 2;
-    thumbnailW = 512;
-    thumbnailH = 384;
-    ispW = 1920;
-    ispH = 1080;
-
-    antiBandingList =
-          ExynosCamera::ANTIBANDING_AUTO
-        | ExynosCamera::ANTIBANDING_50HZ
-        | ExynosCamera::ANTIBANDING_60HZ
-        | ExynosCamera::ANTIBANDING_OFF
-        ;
-    antiBanding = ExynosCamera::ANTIBANDING_AUTO;
-
-    effectList =
-          ExynosCamera::EFFECT_NONE
-        | ExynosCamera::EFFECT_MONO
-        | ExynosCamera::EFFECT_NEGATIVE
-        //| ExynosCamera::EFFECT_SOLARIZE
-        | ExynosCamera::EFFECT_SEPIA
-        //| ExynosCamera::EFFECT_POSTERIZE
-        //| ExynosCamera::EFFECT_WHITEBOARD
-        //| ExynosCamera::EFFECT_BLACKBOARD
-        //| ExynosCamera::EFFECT_AQUA
-        ;
-    effect = ExynosCamera::EFFECT_NONE;
-
-    flashModeList =
-          ExynosCamera::FLASH_MODE_OFF
-        | ExynosCamera::FLASH_MODE_AUTO
-        | ExynosCamera::FLASH_MODE_ON
-        //| ExynosCamera::FLASH_MODE_RED_EYE
-        | ExynosCamera::FLASH_MODE_TORCH;
-    flashMode = ExynosCamera::FLASH_MODE_OFF;
-
-    focusModeList =
-          ExynosCamera::FOCUS_MODE_AUTO
-        | ExynosCamera::FOCUS_MODE_INFINITY
-        | ExynosCamera::FOCUS_MODE_MACRO
-        //| ExynosCamera::FOCUS_MODE_FIXED
-        //| ExynosCamera::FOCUS_MODE_EDOF
-        | ExynosCamera::FOCUS_MODE_CONTINUOUS_VIDEO
-        | ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE
-        | ExynosCamera::FOCUS_MODE_TOUCH
-        ;
-    focusMode = ExynosCamera::FOCUS_MODE_AUTO;
-
-    sceneModeList =
-          ExynosCamera::SCENE_MODE_AUTO
-        //| ExynosCamera::SCENE_MODE_ACTION
-        | ExynosCamera::SCENE_MODE_PORTRAIT
-        | ExynosCamera::SCENE_MODE_LANDSCAPE
-        | ExynosCamera::SCENE_MODE_NIGHT
-        //| ExynosCamera::SCENE_MODE_NIGHT_PORTRAIT
-        //| ExynosCamera::SCENE_MODE_THEATRE
-        | ExynosCamera::SCENE_MODE_BEACH
-        | ExynosCamera::SCENE_MODE_SNOW
-        | ExynosCamera::SCENE_MODE_SUNSET
-        | ExynosCamera::SCENE_MODE_STEADYPHOTO
-        | ExynosCamera::SCENE_MODE_FIREWORKS
-        | ExynosCamera::SCENE_MODE_SPORTS
-        | ExynosCamera::SCENE_MODE_PARTY
-        | ExynosCamera::SCENE_MODE_CANDLELIGHT;
-    sceneMode = ExynosCamera::SCENE_MODE_AUTO;
-
-    whiteBalanceList =
-          ExynosCamera::WHITE_BALANCE_AUTO
-        | ExynosCamera::WHITE_BALANCE_INCANDESCENT
-        | ExynosCamera::WHITE_BALANCE_FLUORESCENT
-        //| ExynosCamera::WHITE_BALANCE_WARM_FLUORESCENT
-        | ExynosCamera::WHITE_BALANCE_DAYLIGHT
-        | ExynosCamera::WHITE_BALANCE_CLOUDY_DAYLIGHT
-        //| ExynosCamera::WHITE_BALANCE_TWILIGHT
-        //| ExynosCamera::WHITE_BALANCE_SHADE
-        ;
-    whiteBalance = ExynosCamera::WHITE_BALANCE_AUTO;
-
-    autoWhiteBalanceLockSupported = true;
-    autoWhiteBalanceLock = false;
-
-    rotation = 0;
-    minExposure = -4;
-    maxExposure = 4;
-    exposure = 0;
-
-    autoExposureLockSupported = true;
-    autoExposureLock = false;
-
-    fpsRange[0] =  1000;
-    fpsRange[1] = 30000;
-
-    fNumberNum = 26;
-    fNumberDen = 10;
-    focalLengthNum = 9;
-    focalLengthDen = 10;
-    apertureNum = 27;
-    apertureDen = 10;
-    supportVideoStabilization = true;
-    applyVideoStabilization = false;
-    videoStabilization = false;
-    maxNumMeteringAreas = 64;
-    maxNumDetectedFaces = 16;
-    maxNumFocusAreas = 2;
-    maxZoom = ZOOM_LEVEL_MAX;
-    hwZoomSupported = false;
-    zoom = 0;
-    gpsAltitude = 0;
-    gpsLatitude = 0;
-    gpsLongitude = 0;
-    gpsTimestamp = 0;
-
-    /* Additional API default Value. */
-    metering = ExynosCamera::METERING_MODE_CENTER;
-}
-#endif
-
-#ifdef USE_S5K3L2_CAMERA
-ExynosCameraInfoS5K3L2::ExynosCameraInfoS5K3L2()
-{
-    previewW = 1920;
-    previewH = 1080;
-    previewColorFormat = V4L2_PIX_FMT_NV21M;
-    videoW = 1920;
-    videoH = 1080;
-    ispW = 1920;
-    ispH = 1080;
-    videoColorFormat = V4L2_PIX_FMT_NV12M;
-    pictureW = 4128;
-    pictureH = 3096;
-    pictureColorFormat = V4L2_PIX_FMT_YUYV;
-    thumbnailW = 320;
-    thumbnailH = 240;
-
-    antiBandingList =
-          ExynosCamera::ANTIBANDING_AUTO
-        | ExynosCamera::ANTIBANDING_50HZ
-        | ExynosCamera::ANTIBANDING_60HZ
-        | ExynosCamera::ANTIBANDING_OFF;
-    antiBanding = ExynosCamera::ANTIBANDING_OFF;
-
-    effectList =
-          ExynosCamera::EFFECT_NONE
-        | ExynosCamera::EFFECT_MONO
-        | ExynosCamera::EFFECT_NEGATIVE
-        | ExynosCamera::EFFECT_SOLARIZE
-        | ExynosCamera::EFFECT_SEPIA
-        | ExynosCamera::EFFECT_POSTERIZE
-        | ExynosCamera::EFFECT_WHITEBOARD
-        | ExynosCamera::EFFECT_BLACKBOARD
-        | ExynosCamera::EFFECT_AQUA
-        ;
-    effect = ExynosCamera::EFFECT_NONE;
-
-    flashModeList =
-          ExynosCamera::FLASH_MODE_OFF
-        | ExynosCamera::FLASH_MODE_AUTO
-        | ExynosCamera::FLASH_MODE_ON
-        //| ExynosCamera::FLASH_MODE_RED_EYE
-        | ExynosCamera::FLASH_MODE_TORCH;
-    flashMode = ExynosCamera::FLASH_MODE_OFF;
-
-    focusModeList =
-          ExynosCamera::FOCUS_MODE_AUTO
-        //| ExynosCamera::FOCUS_MODE_INFINITY
-        | ExynosCamera::FOCUS_MODE_MACRO
-        //| ExynosCamera::FOCUS_MODE_FIXED
-        //| ExynosCamera::FOCUS_MODE_EDOF
-        | ExynosCamera::FOCUS_MODE_CONTINUOUS_VIDEO
-        | ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE
-        | ExynosCamera::FOCUS_MODE_TOUCH
-        ;
-    focusMode = ExynosCamera::FOCUS_MODE_AUTO;
-
-    sceneModeList =
-          ExynosCamera::SCENE_MODE_AUTO
-        | ExynosCamera::SCENE_MODE_ACTION
-        | ExynosCamera::SCENE_MODE_PORTRAIT
-        | ExynosCamera::SCENE_MODE_LANDSCAPE
-        | ExynosCamera::SCENE_MODE_NIGHT
-        | ExynosCamera::SCENE_MODE_NIGHT_PORTRAIT
-        | ExynosCamera::SCENE_MODE_THEATRE
-        | ExynosCamera::SCENE_MODE_BEACH
-        | ExynosCamera::SCENE_MODE_SNOW
-        | ExynosCamera::SCENE_MODE_SUNSET
-        | ExynosCamera::SCENE_MODE_STEADYPHOTO
-        | ExynosCamera::SCENE_MODE_FIREWORKS
-        | ExynosCamera::SCENE_MODE_SPORTS
-        | ExynosCamera::SCENE_MODE_PARTY
-        | ExynosCamera::SCENE_MODE_CANDLELIGHT;
-    sceneMode = ExynosCamera::SCENE_MODE_AUTO;
-
-    whiteBalanceList =
-          ExynosCamera::WHITE_BALANCE_AUTO
-        | ExynosCamera::WHITE_BALANCE_INCANDESCENT
-        | ExynosCamera::WHITE_BALANCE_FLUORESCENT
-        //| ExynosCamera::WHITE_BALANCE_WARM_FLUORESCENT
-        | ExynosCamera::WHITE_BALANCE_DAYLIGHT
-        | ExynosCamera::WHITE_BALANCE_CLOUDY_DAYLIGHT
-        //| ExynosCamera::WHITE_BALANCE_TWILIGHT
-        //| ExynosCamera::WHITE_BALANCE_SHADE
-        ;
-    whiteBalance = ExynosCamera::WHITE_BALANCE_AUTO;
-
-    autoWhiteBalanceLockSupported = true;
-    autoWhiteBalanceLock = false;
-
-    rotation = 0;
-    minExposure = -4;
-    maxExposure = 4;
-    exposure = 0;
-
-    autoExposureLockSupported = true;
-    autoExposureLock = false;
-
-    fpsRange[0] =  1000;
-    fpsRange[1] = 30000;
-
-    focalLengthNum = 343;
-    focalLengthDen = 100;
-    apertureNum = 27;
-    apertureDen = 10;
-    supportVideoStabilization = true;
-    applyVideoStabilization = false;
-    videoStabilization = false;
-    maxNumMeteringAreas = 64;
-    maxNumDetectedFaces = 16;
-    maxNumFocusAreas = 2;
-    maxZoom = ZOOM_LEVEL_MAX;
-    hwZoomSupported = false;
-    zoom = 0;
-    gpsAltitude = 0;
-    gpsLatitude = 0;
-    gpsLongitude = 0;
-    gpsTimestamp = 0;
-
-    /* Additional API default Value. */
-    metering = ExynosCamera::METERING_MODE_CENTER;
-}
-#endif
 ExynosCameraInfoS5K6A3::ExynosCameraInfoS5K6A3()
 {
     previewW = 1280;
@@ -1098,11 +722,11 @@ ExynosCameraInfoS5K6B2::ExynosCameraInfoS5K6B2()
           ExynosCamera::EFFECT_NONE
         | ExynosCamera::EFFECT_MONO
         | ExynosCamera::EFFECT_NEGATIVE
-        //| ExynosCamera::EFFECT_SOLARIZE
+        /* | ExynosCamera::EFFECT_SOLARIZE */
         | ExynosCamera::EFFECT_SEPIA
         | ExynosCamera::EFFECT_POSTERIZE
-        //| ExynosCamera::EFFECT_WHITEBOARD
-        //| ExynosCamera::EFFECT_BLACKBOARD
+        /* | ExynosCamera::EFFECT_WHITEBOARD */
+        /* | ExynosCamera::EFFECT_BLACKBOARD */
         | ExynosCamera::EFFECT_AQUA
         ;
     effect = ExynosCamera::EFFECT_NONE;
@@ -1355,11 +979,11 @@ ExynosCameraInfoIMX135::ExynosCameraInfoIMX135()
           ExynosCamera::EFFECT_NONE
         | ExynosCamera::EFFECT_MONO
         | ExynosCamera::EFFECT_NEGATIVE
-        //| ExynosCamera::EFFECT_SOLARIZE
+        /* | ExynosCamera::EFFECT_SOLARIZE */
         | ExynosCamera::EFFECT_SEPIA
         | ExynosCamera::EFFECT_POSTERIZE
-        //| ExynosCamera::EFFECT_WHITEBOARD
-        //| ExynosCamera::EFFECT_BLACKBOARD
+        /* | ExynosCamera::EFFECT_WHITEBOARD */
+        /* | ExynosCamera::EFFECT_BLACKBOARD */
         | ExynosCamera::EFFECT_AQUA
         ;
     effect = ExynosCamera::EFFECT_NONE;
@@ -1380,8 +1004,8 @@ ExynosCameraInfoIMX135::ExynosCameraInfoIMX135()
         //| ExynosCamera::FOCUS_MODE_EDOF
         | ExynosCamera::FOCUS_MODE_CONTINUOUS_VIDEO
         | ExynosCamera::FOCUS_MODE_CONTINUOUS_PICTURE
-        | ExynosCamera::FOCUS_MODE_TOUCH
-        ;
+        | ExynosCamera::FOCUS_MODE_TOUCH;
+
     focusMode = ExynosCamera::FOCUS_MODE_AUTO;
 
     sceneModeList =
@@ -1453,7 +1077,7 @@ ExynosCameraInfoIMX135::ExynosCameraInfoIMX135()
     focalLengthIn35mmLength = 31;
 }
 
-ExynosCameraInfoIMX135Fake::ExynosCameraInfoIMX135Fake()
+ExynosCameraInfoIMX135Reprocessing::ExynosCameraInfoIMX135Reprocessing()
 {
     previewW = 1920;
     previewH = 1080;
@@ -1470,7 +1094,7 @@ ExynosCameraInfoIMX135Fake::ExynosCameraInfoIMX135Fake()
     thumbnailH = 384;
 }
 
-ExynosCameraInfoS5K6B2Fake::ExynosCameraInfoS5K6B2Fake()
+ExynosCameraInfoS5K6B2Reprocessing::ExynosCameraInfoS5K6B2Reprocessing()
 {
     previewW = 1280;
     previewH = 960;
@@ -1485,7 +1109,7 @@ ExynosCameraInfoS5K6B2Fake::ExynosCameraInfoS5K6B2Fake()
     thumbnailH = 384;
 }
 
-ExynosCameraInfoS5K4E5Fake::ExynosCameraInfoS5K4E5Fake()
+ExynosCameraInfoS5K4E5Reprocessing::ExynosCameraInfoS5K4E5Reprocessing()
 {
     previewW = 1920;
     previewH = 1080;
@@ -1502,63 +1126,6 @@ ExynosCameraInfoS5K4E5Fake::ExynosCameraInfoS5K4E5Fake()
     thumbnailW = 512;
     thumbnailH = 384;
 }
-
-#ifdef USE_S5K3H7_CAMERA
-ExynosCameraInfoS5K3H7_SUNNYFake::ExynosCameraInfoS5K3H7_SUNNYFake()
-{
-    previewW = 1920;
-    previewH = 1080;
-    previewColorFormat = V4L2_PIX_FMT_NV21M;
-    videoW = 1920;
-    videoH = 1080;
-    videoColorFormat = V4L2_PIX_FMT_NV12M;
-    pictureW = 3200;
-    pictureH = 2400;
-    pictureColorFormat = V4L2_PIX_FMT_YUYV;
-    thumbnailW = 512;
-    thumbnailH = 384;
-    ispW = 3200;
-    ispH = 2400;
-}
-
-ExynosCameraInfoS5K3H7_SUNNY_2MFake::ExynosCameraInfoS5K3H7_SUNNY_2MFake()
-{
-    previewW = 1920;
-    previewH = 1080;
-    previewColorFormat = V4L2_PIX_FMT_NV21M;
-    videoW = 1920;
-    videoH = 1080;
-    videoColorFormat = V4L2_PIX_FMT_NV12M;
-    pictureW = 1920;
-    pictureH = 1080;
-    pictureColorFormat = V4L2_PIX_FMT_YUYV;
-    thumbnailW = 512;
-    thumbnailH = 384;
-    ispW = 1920;
-    ispH = 1080;
-}
-#endif
-#ifdef USE_S5K3L2_CAMERA
-ExynosCameraInfoS5K3L2Fake::ExynosCameraInfoS5K3L2Fake()
-{
-   previewW = 1920;
-   previewH = 1080;
-   previewColorFormat = V4L2_PIX_FMT_NV21M;
-   videoW = 1920;
-   videoH = 1080;
-   pictureW = 4128;
-   pictureH = 3096;
-   videoColorFormat = V4L2_PIX_FMT_NV12M;
-   ispW = 4128;
-   ispH = 3096;
-   pictureColorFormat = V4L2_PIX_FMT_YUYV;
-   thumbnailW = 320;
-   thumbnailH = 240;
-}
-#endif
-
-
-//////////////////////////////////////////////////
 
 #define PFX_NODE                            "/dev/video"
 
@@ -1578,22 +1145,22 @@ ExynosCameraInfoS5K3L2Fake::ExynosCameraInfoS5K3L2Fake()
 #define VIDEO_NODE_RECODING_ID              (2)
 #define VIDEO_NODE_SNAPSHOT_ID              (1)
 
-#define ISP_SENSOR_MAX_ENTITIES             1
-#define ISP_SENSOR_PAD_SOURCE_FRONT         0
-#define ISP_SENSOR_PADS_NUM                 1
+#define ISP_SENSOR_MAX_ENTITIES             (1)
+#define ISP_SENSOR_PAD_SOURCE_FRONT         (0)
+#define ISP_SENSOR_PADS_NUM                 (1)
 
-#define ISP_FRONT_MAX_ENTITIES              1
-#define ISP_FRONT_PAD_SINK                  0
-#define ISP_FRONT_PAD_SOURCE_BACK           1
-#define ISP_FRONT_PAD_SOURCE_BAYER          2
-#define ISP_FRONT_PAD_SOURCE_SCALERC        3
-#define ISP_FRONT_PADS_NUM                  4
+#define ISP_FRONT_MAX_ENTITIES              (1)
+#define ISP_FRONT_PAD_SINK                  (0)
+#define ISP_FRONT_PAD_SOURCE_BACK           (1)
+#define ISP_FRONT_PAD_SOURCE_BAYER          (2)
+#define ISP_FRONT_PAD_SOURCE_SCALERC        (3)
+#define ISP_FRONT_PADS_NUM                  (4)
 
-#define ISP_BACK_MAX_ENTITIES               1
-#define ISP_BACK_PAD_SINK                   0
-#define ISP_BACK_PAD_SOURCE_3DNR            1
-#define ISP_BACK_PAD_SOURCE_SCALERP         2
-#define ISP_BACK_PADS_NUM                   3
+#define ISP_BACK_MAX_ENTITIES               (1)
+#define ISP_BACK_PAD_SINK                   (0)
+#define ISP_BACK_PAD_SOURCE_3DNR            (1)
+#define ISP_BACK_PAD_SOURCE_SCALERP         (2)
+#define ISP_BACK_PADS_NUM                   (3)
 
 #define ISP_MODULE_NAME                     "exynos5-fimc-is"
 #define ISP_SENSOR_ENTITY_NAME              "exynos5-fimc-is-sensor"
@@ -1604,13 +1171,13 @@ ExynosCameraInfoS5K3L2Fake::ExynosCameraInfoS5K3L2Fake()
 #define ISP_VIDEO_3DNR_NAME                 "exynos5-fimc-is-3dnr"
 #define ISP_VIDEO_SCALERP_NAME              "exynos5-fimc-is-scalerp"
 
-#define MIPI_NUM                            1
-#define FLITE_NUM                           1
-#define GSC_NUM                             0
+#define MIPI_NUM                            (1)
+#define FLITE_NUM                           (1)
+#define GSC_NUM                             (0)
 
 #define PFX_SUBDEV_NODE                     "/dev/v4l-subdev"
 
-#define V4L2_CAMERA_MEMORY_TYPE             V4L2_MEMORY_DMABUF /* V4L2_MEMORY_USERPTR */
+#define V4L2_CAMERA_MEMORY_TYPE             (V4L2_MEMORY_DMABUF) /* (V4L2_MEMORY_USERPTR) */
 /*
  * V 4 L 2   F I M C   E X T E N S I O N S
  *
@@ -1641,13 +1208,11 @@ ExynosCameraInfoS5K3L2Fake::ExynosCameraInfoS5K3L2Fake()
 // Google Official API : Camera.Parameters
 // http://developer.android.com/reference/android/hardware/Camera.Parameters.html
 ///////////////////////////////////////////////////
-
-/* For v4l2_ioctls interfaces */
-int ExynosCamera::get_pixel_depth(uint32_t fmt)
+int ExynosCamera::cam_int_get_pixel_depth(node_info_t *node)
 {
     int depth = 0;
 
-    switch (fmt) {
+    switch (node->format) {
     case V4L2_PIX_FMT_JPEG:
         depth = 8;
         break;
@@ -1680,7 +1245,7 @@ int ExynosCamera::get_pixel_depth(uint32_t fmt)
         depth = 32;
         break;
     default:
-        CLOGE("ERR(%s):Get depth failed(format : %d)", __func__, fmt);
+        CLOGE("ERR(%s):Get depth fail(format : %d)", __func__, node->format);
         break;
     }
 
@@ -1689,6 +1254,7 @@ int ExynosCamera::get_pixel_depth(uint32_t fmt)
 
 int ExynosCamera::cam_int_s_fmt(node_info_t *node)
 {
+    int ret = 0;
     struct v4l2_format v4l2_fmt;
 
     if (node->planes <= 0) {
@@ -1696,80 +1262,105 @@ int ExynosCamera::cam_int_s_fmt(node_info_t *node)
         return -1;
     }
 
-    CLOGD("[%s] (%d) type %d, %d x %d, format %d", __func__, __LINE__, node->type, node->width, node->height, node->format);
+    CLOGD("DEBUG(%s):type %d, %d x %d, format %d", __func__, node->type, node->width, node->height, node->format);
 
     memset(&v4l2_fmt, 0, sizeof(struct v4l2_format));
 
-    v4l2_fmt.type = node->type;
+    v4l2_fmt.type                   = node->type;
     v4l2_fmt.fmt.pix_mp.width       = node->width;
     v4l2_fmt.fmt.pix_mp.height      = node->height;
     v4l2_fmt.fmt.pix_mp.pixelformat = node->format;
     v4l2_fmt.fmt.pix_mp.field       = V4L2_FIELD_ANY;
 
-    if (exynos_v4l2_s_fmt(node->fd, &v4l2_fmt) < 0) {
-        CLOGE("ERR(%s):exynos_v4l2_s_fmt fail", __func__);
-        return -1;
+    ret = exynos_v4l2_s_fmt(node->fd, &v4l2_fmt);
+    if (ret < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_s_fmt(fd:%d) fail (%d)", __func__, node->fd, ret);
+        return ret;
     }
 
-    return 0;
+    return ret;
 }
 
 int ExynosCamera::cam_int_reqbufs(node_info_t *node)
 {
+    int ret = 0;
     struct v4l2_requestbuffers req;
-    int ret;
 
-    req.count = node->buffers;
-    req.type = node->type;
+    req.count  = node->buffers;
+    req.type   = node->type;
     req.memory = node->memory;
 
-    CLOGD("[%s] (%d) fd %d, count %d, type %d, memory %d", __func__, __LINE__, node->fd, req.count, req.type, req.memory);
+    CLOGD("DEBUG(%s):fd %d, count %d, type %d, memory %d", __func__, node->fd, req.count, req.type, req.memory);
 
     ret = exynos_v4l2_reqbufs(node->fd, &req);
-
     if (ret < 0) {
-        CLOGE("ERR(%s):VIDIOC_REQBUFS (fd:%d) failed (%d)", __func__,node->fd, ret);
-        return -1;
+        CLOGE("ERR(%s):exynos_v4l2_reqbufs(fd:%d, count:%d) fail (%d)", __func__, node->fd, req.count, ret);
+        return ret;
     }
+
+    for (int i = 0; i < VIDEO_MAX_FRAME; i++)
+        cam_int_m_setQ(node, i, false);
 
     return req.count;
 }
 
 int ExynosCamera::cam_int_clrbufs(node_info_t * node)
 {
+    int ret = 0;
     struct v4l2_requestbuffers req;
-    int ret;
 
     req.count  = 0;
     req.type   = node->type;
     req.memory = node->memory;
 
-    CLOGD("[%s] (%d) fd %d, count %d, type %d, memory %d", __func__, __LINE__, node->fd, req.count, req.type, req.memory);
+    CLOGD("DEBUG(%s):fd %d, count %d, type %d, memory %d", __func__, node->fd, req.count, req.type, req.memory);
 
     ret = exynos_v4l2_reqbufs(node->fd, &req);
-
     if (ret < 0) {
-        CLOGE("ERR(%s):VIDIOC_REQBUFS(0) (fd:%d) failed (%d)", __func__,node->fd, ret);
-        return -1;
+        CLOGE("ERR(%s):exynos_v4l2_reqbufs(fd:%d, count:%d) fail (%d)", __func__, node->fd, req.count, ret);
+        return ret;
     }
+
+    for (int i = 0; i < VIDEO_MAX_FRAME; i++)
+        cam_int_m_setQ(node, i, false);
 
     return req.count;
 }
 
 int ExynosCamera::cam_int_qbuf(node_info_t *node, int index)
 {
+    int ret = 0;
+    unsigned int i = 0;
     struct v4l2_buffer v4l2_buf;
     struct v4l2_plane planes[VIDEO_MAX_PLANES];
-    int i;
-    int ret = 0;
 
-    v4l2_buf.m.planes   = planes;
-    v4l2_buf.type       = node->type;
-    v4l2_buf.memory     = node->memory;
-    v4l2_buf.index      = index;
-    v4l2_buf.length     = node->planes;
+    /* waiting that index is free*/
+    bool flagAlreadyQ = false;
 
-    for(i = 0; i < node->planes; i++){
+    for (i = 0; i < CAMERA_Q_TATOL_WATING_TIME; i += CAMERA_Q_WATING_TIME) {
+        if (cam_int_m_flagQ(node, index) == false)
+            break;
+
+        flagAlreadyQ = true;
+        usleep(CAMERA_Q_WATING_TIME);
+    }
+
+    if (flagAlreadyQ == true) {
+        CLOGW("WARN(%s):q waiting on node(%d), index(%d), waiting time(%d) msec", __func__, node->fd, index, i / 1000);
+
+        if (CAMERA_Q_TATOL_WATING_TIME <= i) {
+            CLOGE("ERR(%s):q waiting on node(%d), index(%d) time out(%d) msec", __func__, node->fd,  index, i / 1000);
+            return -1;
+        }
+    }
+
+    v4l2_buf.m.planes = planes;
+    v4l2_buf.type     = node->type;
+    v4l2_buf.memory   = node->memory;
+    v4l2_buf.index    = index;
+    v4l2_buf.length   = node->planes;
+
+    for (i = 0; i < node->planes; i++) {
         if (node->memory == V4L2_MEMORY_DMABUF)
             v4l2_buf.m.planes[i].m.fd = (int)(node->buffer[index].fd.extFd[i]);
         else if (node->memory == V4L2_MEMORY_USERPTR)
@@ -1784,148 +1375,148 @@ int ExynosCamera::cam_int_qbuf(node_info_t *node, int index)
 
     ret = exynos_v4l2_qbuf(node->fd, &v4l2_buf);
     if (ret < 0) {
-        CLOGE("ERR(%s):exynos_v4l2_qbuf failed (index:%d)(ret:%d)", __func__, index, ret);
-        return -1;
+        CLOGE("ERR(%s):exynos_v4l2_qbuf(fd:%d, index:%d) fail (%d)", __func__, node->fd, index, ret);
+        return ret;
     }
+
+    cam_int_m_setQ(node, index, true);
 
     return ret;
 }
 
-int ExynosCamera::cam_int_m2m_qbuf(node_info_t *srcNode, int srcIndex, node_info_t *ctlNode, int ctlIndex)
+int ExynosCamera::cam_int_qbuf(node_info_t *node, int index, node_info_t *srcNode)
 {
+    int ret = 0;
+    unsigned int i = 0;
     struct v4l2_buffer v4l2_buf;
     struct v4l2_plane planes[VIDEO_MAX_PLANES];
-    int i;
-    int ret = 0;
 
-    v4l2_buf.m.planes   = planes;
-    v4l2_buf.type       = ctlNode->type;
-    v4l2_buf.memory     = srcNode->memory;
-    v4l2_buf.index      = ctlIndex;
-    v4l2_buf.length     = srcNode->planes;
+    /* waiting that index is free*/
+    bool flagAlreadyQ = false;
 
-    for(i = 0; i < srcNode->planes; i++){
-        if (srcNode->memory == V4L2_MEMORY_DMABUF) {
-            v4l2_buf.m.planes[i].m.fd = (int)(srcNode->buffer[srcIndex].fd.extFd[i]);
-        } else if (srcNode->memory == V4L2_MEMORY_USERPTR) {
-            v4l2_buf.m.planes[i].m.userptr = (unsigned long)(srcNode->buffer[srcIndex].virt.extP[i]);
-        } else {
-            CLOGE("ERR(%s):invalid node->memory(%d)", __func__, srcNode->memory);
+    for (i = 0; i < CAMERA_Q_TATOL_WATING_TIME; i += CAMERA_Q_WATING_TIME) {
+        if (cam_int_m_flagQ(node, index) == false)
+            break;
+
+        flagAlreadyQ = true;
+        usleep(CAMERA_Q_WATING_TIME);
+    }
+
+    if (flagAlreadyQ == true) {
+        CLOGW("WARN(%s):q waiting on node(%d), index(%d), waiting time(%d) msec", __func__, node->fd, index, i / 1000);
+
+        if (CAMERA_Q_TATOL_WATING_TIME <= i) {
+            CLOGE("ERR(%s):q waiting on node(%d), index(%d) time out(%d) msec", __func__, node->fd,  index, i / 1000);
             return -1;
         }
-
-        v4l2_buf.m.planes[i].length = (unsigned long)(srcNode->buffer[srcIndex].size.extS[i]);
     }
 
-    ret = exynos_v4l2_qbuf(ctlNode->fd, &v4l2_buf);
-    if (ret < 0) {
-        CLOGE("ERR(%s):exynos_v4l2_qbuf failed (srcIndex:%d)(ret:%d)", __func__, srcIndex, ret);
-
-        return -1;
-    }
-
-    return ret;
-}
-
-int ExynosCamera::cam_int_m2m_qbuf_for_3a0(node_info_t *srcNode, int srcIndex, node_info_t *ctlNode, int ctlIndex, ExynosBuffer tempMeta)
-{
-    struct v4l2_buffer v4l2_buf;
-    struct v4l2_plane planes[VIDEO_MAX_PLANES];
-    int i;
-    int ret = 0;
-
-    v4l2_buf.m.planes   = planes;
-    v4l2_buf.type         = ctlNode->type;
-    v4l2_buf.memory    = srcNode->memory;
-    v4l2_buf.index       = ctlIndex;
-    v4l2_buf.length      = srcNode->planes;
+    v4l2_buf.m.planes = planes;
+    v4l2_buf.type     = node->type;
+    v4l2_buf.memory   = srcNode->memory;
+    v4l2_buf.index    = index;
+    v4l2_buf.length   = srcNode->planes;
 
     for (i = 0; i < srcNode->planes; i++) {
         if (srcNode->memory == V4L2_MEMORY_DMABUF) {
-            v4l2_buf.m.planes[i].m.fd = (int)(srcNode->buffer[srcIndex].fd.extFd[i]);
+            v4l2_buf.m.planes[i].m.fd = (int)(srcNode->buffer[index].fd.extFd[i]);
         } else if (srcNode->memory == V4L2_MEMORY_USERPTR) {
-            v4l2_buf.m.planes[i].m.userptr = (unsigned long)(srcNode->buffer[srcIndex].virt.extP[i]);
+            v4l2_buf.m.planes[i].m.userptr = (unsigned long)(srcNode->buffer[index].virt.extP[i]);
         } else {
-            CLOGE("ERR(%s):invalid node->memory(%d)", __func__, srcNode->memory);
+            CLOGE("ERR(%s):invalid srcNode->memory(%d)", __func__, srcNode->memory);
             return -1;
         }
 
-        v4l2_buf.m.planes[i].length = (unsigned long)(srcNode->buffer[srcIndex].size.extS[i]);
+        v4l2_buf.m.planes[i].length = (unsigned long)(srcNode->buffer[index].size.extS[i]);
+    }
+
+    ret = exynos_v4l2_qbuf(node->fd, &v4l2_buf);
+    if (ret < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_qbuf(fd:%d, index:%d) fail (%d)", __func__, node->fd, index, ret);
+        return ret;
+    }
+
+    cam_int_m_setQ(node, index, true);
+
+    return ret;
+}
+
+int ExynosCamera::cam_int_qbuf(node_info_t *node, int index, node_info_t *srcNode, ExynosBuffer mataBuf)
+{
+    int ret = 0;
+    unsigned int i = 0;
+    struct v4l2_buffer v4l2_buf;
+    struct v4l2_plane planes[VIDEO_MAX_PLANES];
+
+    /* waiting that index is free*/
+    bool flagAlreadyQ = false;
+
+    for (i = 0; i < CAMERA_Q_TATOL_WATING_TIME; i += CAMERA_Q_WATING_TIME) {
+        if (cam_int_m_flagQ(node, index) == false)
+            break;
+
+        flagAlreadyQ = true;
+        usleep(CAMERA_Q_WATING_TIME);
+    }
+
+    if (flagAlreadyQ == true) {
+        CLOGW("WARN(%s):q waiting on node(%d), index(%d), waiting time(%d) msec", __func__, node->fd, index, i / 1000);
+
+        if (CAMERA_Q_TATOL_WATING_TIME <= i) {
+            CLOGE("ERR(%s):q waiting on node(%d), index(%d) time out(%d) msec", __func__, node->fd,  index, i / 1000);
+            return -1;
+        }
+    }
+
+    v4l2_buf.m.planes = planes;
+    v4l2_buf.type     = node->type;
+    v4l2_buf.memory   = srcNode->memory;
+    v4l2_buf.index    = index;
+    v4l2_buf.length   = srcNode->planes;
+
+    for (i = 0; i < srcNode->planes; i++) {
+        if (srcNode->memory == V4L2_MEMORY_DMABUF) {
+            v4l2_buf.m.planes[i].m.fd = (int)(srcNode->buffer[index].fd.extFd[i]);
+        } else if (srcNode->memory == V4L2_MEMORY_USERPTR) {
+            v4l2_buf.m.planes[i].m.userptr = (unsigned long)(srcNode->buffer[index].virt.extP[i]);
+        } else {
+            CLOGE("ERR(%s):invalid srcNode->memory(%d)", __func__, srcNode->memory);
+            return -1;
+        }
+
+        v4l2_buf.m.planes[i].length = (unsigned long)(srcNode->buffer[index].size.extS[i]);
     }
 
     if (srcNode->memory == V4L2_MEMORY_DMABUF) {
-        v4l2_buf.m.planes[v4l2_buf.length - 1].m.fd = (int)(tempMeta.fd.extFd[v4l2_buf.length - 1]);
+        v4l2_buf.m.planes[v4l2_buf.length - 1].m.fd = (int)(mataBuf.fd.extFd[v4l2_buf.length - 1]);
     } else if (srcNode->memory == V4L2_MEMORY_USERPTR) {
-        v4l2_buf.m.planes[v4l2_buf.length - 1].m.userptr = (unsigned long)(tempMeta.virt.extP[v4l2_buf.length - 1]);
+        v4l2_buf.m.planes[v4l2_buf.length - 1].m.userptr = (unsigned long)(mataBuf.virt.extP[v4l2_buf.length - 1]);
     } else {
         CLOGE("ERR(%s):invalid meta(%d)", __func__, srcNode->memory);
         return -1;
     }
 
-    ret = exynos_v4l2_qbuf(ctlNode->fd, &v4l2_buf);
+    ret = exynos_v4l2_qbuf(node->fd, &v4l2_buf);
     if (ret < 0) {
-        CLOGE("ERR(%s):exynos_v4l2_qbuf failed (srcIndex:%d)(ret:%d)", __func__, srcIndex, ret);
-        return -1;
+        CLOGE("ERR(%s):exynos_v4l2_qbuf(fd:%d, index:%d) fail (%d)", __func__, node->fd, index, ret);
+        return ret;
     }
 
-    return ret;
-}
-
-int ExynosCamera::cam_int_m2m_qbuf_for_3a1(node_info_t *srcNode, int srcIndex, node_info_t *ctlNode, int ctlIndex, ExynosBuffer tempMeta)
-{
-    struct v4l2_buffer v4l2_buf;
-    struct v4l2_plane planes[VIDEO_MAX_PLANES];
-    int i;
-    int ret = 0;
-
-    v4l2_buf.m.planes   = planes;
-    v4l2_buf.type         = ctlNode->type;
-    v4l2_buf.memory    = srcNode->memory;
-    v4l2_buf.index       = ctlIndex;
-    v4l2_buf.length      = srcNode->planes;
-
-    for (i = 0; i < srcNode->planes; i++) {
-        if (srcNode->memory == V4L2_MEMORY_DMABUF) {
-            v4l2_buf.m.planes[i].m.fd = (int)(srcNode->buffer[srcIndex].fd.extFd[i]);
-        } else if (srcNode->memory == V4L2_MEMORY_USERPTR) {
-            v4l2_buf.m.planes[i].m.userptr = (unsigned long)(srcNode->buffer[srcIndex].virt.extP[i]);
-        } else {
-            CLOGE("ERR(%s):invalid node->memory(%d)", __func__, srcNode->memory);
-            return -1;
-        }
-
-        v4l2_buf.m.planes[i].length = (unsigned long)(srcNode->buffer[srcIndex].size.extS[i]);
-    }
-
-    if (srcNode->memory == V4L2_MEMORY_DMABUF) {
-        v4l2_buf.m.planes[v4l2_buf.length - 1].m.fd = (int)(tempMeta.fd.extFd[v4l2_buf.length - 1]);
-    } else if (srcNode->memory == V4L2_MEMORY_USERPTR) {
-        v4l2_buf.m.planes[v4l2_buf.length - 1].m.userptr = (unsigned long)(tempMeta.virt.extP[v4l2_buf.length - 1]);
-    } else {
-        CLOGE("ERR(%s):invalid meta(%d)", __func__, srcNode->memory);
-        return -1;
-    }
-
-    ret = exynos_v4l2_qbuf(ctlNode->fd, &v4l2_buf);
-    if (ret < 0) {
-        CLOGE("ERR(%s):exynos_v4l2_qbuf failed (srcIndex:%d)(ret:%d)", __func__, srcIndex, ret);
-        return -1;
-    }
+    cam_int_m_setQ(node, index, true);
 
     return ret;
 }
 
 int ExynosCamera::cam_int_streamon(node_info_t *node)
 {
-    enum v4l2_buf_type type = node->type;
-    int ret;
+    int ret = 0;
 
-    CLOGD("[%s] (%d) fd %d, type %d", __func__, __LINE__, node->fd, (int)type);
+    CLOGD("DEBUG(%s):fd %d, type %d", __func__, node->fd, (int)node->type);
 
-    ret = exynos_v4l2_streamon(node->fd, type);
+    ret = exynos_v4l2_streamon(node->fd, node->type);
     if (ret < 0) {
-        CLOGE("ERR(%s):VIDIOC_STREAMON failed (%d)", __func__, ret);
-        return -1;
+        CLOGE("ERR(%s):exynos_v4l2_streamon(fd:%d, type:%d) fail (%d)", __func__, node->fd, (int)node->type, ret);
+        return ret;
     }
 
     return ret;
@@ -1933,25 +1524,24 @@ int ExynosCamera::cam_int_streamon(node_info_t *node)
 
 int ExynosCamera::cam_int_streamoff(node_info_t *node)
 {
-    enum v4l2_buf_type type = node->type;
+    int ret = 0;
 
-    int ret;
+    CLOGD("DEBUG(%s):fd %d, type %d", __func__, node->fd, (int)node->type);
 
-    CLOGD("[%s] (%d) fd %d, type %d", __func__, __LINE__, node->fd, (int)type);
-
-    ret = exynos_v4l2_streamoff(node->fd, type);
-
+    ret = exynos_v4l2_streamoff(node->fd, node->type);
     if (ret < 0) {
-        CLOGE("ERR(%s):VIDIOC_STREAMOFF failed (%d)", __func__, ret);
-        return -1;
+        CLOGE("ERR(%s):exynos_v4l2_streamoff(fd:%d, type:%d) fail (%d)", __func__, node->fd, (int)node->type, ret);
+        return ret;
     }
+
+    for (int i = 0; i < VIDEO_MAX_FRAME; i++)
+        cam_int_m_setQ(node, i, false);
 
     return ret;
 }
 
 #ifdef USE_CAMERA_ESD_RESET
-#define CLEAR(x)    memset(&(x), 0, sizeof(x))
-int ExynosCamera::polling(int node_fd)
+int ExynosCamera::cam_int_polling(node_info_t *node)
 {
     struct pollfd events;
 
@@ -1962,7 +1552,7 @@ int ExynosCamera::polling(int node_fd)
     int ret = 0;
     int pollRet = 0;
 
-    events.fd = node_fd;
+    events.fd = node->fd;
     events.events = POLLIN | POLLRDNORM | POLLOUT | POLLWRNORM | POLLERR;
     events.revents = 0;
 
@@ -1983,7 +1573,7 @@ int ExynosCamera::polling(int node_fd)
 
     if (ret < 0 || cnt <= 0) {
         CLOGE("ERR(%s):[esdreset] poll[%d], pollRet(%d) event(0x%x), cnt(%d)",
-            __func__, node_fd, pollRet, events.revents, cnt);
+            __func__, node->fd, pollRet, events.revents, cnt);
 
         if (cnt <= 0)
             ret = -1;
@@ -1993,12 +1583,11 @@ int ExynosCamera::polling(int node_fd)
 }
 #endif
 
-
 int ExynosCamera::cam_int_dqbuf(node_info_t *node)
 {
+    int ret = 0;
     struct v4l2_buffer v4l2_buf;
     struct v4l2_plane planes[VIDEO_MAX_PLANES];
-    int ret;
 
     v4l2_buf.type       = node->type;
     v4l2_buf.memory     = node->memory;
@@ -2008,80 +1597,90 @@ int ExynosCamera::cam_int_dqbuf(node_info_t *node)
     ret = exynos_v4l2_dqbuf(node->fd, &v4l2_buf);
     if (ret < 0) {
         if (ret != -EAGAIN)
-            CLOGE("ERR(%s):VIDIOC_DQBUF failed (%d)", __func__, ret);
+            CLOGE("ERR(%s):exynos_v4l2_dqbuf(fd:%d) fail (%d)", __func__, node->fd, ret);
+
         return ret;
     }
 
 #ifdef USE_FOR_DTP
     if (v4l2_buf.flags & V4L2_BUF_FLAG_ERROR) {
-        CLOGE("ERR(%s):VIDIOC_DQBUF returned with error (%d)", __func__, V4L2_BUF_FLAG_ERROR);
+        CLOGE("ERR(%s):exynos_v4l2_dqbuf(fd:%d) returned with error (%d)", __func__, node->fd, V4L2_BUF_FLAG_ERROR);
         return -1;
     }
 #endif
+
+    cam_int_m_setQ(node, v4l2_buf.index, false);
 
     return v4l2_buf.index;
 }
 
 int ExynosCamera::cam_int_s_input(node_info_t *node, int index)
 {
-    int ret;
+    int ret = 0;
 
-    CLOGD("[%s] (%d) fd %d, index %d", __func__, __LINE__, node->fd, index);
+    CLOGD("DEBUG(%s):fd %d, index %d", __func__, node->fd, index);
 
     ret = exynos_v4l2_s_input(node->fd, index);
     if (ret < 0)
-        CLOGE("ERR(%s):VIDIOC_S_INPUT failed (%d)", __func__, ret);
+        CLOGE("ERR(%s):exynos_v4l2_s_input(fd:%d, index:%d) fail (%d)", __func__, node->fd, index, ret);
 
     return ret;
 }
 
-int ExynosCamera::cam_int_querybuf(node_info_t *stream)
+int ExynosCamera::cam_int_querybuf(node_info_t *node)
 {
+    int ret = 0;
     struct v4l2_buffer v4l2_buf;
     struct v4l2_plane planes[VIDEO_MAX_PLANES];
-    int i, plane_index, ret;
+    int plane_index;
 
-    for(i = 0; i < stream->buffers; i++) {
-        v4l2_buf.type       = stream->type;
-        v4l2_buf.memory     = stream->memory;
+    for (int i = 0; i < node->buffers; i++) {
+        v4l2_buf.type       = node->type;
+        v4l2_buf.memory     = node->memory;
         v4l2_buf.index      = i;
         v4l2_buf.m.planes   = planes;
-        v4l2_buf.length     = stream->planes; //  this is for multi-planar
+        v4l2_buf.length     = node->planes; //  this is for multi-planar
 
-        ret = ioctl(stream->fd, VIDIOC_QUERYBUF, &v4l2_buf);
-        if (ret < 0)
-            CLOGE("ERR(%s):VIDIOC_QUERYBUF failed (%d)", __func__, ret);
-/*
-        for (plane_index = 0; plane_index < stream->planes; plane_index++) {
-            // remember for munmap()
-            stream->buffer[i].length[plane_index] = v4l2_buf.m.planes[plane_index].length;
-            printf("length[%d] : 0x%x\n", i, stream->buffer[i].length[plane_index]);
-            if ((stream->buffer[i].start[plane_index] = (char *) mmap(0,
-                v4l2_buf.m.planes[plane_index].length, \
-                PROT_READ | PROT_WRITE, MAP_SHARED, \
-                stream->fd, v4l2_buf.m.planes[plane_index].m.mem_offset)) < 0) {
-                perror_exit(1, "mmap() failed\n");
-            }
-
-            memset(stream->buffer[i].start[plane_index],
-                0xff, stream->buffer[i].length[plane_index]);
+        ret = ioctl(node->fd, VIDIOC_QUERYBUF, &v4l2_buf);
+        if (ret < 0) {
+            CLOGE("ERR(%s):VIDIOC_QUERYBUF(fd:%d, index:%d) fail (%d)", __func__, node->fd, v4l2_buf.index, ret);
+            return ret;
         }
-*/
     }
 
     return 0;
+}
+
+bool ExynosCamera::cam_int_m_flagQ(node_info_t *node, int index)
+{
+    Mutex::Autolock lock(node->QLock);
+
+    if (node->flagDup == false)
+        return node->flagQ[index];
+
+    return false;
+}
+
+void ExynosCamera::cam_int_m_setQ(node_info_t *node, int index, bool toggle)
+{
+    Mutex::Autolock lock(node->QLock);
+
+    if (node->flagDup == false)
+        node->flagQ[index] = toggle;
 }
 
 ExynosCamera::ExynosCamera()
 {
     m_flagCreate = false;
     m_cameraId = CAMERA_ID_BACK;
+    m_cameraMode = CAMERA_MODE_BACK;
 
-    for (int i = 0; i < SENSOR_MAX_NUM; i++) {
+    for (int i = 0; i < CAMERA_MODE_MAX; i++) {
         m_defaultCameraInfo[i] = NULL;
         m_curCameraInfo[i] = NULL;
         m_flagOpen[i] = false;
     }
+
     m_jpegQuality= 100;
     m_jpegThumbnailQuality = 100;
     m_currentZoom = -1;
@@ -2090,19 +1689,13 @@ ExynosCamera::ExynosCamera()
     m_needCallbackCSC = true;
 
     m_previewInternalMemAlloc = false;
-    m_tryPreviewStop = true;
-    m_tryVideoStop   = true;
-    m_tryPictureStop = true;
 
-    m_tryPreviewStopLpzsl = true;
-    m_tryVideoStopLpzsl = true;
-    m_tryPictureStopLpzsl = true;
-    m_isFirtstIspStartLpzsl = true;
-    m_isFirtstSensorStartLpzsl = true;
-    m_isFirtstIs3a1OutputStart = true;
-    m_isFirtstIs3a1CaptureStart = true;
-    m_isFirtstIs3a0OutputStart = true;
-    m_isFirtstIs3a0CaptureStart = true;
+    m_isFirtstIspStartReprocessing = true;
+    m_isFirtstSensorStartReprocessing = true;
+    m_isFirtstIs3a1SrcStart = true;
+    m_isFirtstIs3a1DstStart = true;
+    m_isFirtstIs3a0SrcStart = true;
+    m_isFirtstIs3a0DstStart = true;
 
     m_sensorEntity = NULL;
     m_mipiEntity = NULL;
@@ -2124,7 +1717,6 @@ ExynosCamera::ExynosCamera()
 
     memset(&mExifInfo, 0, sizeof(mExifInfo));
     memset(m_imageUniqueIdBuf, '\0', UNIQUE_ID_BUF_SIZE);
-    memset(&m_udm, 0, sizeof(struct camera2_udm));
 
     m_internalISP = true;
     m_flagStartFaceDetection = false;
@@ -2135,6 +1727,7 @@ ExynosCamera::ExynosCamera()
     m_isFirtstSensorStart = true;
     m_oldMeteringMode = 0;
     m_recordingHint = false;
+
 #ifdef USE_VDIS
     m_vdisInIndex = -1;
     m_vdisInRcount = -1;
@@ -2143,20 +1736,18 @@ ExynosCamera::ExynosCamera()
     m_isHWVDis = true;
 #endif
     m_sensorFrameCount = 0;
+
 #if CAPTURE_BUF_GET
-    recent_get_sensor_buf_index = 0;
-    minCaptureBayerBuf = MIN_CAPTURE_BAYER_COUNT;
-    notInsertBayer= false;
-    captureBayerBufCount = 0;
-    waitCAptureBayer = false;
+    m_recentCaptureBayerBufIndex = 0;
+    m_minCaptureBayerBuf = MIN_CAPTURE_BAYER_COUNT;
+    m_notInsertBayer = false;
+    m_waitCaptureBayer = false;
     m_isDVFSLocked = false;
 
     for (int i =0; i < NUM_BAYER_BUFFERS; i++) {
-        captureBayerIndex[i] = -1;
-        captureBayerLock[i] = false;
+        m_captureBayerIndex[i] = -1;
+        m_captureBayerLock[i] = false;
     }
-
-    debugCount = 0;
 #endif
 
 #ifdef USE_CAMERA_ESD_RESET
@@ -2168,22 +1759,18 @@ ExynosCamera::ExynosCamera()
     m_notifyStopMsg = false;
     m_traceCount = 0;
 
-    for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-        memset(&previewMetaBuffer[i], 0, sizeof(struct ExynosBuffer));
-        pictureMetaBuffer[i] = -1;
-    }
+    for (int i = 0; i < VIDEO_MAX_FRAME; i++)
+        memset(&m_previewMetaBuffer[i], 0, sizeof(struct ExynosBuffer));
 
     m_flashMgr = NULL;
     m_autofocusMgr = NULL;
     m_sCaptureMgr = NULL;
 
-    beforeBufOut = -1;
-    beforeBufCap = -1;
-    g3a1FrameCount = 0;
+    m_is3a1SrcLastBufIndex = -1;
+    m_is3a1DstLastBufIndex = -1;
+    m_is3a1FrameCount = 0;
+    m_aeFrameCount = 0;
 
-#ifdef MULTI_INSTANCE_CHECK
-    multi_instance = 0;
-#endif
 #ifdef FRONT_NO_ZSL
     m_frontCaptureStatus = 0;
 #endif
@@ -2200,22 +1787,21 @@ ExynosCamera::~ExynosCamera()
 
 bool ExynosCamera::create(int cameraId)
 {
-    m_cameraId = cameraId;
-
     if (m_flagCreate == true) {
         CLOGW("WARN(%s):Already created", __func__);
         return true;
     }
 
-    CLOGD("[%s] (%d) cameraId: %d", __func__, __LINE__, cameraId);
+    CLOGD("DEBUG(%s):(%d) cameraId: %d", __func__, __LINE__, cameraId);
+    m_cameraId = cameraId;
 
 /*
-    if (exynos_v4l2_enuminput(m_camera_info.preview.fd, m_cameraId, m_cameraName) == false) {
-        CLOGE("ERR(%s):exynos_v4l2_enuminput(%d, %s) fail", __func__, m_cameraId, m_cameraName);
+    if (exynos_v4l2_enuminput(m_camera_info.preview.fd, cameraId, m_cameraName) == false) {
+        CLOGE("ERR(%s):exynos_v4l2_enuminput(%d, %s) fail", __func__, cameraId, m_cameraName);
         goto err;
     }
 
-    if (exynos_v4l2_s_input(m_camera_info.preview.fd,  m_cameraId) < 0) {
+    if (exynos_v4l2_s_input(m_camera_info.preview.fd, cameraId) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_input() fail",  __func__);
         goto err;
     }
@@ -2243,260 +1829,89 @@ bool ExynosCamera::create(int cameraId)
         goto err;
     }
 */
-#ifdef USE_S5K3L2_CAMERA
-    if (m_cameraId == CAMERA_ID_BACK) {
-        m_camera_default = SENSOR_BACK;
-        m_camera_mode = CAMERA_ACTIVATE_MODE_BACK;
-        m_cameraId = CAMERA_ID_BACK;
-        m_defaultCameraInfo[SENSOR_BACK]  = new ExynosCameraInfoS5K3L2;
-        m_curCameraInfo    [SENSOR_BACK]  = new ExynosCameraInfoS5K3L2;
-        
-        m_defaultCameraInfo[SENSOR_FRONT] = new ExynosCameraInfoS5K6B2;
-        m_curCameraInfo    [SENSOR_FRONT] = new ExynosCameraInfoS5K6B2;
-        
-        m_defaultCameraInfo[SENSOR_FAKE]  = new ExynosCameraInfoS5K3L2Fake;
-        m_curCameraInfo    [SENSOR_FAKE]  = new ExynosCameraInfoS5K3L2Fake;
-     } else if (m_cameraId == CAMERA_ID_FRONT) {
-        m_camera_default = SENSOR_FRONT;
-        m_camera_mode = CAMERA_ACTIVATE_MODE_FRONT;
-        m_cameraId = CAMERA_ID_FRONT;
-        
-        m_defaultCameraInfo[SENSOR_BACK]  = new ExynosCameraInfoS5K3L2;
-        m_curCameraInfo    [SENSOR_BACK]  = new ExynosCameraInfoS5K3L2;
-        
-        m_defaultCameraInfo[SENSOR_FRONT] = new ExynosCameraInfoS5K6B2;
-        m_curCameraInfo    [SENSOR_FRONT] = new ExynosCameraInfoS5K6B2;
-        
-        m_defaultCameraInfo[SENSOR_FAKE]  = new ExynosCameraInfoS5K6B2Fake;
-        m_curCameraInfo    [SENSOR_FAKE]  = new ExynosCameraInfoS5K6B2Fake;	
-    }		
-#elif defined(USE_S5K3H7_CAMERA )
-    if (m_cameraId == CAMERA_ID_BACK) {
-        m_camera_default = SENSOR_BACK;
-        m_camera_mode = CAMERA_ACTIVATE_MODE_BACK;
-        m_cameraId = CAMERA_ID_BACK;
-        m_defaultCameraInfo[SENSOR_BACK]  = new ExynosCameraInfoS5K3H7_SUNNY;
-        m_curCameraInfo    [SENSOR_BACK]  = new ExynosCameraInfoS5K3H7_SUNNY;
-        
-        m_defaultCameraInfo[SENSOR_FRONT] = new ExynosCameraInfoS5K3H7_SUNNY_2M;
-        m_curCameraInfo    [SENSOR_FRONT] = new ExynosCameraInfoS5K3H7_SUNNY_2M;
-        
-        m_defaultCameraInfo[SENSOR_FAKE]  = new ExynosCameraInfoS5K3H7_SUNNYFake;
-        m_curCameraInfo    [SENSOR_FAKE]  = new ExynosCameraInfoS5K3H7_SUNNYFake;
-     } else if (m_cameraId == CAMERA_ID_FRONT) {
-        m_camera_default = SENSOR_FRONT;
-        m_camera_mode = CAMERA_ACTIVATE_MODE_FRONT;
-        m_cameraId = CAMERA_ID_FRONT;
-        
-        m_defaultCameraInfo[SENSOR_BACK]  = new ExynosCameraInfoS5K3H7_SUNNY;
-        m_curCameraInfo    [SENSOR_BACK]  = new ExynosCameraInfoS5K3H7_SUNNY;
-		
-        m_defaultCameraInfo[SENSOR_FRONT] = new ExynosCameraInfoS5K3H7_SUNNY_2M;
-        m_curCameraInfo    [SENSOR_FRONT] = new ExynosCameraInfoS5K3H7_SUNNY_2M;
-		
-        m_defaultCameraInfo[SENSOR_FAKE]  = new ExynosCameraInfoS5K3H7_SUNNY_2MFake;
-        m_curCameraInfo    [SENSOR_FAKE]  = new ExynosCameraInfoS5K3H7_SUNNY_2MFake;
+    m_defaultCameraInfo[CAMERA_MODE_BACK]  = new ExynosCameraInfoIMX135;
+    m_curCameraInfo    [CAMERA_MODE_BACK]  = new ExynosCameraInfoIMX135;
+
+    m_defaultCameraInfo[CAMERA_MODE_FRONT] = new ExynosCameraInfoS5K6B2;
+    m_curCameraInfo    [CAMERA_MODE_FRONT] = new ExynosCameraInfoS5K6B2;
+
+    if (cameraId == CAMERA_ID_BACK) {
+        m_cameraMode = CAMERA_MODE_BACK;
+
+        m_defaultCameraInfo[CAMERA_MODE_REPROCESSING]  = new ExynosCameraInfoIMX135Reprocessing;
+        m_curCameraInfo    [CAMERA_MODE_REPROCESSING]  = new ExynosCameraInfoIMX135Reprocessing;
+    } else if (cameraId == CAMERA_ID_FRONT) {
+        m_cameraMode = CAMERA_MODE_FRONT;
+
+        m_defaultCameraInfo[CAMERA_MODE_REPROCESSING]  = new ExynosCameraInfoS5K6B2Reprocessing;
+        m_curCameraInfo    [CAMERA_MODE_REPROCESSING]  = new ExynosCameraInfoS5K6B2Reprocessing;
     }
-#else
-    if (m_cameraId == CAMERA_ID_BACK) {
-        m_camera_default = SENSOR_BACK;
-        m_camera_mode = CAMERA_ACTIVATE_MODE_BACK;
-        m_cameraId = CAMERA_ID_BACK;
 
-        m_defaultCameraInfo[SENSOR_BACK]  = new ExynosCameraInfoIMX135;
-        m_curCameraInfo    [SENSOR_BACK]  = new ExynosCameraInfoIMX135;
-
-        m_defaultCameraInfo[SENSOR_FRONT] = new ExynosCameraInfoS5K6B2;
-        m_curCameraInfo    [SENSOR_FRONT] = new ExynosCameraInfoS5K6B2;
-
-        m_defaultCameraInfo[SENSOR_FAKE]  = new ExynosCameraInfoIMX135Fake;
-        m_curCameraInfo    [SENSOR_FAKE]  = new ExynosCameraInfoIMX135Fake;
-    } else if (m_cameraId == CAMERA_ID_FRONT) {
-        m_camera_default = SENSOR_FRONT;
-        m_camera_mode = CAMERA_ACTIVATE_MODE_FRONT;
-        m_cameraId = CAMERA_ID_FRONT;
-
-        m_defaultCameraInfo[SENSOR_BACK]  = new ExynosCameraInfoIMX135;
-        m_curCameraInfo    [SENSOR_BACK]  = new ExynosCameraInfoIMX135;
-
-        m_defaultCameraInfo[SENSOR_FRONT] = new ExynosCameraInfoS5K6B2;
-        m_curCameraInfo    [SENSOR_FRONT] = new ExynosCameraInfoS5K6B2;
-
-        m_defaultCameraInfo[SENSOR_FAKE]  = new ExynosCameraInfoS5K6B2Fake;
-        m_curCameraInfo    [SENSOR_FAKE]  = new ExynosCameraInfoS5K6B2Fake;
-    }
-#endif //USE_S5K3H7_CAMERA
-
-    for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-        memset(&m_camera_info[SENSOR_BACK].sensor, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].isp, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].picture, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].preview, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].video, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].is3a0Output, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].is3a0Capture, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].is3a1Output, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].is3a1Capture, 0, sizeof(node_info_t));
+    for (int i = 0; i < CAMERA_MODE_MAX; i++) {
+        memset(&m_camera_info[i].sensor,   0, sizeof(node_info_t));
+        memset(&m_camera_info[i].is3a0Src, 0, sizeof(node_info_t));
+        memset(&m_camera_info[i].is3a0Dst, 0, sizeof(node_info_t));
+        memset(&m_camera_info[i].is3a1Src, 0, sizeof(node_info_t));
+        memset(&m_camera_info[i].is3a1Dst, 0, sizeof(node_info_t));
+        memset(&m_camera_info[i].isp,      0, sizeof(node_info_t));
+        memset(&m_camera_info[i].picture,  0, sizeof(node_info_t));
+        memset(&m_camera_info[i].preview,  0, sizeof(node_info_t));
+        memset(&m_camera_info[i].video,    0, sizeof(node_info_t));
 #ifdef USE_VDIS
-        memset(&m_camera_info[SENSOR_BACK].vdisc,   0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_BACK].vdiso,   0, sizeof(node_info_t));
+        memset(&m_camera_info[i].vdisc,    0, sizeof(node_info_t));
+        memset(&m_camera_info[i].vdiso,    0, sizeof(node_info_t));
 #endif
 
-        memset(&m_camera_info[SENSOR_FRONT].sensor, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].isp, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].picture, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].preview, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].video, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].is3a0Output, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].is3a0Capture, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].is3a1Output, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].is3a1Capture, 0, sizeof(node_info_t));
+        m_camera_info[i].sensor.fd   = -1;
+        m_camera_info[i].is3a0Src.fd = -1;
+        m_camera_info[i].is3a0Dst.fd = -1;
+        m_camera_info[i].is3a1Src.fd = -1;
+        m_camera_info[i].is3a1Dst.fd = -1;
+        m_camera_info[i].isp.fd      = -1;
+        m_camera_info[i].picture.fd  = -1;
+        m_camera_info[i].preview.fd  = -1;
+        m_camera_info[i].video.fd    = -1;
 #ifdef USE_VDIS
-        memset(&m_camera_info[SENSOR_FRONT].vdisc,   0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FRONT].vdiso,   0, sizeof(node_info_t));
-#endif
-
-        memset(&m_camera_info[SENSOR_FAKE].sensor, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].isp, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].picture, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].preview, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].video, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].is3a0Output, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].is3a0Capture, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].is3a1Output, 0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].is3a1Capture, 0, sizeof(node_info_t));
-#ifdef USE_VDIS
-        memset(&m_camera_info[SENSOR_FAKE].vdisc,   0, sizeof(node_info_t));
-        memset(&m_camera_info[SENSOR_FAKE].vdiso,   0, sizeof(node_info_t));
-#endif
-
-        m_camera_info[SENSOR_BACK].sensor.fd = -1;
-        m_camera_info[SENSOR_BACK].isp.fd = -1;
-        m_camera_info[SENSOR_BACK].picture.fd = -1;
-        m_camera_info[SENSOR_BACK].preview.fd = -1;
-        m_camera_info[SENSOR_BACK].video.fd = -1;
-        m_camera_info[SENSOR_BACK].is3a0Output.fd = -1;
-        m_camera_info[SENSOR_BACK].is3a0Capture.fd = -1;
-        m_camera_info[SENSOR_BACK].is3a1Output.fd = -1;
-        m_camera_info[SENSOR_BACK].is3a1Capture.fd = -1;
-#ifdef USE_VDIS
-        m_camera_info[SENSOR_BACK].vdisc.fd   = -1;
-        m_camera_info[SENSOR_BACK].vdiso.fd   = -1;
-#endif
-
-        m_camera_info[SENSOR_FRONT].sensor.fd = -1;
-        m_camera_info[SENSOR_FRONT].isp.fd = -1;
-        m_camera_info[SENSOR_FRONT].picture.fd = -1;
-        m_camera_info[SENSOR_FRONT].preview.fd = -1;
-        m_camera_info[SENSOR_FRONT].video.fd = -1;
-        m_camera_info[SENSOR_FRONT].is3a0Output.fd = -1;
-        m_camera_info[SENSOR_FRONT].is3a0Capture.fd = -1;
-        m_camera_info[SENSOR_FRONT].is3a1Output.fd = -1;
-        m_camera_info[SENSOR_FRONT].is3a1Capture.fd = -1;
-#ifdef USE_VDIS
-        m_camera_info[SENSOR_FRONT].vdisc.fd   = -1;
-        m_camera_info[SENSOR_FRONT].vdiso.fd   = -1;
-#endif
-
-        m_camera_info[SENSOR_FAKE].sensor.fd = -1;
-        m_camera_info[SENSOR_FAKE].isp.fd = -1;
-        m_camera_info[SENSOR_FAKE].picture.fd = -1;
-        m_camera_info[SENSOR_FAKE].preview.fd = -1;
-        m_camera_info[SENSOR_FAKE].video.fd = -1;
-        m_camera_info[SENSOR_FAKE].is3a0Output.fd = -1;
-        m_camera_info[SENSOR_FAKE].is3a0Capture.fd = -1;
-        m_camera_info[SENSOR_FAKE].is3a1Output.fd = -1;
-        m_camera_info[SENSOR_FAKE].is3a1Capture.fd = -1;
-#ifdef USE_VDIS
-        m_camera_info[SENSOR_FAKE].vdisc.fd   = -1;
-        m_camera_info[SENSOR_FAKE].vdiso.fd   = -1;
+        m_camera_info[i].vdisc.fd    = -1;
+        m_camera_info[i].vdiso.fd    = -1;
 #endif
     }
 
-    m_camera_info[SENSOR_BACK].sensor.flagStart = false;
-    m_camera_info[SENSOR_BACK].isp.flagStart = false;
-    m_camera_info[SENSOR_BACK].preview.flagStart = false;
-    m_camera_info[SENSOR_BACK].video.flagStart = false;
-    m_camera_info[SENSOR_BACK].picture.flagStart = false;
-    m_camera_info[SENSOR_BACK].is3a0Output.flagStart = false;
-    m_camera_info[SENSOR_BACK].is3a0Capture.flagStart = false;
-    m_camera_info[SENSOR_BACK].is3a1Output.flagStart = false;
-    m_camera_info[SENSOR_BACK].is3a1Capture.flagStart = false;
-#ifdef USE_VDIS
-    m_camera_info[SENSOR_BACK].vdisc.flagStart = false;
-    m_camera_info[SENSOR_BACK].vdiso.flagStart = false;
-#endif
+    m_isFirtstSensorStart = true;
+    m_isFirtstIs3a1SrcStart= true;
+    m_isFirtstIs3a1DstStart = true;
+    m_isFirtstIs3a0SrcStart= true;
+    m_isFirtstIs3a0DstStart = true;
+    m_isFirtstIspStart = true;
 
-    m_tryPreviewStop = true;
-    m_tryVideoStop = true;
-    m_tryPictureStop = true;
-
-    m_camera_info[SENSOR_FRONT].sensor.flagStart = false;
-    m_camera_info[SENSOR_FRONT].isp.flagStart = false;
-    m_camera_info[SENSOR_FRONT].preview.flagStart = false;
-    m_camera_info[SENSOR_FRONT].video.flagStart = false;
-    m_camera_info[SENSOR_FRONT].picture.flagStart = false;
-    m_camera_info[SENSOR_FRONT].is3a0Output.flagStart = false;
-    m_camera_info[SENSOR_FRONT].is3a0Capture.flagStart = false;
-    m_camera_info[SENSOR_FRONT].is3a1Output.flagStart = false;
-    m_camera_info[SENSOR_FRONT].is3a1Capture.flagStart = false;
-#ifdef USE_VDIS
-    m_camera_info[SENSOR_FRONT].vdisc.flagStart = false;
-    m_camera_info[SENSOR_FRONT].vdiso.flagStart = false;
-#endif
-
-    m_camera_info[SENSOR_FAKE].sensor.flagStart = false;
-    m_camera_info[SENSOR_FAKE].isp.flagStart = false;
-    m_camera_info[SENSOR_FAKE].preview.flagStart = false;
-    m_camera_info[SENSOR_FAKE].video.flagStart = false;
-    m_camera_info[SENSOR_FAKE].picture.flagStart = false;
-    m_camera_info[SENSOR_FAKE].is3a0Output.flagStart = false;
-    m_camera_info[SENSOR_FAKE].is3a0Capture.flagStart = false;
-    m_camera_info[SENSOR_FAKE].is3a1Output.flagStart = false;
-    m_camera_info[SENSOR_FAKE].is3a1Capture.flagStart = false;
-#ifdef USE_VDIS
-    m_camera_info[SENSOR_FAKE].vdisc.flagStart = false;
-    m_camera_info[SENSOR_FAKE].vdiso.flagStart = false;
-#endif
-
-    m_tryPreviewStopLpzsl = true;
-    m_tryVideoStopLpzsl = true;
-    m_tryPictureStopLpzsl = true;
-    m_isFirtstIspStartLpzsl= true;
-    m_isFirtstSensorStartLpzsl = true;
-    m_isFirtstIs3a1OutputStart= true;
-    m_isFirtstIs3a1CaptureStart = true;
-    m_isFirtstIs3a0OutputStart= true;
-    m_isFirtstIs3a0CaptureStart = true;
+    m_isFirtstIspStartReprocessing= true;
+    m_isFirtstSensorStartReprocessing = true;
 
     m_isFirtstIs3a1StreamOn = true;
     m_isFirtstIs3a0StreamOn = true;
     m_isIs3a1ParamChanged = false;
     m_isIs3a0ParamChanged = false;
 
+    m_cameraModeIs3a0 = m_cameraMode;
+
     m_flagStartFaceDetection = false;
     m_flagAutoFocusRunning = false;
 
     m_touchAFMode = false;
     m_touchAFModeForFlash= false;
-    m_oldMeteringMode = m_curCameraInfo[m_camera_default]->metering;
-    m_isFirtstIspStart = true;
-    m_isFirtstSensorStart = true;
+    m_oldMeteringMode = m_curCameraInfo[m_cameraMode]->metering;
 
-    if (this->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
-        if (initSensorLpzsl() == false) {
-            CLOGE("ERR(%s):Fail on initSensorLpzsl()", __func__);
+    if (m_initSensor(m_cameraMode) == false) {
+        CLOGE("ERR(%s):m_initSensor(%d) fail", __func__, m_cameraMode);
+        goto err;
+    }
+
+    if (this->getCameraMode() == CAMERA_MODE_BACK) {
+        if (m_initSensor(CAMERA_MODE_REPROCESSING) == false) {
+            CLOGE("ERR(%s):m_initSensor(%d) fail", __func__, m_cameraMode);
             goto err;
         }
-        if (initSensor() == false) {
-            CLOGE("ERR(%s):Fail on initSensor()", __func__);
-            goto err;
-        }
-    } else if (this->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
-        if (initSensor() == false) {
-            CLOGE("ERR(%s):Fail on initSensor()", __func__);
-            goto err;
-        }
+
     }
 
     m_ionCameraClient = ion_client_create();
@@ -2506,23 +1921,21 @@ bool ExynosCamera::create(int cameraId)
     }
 
     m_setExifFixedAttribute();
-    m_flagCreate = true;
 
     m_flashMgr = new ExynosCameraActivityFlash();
     m_autofocusMgr = new ExynosCameraActivityAutofocus();
     m_sCaptureMgr = new ExynosCameraActivitySpecialCapture();
 
+    m_flagCreate = true;
+
     return true;
 
 err:
-    deinitSensor();
-    deinitSensorLpzsl();
-
     if (0 < m_ionCameraClient)
         ion_client_destroy(m_ionCameraClient);
     m_ionCameraClient = -1;
 
-    for (int i = 0; i < SENSOR_MAX_NUM; i++) {
+    for (int i = 0; i < CAMERA_MODE_MAX; i++) {
         if (m_defaultCameraInfo[i])
             delete m_defaultCameraInfo[i];
         m_defaultCameraInfo[i] = NULL;
@@ -2535,14 +1948,214 @@ err:
     return false;
 }
 
-bool ExynosCamera::flagOpen(int cameraId)
+bool ExynosCamera::destroy(void)
 {
-    return m_flagOpen[cameraId];
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (m_flagCreate == false) {
+        CLOGW("WARN(%s):Not yet created", __func__);
+        return true;
+    }
+
+    if (m_isDVFSLocked == true) {
+        if (DvfsUnLock() == false)
+            CLOGW("WRN(%s): Dvfs unlock fail!!!", __func__);
+    }
+
+    if (mExifInfo.maker_note)
+        delete mExifInfo.maker_note;
+    mExifInfo.maker_note = NULL;
+    mExifInfo.maker_note_size = 0;
+
+#ifdef USE_VDIS
+    if (m_camera_info[CAMERA_MODE_BACK].vdisc.flagStart == true) {
+        if (stopVdisCapture() == false)
+            CLOGE("ERR(%s):stopVdisCapture() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_BACK].vdiso.flagStart == true) {
+        if (stopVdisOutput() == false)
+            CLOGE("ERR(%s):stopVdisOutput() fail", __func__);
+    }
+#endif
+
+    if (m_camera_info[CAMERA_MODE_BACK].video.flagStart == true) {
+        if (stopVideo() == false)
+            CLOGE("ERR(%s):stopVideo() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_BACK].preview.flagStart == true) {
+        if (stopPreview() == false)
+            CLOGE("ERR(%s):stopPreview() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_BACK].picture.flagStart == true) {
+        if (stopPicture() == false)
+            CLOGE("ERR(%s):stopPicture() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].sensor.flagStart == true) {
+        if (stopSensorOff(CAMERA_MODE_REPROCESSING) == false)
+            CLOGE("ERR(%s):stopSensorOff() fail", __func__);
+
+        if (stopSensorReprocessing() == false)
+            CLOGE("ERR(%s):stopSensorReprocessing() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_BACK].sensor.flagStart == true) {
+        if (stopSensor() == false)
+            CLOGE("ERR(%s):stopSensor() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_BACK].isp.flagStart == true) {
+        if (stopIsp() == false)
+            CLOGE("ERR(%s):stopIsp() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_BACK].is3a0Src.flagStart == true ||
+        m_camera_info[CAMERA_MODE_BACK].is3a0Dst.flagStart == true) {
+        if (stopIs3a0(CAMERA_MODE_BACK) == false)
+            CLOGE("ERR(%s):stopIs3a0() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_BACK].is3a1Src.flagStart == true ||
+        m_camera_info[CAMERA_MODE_BACK].is3a1Dst.flagStart == true) {
+        if (stopIs3a1(CAMERA_MODE_BACK) == false)
+            CLOGE("ERR(%s):stopIs3a1() fail", __func__);
+    }
+
+#ifdef USE_VDIS
+    if (m_camera_info[CAMERA_MODE_FRONT].vdisc.flagStart == true) {
+        if (stopVdisCapture() == false)
+            CLOGE("ERR(%s):stopVdisCapture() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_FRONT].vdiso.flagStart == true) {
+        if (stopVdisOutput() == false)
+            CLOGE("ERR(%s):stopVdisOutput() fail", __func__);
+    }
+#endif
+
+    if (m_camera_info[CAMERA_MODE_FRONT].is3a0Src.flagStart == true ||
+        m_camera_info[CAMERA_MODE_FRONT].is3a0Dst.flagStart == true) {
+        if (stopIs3a0(CAMERA_MODE_FRONT) == false)
+            CLOGE("ERR(%s):stopIs3a0() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_FRONT].is3a1Src.flagStart == true ||
+        m_camera_info[CAMERA_MODE_FRONT].is3a1Dst.flagStart == true) {
+        if (stopIs3a1(CAMERA_MODE_FRONT) == false)
+            CLOGE("ERR(%s):stopIs3a1() fail", __func__);
+    }
+
+#ifdef USE_VDIS
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].vdisc.flagStart == true) {
+        if (stopVdisCapture() == false)
+            CLOGE("ERR(%s):stopVdisCapture() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].vdiso.flagStart == true) {
+        if (stopVdisOutput() == false)
+            CLOGE("ERR(%s):stopVdisOutput() fail", __func__);
+    }
+#endif
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].preview.flagStart == true) {
+        if (stopPreviewReprocessing() == false)
+            CLOGE("ERR(%s):stopPreviewReprocessing() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart == true) {
+        if (stopPictureReprocessing() == false)
+            CLOGE("ERR(%s):stopPictureReprocessing() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart == true) {
+        if (stopIspReprocessing() == false)
+            CLOGE("ERR(%s):stopIspReprocessing() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].is3a0Src.flagStart == true ||
+        m_camera_info[CAMERA_MODE_REPROCESSING].is3a0Dst.flagStart == true) {
+        if (stopIs3a0(CAMERA_MODE_REPROCESSING) == false)
+            CLOGE("ERR(%s):stopIs3a0() fail", __func__);
+    }
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].is3a1Src.flagStart == true ||
+        m_camera_info[CAMERA_MODE_REPROCESSING].is3a1Dst.flagStart == true) {
+        if (stopIs3a1(CAMERA_MODE_REPROCESSING) == false)
+            CLOGE("ERR(%s):stopIs3a1() fail", __func__);
+    }
+
+    if (getFlagInternalPreviewBuf() == true)
+        releaseAllInternalPreviewBuf();
+
+#ifdef USE_VDIS
+    m_closeVdisOut();
+#endif
+    m_closePreview(m_cameraMode);
+    m_closePicture(m_cameraMode);
+
+    m_closeIs3a0(CAMERA_MODE_FRONT);
+    m_closeIs3a0(CAMERA_MODE_BACK);
+    m_closeIs3a0(CAMERA_MODE_REPROCESSING);
+
+    m_closeIs3a1(CAMERA_MODE_FRONT);
+    m_closeIs3a1(CAMERA_MODE_BACK);
+    m_closeIs3a1(CAMERA_MODE_REPROCESSING);
+
+    m_closeSensor(m_cameraMode);
+    m_closeIsp(m_cameraMode);
+
+    m_closePreview(CAMERA_MODE_REPROCESSING);
+    m_closePicture(CAMERA_MODE_REPROCESSING);
+    m_closeSensor(CAMERA_MODE_REPROCESSING);
+    m_closeIsp(CAMERA_MODE_REPROCESSING);
+
+    if (0 < m_ionCameraClient)
+        ion_client_destroy(m_ionCameraClient);
+    m_ionCameraClient = -1;
+
+    for (int i = 0; i < CAMERA_MODE_MAX; i++) {
+        if (m_defaultCameraInfo[i])
+            delete m_defaultCameraInfo[i];
+        m_defaultCameraInfo[i] = NULL;
+
+        if (m_curCameraInfo[i])
+            delete m_curCameraInfo[i];
+        m_curCameraInfo[i] = NULL;
+
+        m_flagOpen[i] = false;
+    }
+
+    if (m_flashMgr) {
+        delete m_flashMgr;
+        m_flashMgr = NULL;
+    }
+
+    if (m_autofocusMgr) {
+        delete m_autofocusMgr;
+        m_autofocusMgr = NULL;
+    }
+
+    if (m_sCaptureMgr) {
+        delete m_sCaptureMgr;
+        m_sCaptureMgr = NULL;
+    }
+
+    m_flagCreate = false;
+
+    return true;
+}
+
+bool ExynosCamera::flagCreate(void)
+{
+    return m_flagCreate;
 }
 
 bool ExynosCamera::openCamera(int cameraId)
 {
-    CLOGD("[%s] (%d) cameraId: %d", __func__, __LINE__, cameraId);
+    CLOGD("DEBUG(%s):(%d) cameraId: %d", __func__, __LINE__, cameraId);
 
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet created", __func__);
@@ -2550,127 +2163,139 @@ bool ExynosCamera::openCamera(int cameraId)
     }
 
     /* TODO: m_internalIsp have to set by sensor name */
-    if (m_cameraId == CAMERA_ID_BACK)
-        m_internalISP = false; //mhjang  true;
-    else if (m_cameraId == CAMERA_ID_FRONT)
+    if (cameraId == CAMERA_ID_BACK)
+        m_internalISP = true;
+    else if (cameraId == CAMERA_ID_FRONT)
         m_internalISP = true;
 
     if (m_internalISP == true) {
-        if (openInternalISP(m_cameraId) == false) {
-            CLOGE("ERR(%s): Fail to open internal ISP", __func__);
+        if (m_openInternalISP(m_cameraMode) == false) {
+            CLOGE("ERR(%s):m_openInternalISP(%d), fail", __func__, m_cameraMode);
             return false;
         }
     } else {
-        if (openExternalISP(m_cameraId) == false) {
-            CLOGE("ERR(%s): Fail to open external ISP", __func__);
+        if (m_openExternalISP(m_cameraMode) == false) {
+            CLOGE("ERR(%s):m_openExternalISP(%d), fail", __func__, m_cameraMode);
             return false;
         }
     }
 
     if (m_getImageUniqueId() == false)
-        CLOGE("ERR(%s): m_getImageUniqueId() fail", __func__);
+        CLOGE("ERR(%s):m_getImageUniqueId() fail", __func__);
 
     m_flagOpen[cameraId] = true;
 
     return true;
 }
 
-bool ExynosCamera::openInternalISP(int cameraId)
+bool ExynosCamera::m_openInternalISP(int cameraMode)
 {
-    if (this->getCameraMode() == CAMERA_ACTIVATE_MODE_BACK) {
-        if (openSensorLpzsl() == false) {
-            CLOGE("ERR(%s): openSensorLpzsl fail", __func__);
+    if (cameraMode == CAMERA_MODE_BACK) {
+        if (m_openSensor(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openSensor(%d) fail", __func__, cameraMode);
             return false;
         }
-        if (openSensor() == false) {
-            CLOGE("ERR(%s): openSensor fail", __func__);
-            return false;
-        }
-        if (openIsp() == false) {
-            CLOGE("ERR(%s):Fail on openIsp()", __func__);
+
+        if (m_openIsp(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openIsp(%d) fail", __func__, cameraMode);
             goto err;
         }
-        if (openIs3a1(SENSOR_BACK) == false) {
-            CLOGE("ERR(%s):Fail on openSensor()", __func__);
+
+        if (m_openIs3a1(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openIs3a1(%d) fail", __func__, cameraMode);
             goto err;
         }
-        if (openPicture() == false) {
-            CLOGE("ERR(%s):Fail on openPicture()", __func__);
+
+        if (m_openPicture(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openPicture(%d) fail", __func__, cameraMode);
             goto err;
         }
-        if (openPreview() == false) {
-            CLOGE("ERR(%s):Fail on openPreview()", __func__);
+
+        if (m_openPreview(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openPreview(%d) fail", __func__, cameraMode);
             goto err;
         }
+
 #ifdef USE_VDIS
-        if (openVdisOut() == false) {
-            CLOGE("ERR(%s):Fail on initVdisOut()", __func__);
+        if (m_openVdisOut() == false) {
+            CLOGE("ERR(%s):m_openVdisOut(%d) fail", __func__, cameraMode);
             goto err;
         }
 #endif
-
-        if (openIspLpzsl() == false) {
-            CLOGE("ERR(%s):Fail on openIspLpzsl()", __func__);
-            goto err;
-        }
-        if (openIs3a0(SENSOR_FAKE) == false) {
-            CLOGE("ERR(%s):Fail on openIs3a0()", __func__);
-            goto err;
-        }
-        if (openPictureLpzsl() == false) {
-            CLOGE("ERR(%s):Fail on openPictureLpzsl()", __func__);
-            goto err;
-        }
-        if (openPreviewLpzsl() == false) {
-            CLOGE("ERR(%s):Fail on openPreviewLpzsl()", __func__);
-            goto err;
-        }
-    } else if (this->getCameraMode() == CAMERA_ACTIVATE_MODE_FRONT) {
-        if (openSensor() == false) {
-            CLOGE("ERR(%s): openSensor fail", __func__);
+        if (m_openSensor(CAMERA_MODE_REPROCESSING) == false) {
+            CLOGE("ERR(%s):m_openSensor(%d) fail", __func__, CAMERA_MODE_REPROCESSING);
             return false;
         }
-        if (openIsp() == false) {
-            CLOGE("ERR(%s):Fail on openIsp()", __func__);
+
+        if (m_openIsp(CAMERA_MODE_REPROCESSING) == false) {
+            CLOGE("ERR(%s):m_openIsp(%d) fail", __func__, CAMERA_MODE_REPROCESSING);
             goto err;
         }
-        if (openIs3a0(SENSOR_FRONT) == false) {
-            CLOGE("ERR(%s):Fail on openIs3a0()", __func__);
+        if (m_openIs3a0(CAMERA_MODE_REPROCESSING) == false) {
+            CLOGE("ERR(%s):m_openIs3a0(%d) fail", __func__, CAMERA_MODE_REPROCESSING);
             goto err;
         }
-        if (openPicture() == false) {
-            CLOGE("ERR(%s):Fail on openPicture()", __func__);
+        if (m_openPicture(CAMERA_MODE_REPROCESSING) == false) {
+            CLOGE("ERR(%s):m_openPicture(%d) fail", __func__, CAMERA_MODE_REPROCESSING);
             goto err;
         }
-        if (openPreview() == false) {
-            CLOGE("ERR(%s):Fail on openPreview()", __func__);
+        if (m_openPreview(CAMERA_MODE_REPROCESSING) == false) {
+            CLOGE("ERR(%s):m_openPreview(%d) fail", __func__, CAMERA_MODE_REPROCESSING);
+            goto err;
+        }
+    } else if (cameraMode == CAMERA_MODE_FRONT) {
+        if (m_openSensor(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openSensor(%d) fail", __func__, cameraMode);
+            return false;
+        }
+
+        if (m_openIsp(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openIsp(%d) fail", __func__, cameraMode);
+            goto err;
+        }
+
+        if (m_openIs3a0(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openIs3a0(%d) fail", __func__, cameraMode);
+            goto err;
+        }
+
+        if (m_openPicture(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openPicture(%d) fail", __func__, cameraMode);
+            goto err;
+        }
+
+        if (m_openPreview(cameraMode) == false) {
+            CLOGE("ERR(%s):m_openPreview(%d) fail", __func__, cameraMode);
             goto err;
         }
     }
+
     return true;
 
 err:
 #ifdef USE_VDIS
-    closeVdisOut();
+    m_closeVdisOut();
 #endif
-    closePreview();
-    closePicture();
-    closeIs3a0(SENSOR_FRONT);
-    closeIs3a0(SENSOR_BACK);
-    closeIs3a0(SENSOR_FAKE);
-    closeIs3a1(SENSOR_FRONT);
-    closeIs3a1(SENSOR_BACK);
-    closeIs3a1(SENSOR_FAKE);
-    closeIsp();
- 
-    closePreviewLpzsl();
-    closePictureLpzsl();
-    closeIspLpzsl();
+    m_closePreview(cameraMode);
+    m_closePicture(cameraMode);
+
+    m_closeIs3a0(CAMERA_MODE_FRONT);
+    m_closeIs3a0(CAMERA_MODE_BACK);
+    m_closeIs3a0(CAMERA_MODE_REPROCESSING);
+
+    m_closeIs3a1(CAMERA_MODE_FRONT);
+    m_closeIs3a1(CAMERA_MODE_BACK);
+    m_closeIs3a1(CAMERA_MODE_REPROCESSING);
+    m_closeIsp(cameraMode);
+
+    m_closePreview(m_cameraMode);
+    m_closePicture(m_cameraMode);
+    m_closeIsp(CAMERA_MODE_REPROCESSING);
 
     return false;
 }
 
-bool ExynosCamera::openExternalISP(int cameraId)
+bool ExynosCamera::m_openExternalISP(int cameraMode)
 {
     char node[30];
     struct media_link   *links = NULL;
@@ -2829,8 +2454,8 @@ bool ExynosCamera::openExternalISP(int cameraId)
 
     memset(&node, 0x00, sizeof(node));
     snprintf(node, sizeof(node), "%s%d", PFX_NODE, (FLITE_VD_NODE_OFFSET + VIDEO_NODE_PREVIEW_ID));
-    m_camera_info[SENSOR_BACK].preview.fd = exynos_v4l2_open(node, O_RDWR, 0);
-    if (m_camera_info[SENSOR_BACK].preview.fd <= 0) {
+    m_camera_info[CAMERA_MODE_BACK].preview.fd = exynos_v4l2_open(node, O_RDWR, 0);
+    if (m_camera_info[CAMERA_MODE_BACK].preview.fd <= 0) {
         CLOGE("ERR(%s):exynos_v4l2_open(%s) fail (error : %s)", __func__, node, strerror(errno));
         goto err;
     }
@@ -2844,169 +2469,20 @@ err:
     return false;
 }
 
-bool ExynosCamera::destroy(void)
+bool ExynosCamera::flagOpen(int cameraId)
 {
-    if (m_flagCreate == false) {
-        CLOGW("WARN(%s):Not yet created", __func__);
-        return true;
-    }
-
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (m_isDVFSLocked == true) {
-        if (DvfsUnLock() == false)
-            CLOGW("WRN(%s): Dvfs unlock fail!!!", __func__);
-    }
-
-    if (mExifInfo.maker_note)
-        delete mExifInfo.maker_note;
-    mExifInfo.maker_note = NULL;
-    mExifInfo.maker_note_size = 0;
-#ifdef USE_VDIS
-    if (m_camera_info[SENSOR_BACK].vdisc.flagStart == true)
-        stopVdisCapture();
-
-    if (m_camera_info[SENSOR_BACK].vdiso.flagStart == true)
-        stopVdisOutput();
-#endif
-    if (m_camera_info[SENSOR_BACK].video.flagStart == true)
-        stopVideo();
-
-    if (m_camera_info[SENSOR_BACK].preview.flagStart == true)
-        stopPreview();
-
-    if (m_camera_info[SENSOR_BACK].picture.flagStart == true)
-        stopPicture();
-
-    if (m_camera_info[SENSOR_FAKE].sensor.flagStart == true) {
-        stopSensorOff(SENSOR_FAKE);
-        stopSensorLpzsl();
-    }
-
-    if (m_camera_info[SENSOR_BACK].sensor.flagStart == true)
-        stopSensor();
-
-    if (m_camera_info[SENSOR_BACK].isp.flagStart == true)
-        stopIsp();
-
-    if (m_camera_info[SENSOR_BACK].is3a0Output.flagStart == true ||
-        m_camera_info[SENSOR_BACK].is3a0Capture.flagStart == true)
-        stopIs3a0(SENSOR_BACK);
-
-    if (m_camera_info[SENSOR_BACK].is3a1Output.flagStart == true ||
-        m_camera_info[SENSOR_BACK].is3a1Capture.flagStart == true)
-        stopIs3a1(SENSOR_BACK);
-#ifdef USE_VDIS
-    if (m_camera_info[SENSOR_FRONT].vdisc.flagStart == true)
-        stopVdisCapture();
-
-    if (m_camera_info[SENSOR_FRONT].vdiso.flagStart == true)
-        stopVdisOutput();
-#endif
-    if (m_camera_info[SENSOR_FRONT].is3a0Output.flagStart == true ||
-        m_camera_info[SENSOR_FRONT].is3a0Capture.flagStart == true)
-        stopIs3a0(SENSOR_FRONT);
-
-    if (m_camera_info[SENSOR_FRONT].is3a1Output.flagStart == true ||
-        m_camera_info[SENSOR_FRONT].is3a1Capture.flagStart == true)
-        stopIs3a1(SENSOR_FRONT);
-#ifdef USE_VDIS
-    if (m_camera_info[SENSOR_FAKE].vdisc.flagStart == true)
-        stopVdisCapture();
-
-    if (m_camera_info[SENSOR_FAKE].vdiso.flagStart == true)
-        stopVdisOutput();
-#endif
-    if (m_camera_info[SENSOR_FAKE].video.flagStart == true)
-        stopVideoLpzsl();
-
-    if (m_camera_info[SENSOR_FAKE].preview.flagStart == true)
-        stopPreviewLpzsl();
-
-    if (m_camera_info[SENSOR_FAKE].picture.flagStart == true)
-        stopPictureLpzsl();
-
-    if (m_camera_info[SENSOR_FAKE].isp.flagStart == true)
-        stopIspLpzsl();
-
-    if (m_camera_info[SENSOR_FAKE].is3a0Output.flagStart == true ||
-        m_camera_info[SENSOR_FAKE].is3a0Capture.flagStart == true)
-        stopIs3a0(SENSOR_FAKE);
-
-    if (m_camera_info[SENSOR_FAKE].is3a1Output.flagStart == true ||
-        m_camera_info[SENSOR_FAKE].is3a1Capture.flagStart == true)
-        stopIs3a1(SENSOR_FAKE);
-
-    if (getFlagInternalPreviewBuf() == true)
-        releaseAllInternalPreviewBuf();
-
-#ifdef USE_VDIS
-    closeVdisOut();
-#endif
-    closePreview();
-    closePicture();
-
-    closeIs3a0(SENSOR_FRONT);
-    closeIs3a0(SENSOR_BACK);
-    closeIs3a0(SENSOR_FAKE);
-    closeIs3a1(SENSOR_FRONT);
-    closeIs3a1(SENSOR_BACK);
-    closeIs3a1(SENSOR_FAKE);
-
-    deinitSensor();
-    closeSensor();
-    closeIsp();
-
-    closePreviewLpzsl();
-    closePictureLpzsl();
-    deinitSensorLpzsl();
-    closeSensorLpzsl();
-    closeIspLpzsl();
-
-    if (0 < m_ionCameraClient)
-        ion_client_destroy(m_ionCameraClient);
-    m_ionCameraClient = -1;
-
-    for (int i = 0; i < SENSOR_MAX_NUM; i++) {
-        if (m_defaultCameraInfo[i])
-            delete m_defaultCameraInfo[i];
-        m_defaultCameraInfo[i] = NULL;
-
-        if (m_curCameraInfo[i])
-            delete m_curCameraInfo[i];
-        m_curCameraInfo[i] = NULL;
-
-        m_flagOpen[i] = false;
-    }
-
-    if (m_flashMgr) {
-        delete m_flashMgr;
-        m_flashMgr = NULL;
-    }
-
-    if (m_autofocusMgr) {
-        delete m_autofocusMgr;
-        m_autofocusMgr = NULL;
-    }
-
-    if (m_sCaptureMgr) {
-        delete m_sCaptureMgr;
-        m_sCaptureMgr = NULL;
-    }
-
-    m_flagCreate = false;
-
-    return true;
+    return m_flagOpen[cameraId];
 }
 
-bool ExynosCamera::flagCreate(void)
-{
-    return m_flagCreate;
-}
 
 int ExynosCamera::getCameraId(void)
 {
     return m_cameraId;
+}
+
+int ExynosCamera::getCameraMode()
+{
+    return m_cameraMode;
 }
 
 char *ExynosCamera::getCameraName(void)
@@ -3014,23 +2490,10 @@ char *ExynosCamera::getCameraName(void)
     return m_cameraName;
 }
 
-int ExynosCamera::getPreviewFd(void)
-{
-    return m_camera_info[SENSOR_BACK].preview.fd;
-}
-
-int ExynosCamera::getPictureFd(void)
-{
-    return m_camera_info[SENSOR_BACK].picture.fd;
-}
-
-int ExynosCamera::getVideoFd(void)
-{
-    return m_camera_info[SENSOR_BACK].video.fd;
-}
-
 bool ExynosCamera::startPreview(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     int index;
 
     if (m_flagCreate == false) {
@@ -3043,210 +2506,204 @@ bool ExynosCamera::startPreview(void)
             CLOGE("ERR(%s):set3DNR() fail", __func__);
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart : %d), (size : %d x %d), (format : 0x%x)",
-        m_camera_info[m_camera_default].preview.flagStart,
-        m_camera_info[m_camera_default].preview.width,
-        m_camera_info[m_camera_default].preview.height,
-        m_camera_info[m_camera_default].preview.format);
+    CLOGD("DEBUG(%s):(flagStart : %d), (size : %d x %d), (format : 0x%x)",
+        __func__,
+        m_camera_info[m_cameraMode].preview.flagStart,
+        m_camera_info[m_cameraMode].preview.width,
+        m_camera_info[m_cameraMode].preview.height,
+        m_camera_info[m_cameraMode].preview.format);
 
-    if (m_camera_info[m_camera_default].preview.flagStart == false) {
-        m_camera_info[m_camera_default].preview.width  = m_curCameraInfo[m_camera_default]->previewW;
-        m_camera_info[m_camera_default].preview.height = m_curCameraInfo[m_camera_default]->previewH;
-        m_camera_info[m_camera_default].preview.format = m_curCameraInfo[m_camera_default]->previewColorFormat;
-        m_camera_info[m_camera_default].preview.planes = m_curCameraInfo[m_camera_default]->previewBufPlane;
-        m_camera_info[m_camera_default].preview.memory = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[m_camera_default].preview.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[m_camera_default].preview.ionClient = m_ionCameraClient;
+    if (m_camera_info[m_cameraMode].preview.flagStart == false) {
+        m_camera_info[m_cameraMode].preview.width  = m_curCameraInfo[m_cameraMode]->previewW;
+        m_camera_info[m_cameraMode].preview.height = m_curCameraInfo[m_cameraMode]->previewH;
+        m_camera_info[m_cameraMode].preview.format = m_curCameraInfo[m_cameraMode]->previewColorFormat;
+        m_camera_info[m_cameraMode].preview.planes = m_curCameraInfo[m_cameraMode]->previewBufPlane;
+        m_camera_info[m_cameraMode].preview.memory = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[m_cameraMode].preview.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[m_cameraMode].preview.ionClient = m_ionCameraClient;
 
-        m_camera_info[m_camera_default].preview.buffers = NUM_PREVIEW_BUFFERS;
+        m_camera_info[m_cameraMode].preview.buffers = NUM_PREVIEW_BUFFERS;
 
         // for frame sync
         for (int i = 0; i < NUM_PREVIEW_BUFFERS; i++) {
-            m_camera_info[m_camera_default].preview.buffer[i].size.extS[m_camera_info[m_camera_default].preview.planes - 1]
+            m_camera_info[m_cameraMode].preview.buffer[i].size.extS[m_camera_info[m_cameraMode].preview.planes - 1]
                 = ALIGN(META_DATA_SIZE, PAGE_SIZE);
 
             if (allocMemSinglePlane(m_ionCameraClient,
-                                    &m_camera_info[m_camera_default].preview.buffer[i],
-                                    m_camera_info[m_camera_default].preview.planes - 1,
+                                    &m_camera_info[m_cameraMode].preview.buffer[i],
+                                    m_camera_info[m_cameraMode].preview.planes - 1,
                                     true) == false) {
                 CLOGE("ERR(%s):m_allocCameraMemorySingle() fail", __func__);
                 goto err;
             } else {
-                memset(m_camera_info[m_camera_default].preview.buffer[i].virt.extP[m_curCameraInfo[m_camera_default]->previewBufPlane - 1],
-                        0, m_camera_info[m_camera_default].preview.buffer[i].size.extS[m_curCameraInfo[m_camera_default]->previewBufPlane - 1]);
+                memset(m_camera_info[m_cameraMode].preview.buffer[i].virt.extP[m_curCameraInfo[m_cameraMode]->previewBufPlane - 1],
+                        0, m_camera_info[m_cameraMode].preview.buffer[i].size.extS[m_curCameraInfo[m_cameraMode]->previewBufPlane - 1]);
             }
 
-            CLOGV("DEBUG(%s): index(%d), meta addr(%x)", __func__, i,
-                m_camera_info[m_camera_default].preview.buffer[i].virt.extP[m_curCameraInfo[m_camera_default]->previewBufPlane - 1]);
+            CLOGD("DEBUG(%s): index(%d), meta addr(%x)", __func__, i,
+                m_camera_info[m_cameraMode].preview.buffer[i].virt.extP[m_curCameraInfo[m_cameraMode]->previewBufPlane - 1]);
 
-            previewMetaBuffer[i].virt.p = m_camera_info[m_camera_default].preview.buffer[i].virt.extP[m_curCameraInfo[m_camera_default]->previewBufPlane - 1];
-            previewMetaBuffer[i].size.s = m_camera_info[m_camera_default].preview.buffer[i].size.extS[m_curCameraInfo[m_camera_default]->previewBufPlane - 1];
-            previewMetaBuffer[i].fd.fd = m_camera_info[m_camera_default].preview.buffer[i].fd.extFd[m_curCameraInfo[m_camera_default]->previewBufPlane - 1];
+            m_previewMetaBuffer[i].virt.p = m_camera_info[m_cameraMode].preview.buffer[i].virt.extP[m_curCameraInfo[m_cameraMode]->previewBufPlane - 1];
+            m_previewMetaBuffer[i].size.s = m_camera_info[m_cameraMode].preview.buffer[i].size.extS[m_curCameraInfo[m_cameraMode]->previewBufPlane - 1];
+            m_previewMetaBuffer[i].fd.fd  = m_camera_info[m_cameraMode].preview.buffer[i].fd.extFd[m_curCameraInfo[m_cameraMode]->previewBufPlane - 1];
         }
 
-        if (startPreviewOn() == false) {
-            CLOGE("ERR(%s):startPreviewOn() fail", __func__);
+        if (m_startPreview() == false) {
+            CLOGE("ERR(%s):m_startPreview() fail", __func__);
             goto err;
         }
+
+        m_camera_info[m_cameraMode].preview.flagStart = true;
     }
 
     return true;
 
 err:
-    if (stopPreview() == false)
+    if (this->stopPreview() == false)
         CLOGE("ERR(%s):stopPreview() fail", __func__);
 
     return false;
 }
 
-bool ExynosCamera::startPreviewOn(void)
+bool ExynosCamera::m_startPreview(void)
 {
     int index;
     int BDS_w = 0;
     int BDS_h = 0;
 
-    if (m_flagCreate == false) {
-        CLOGE("ERR(%s):Not yet Created", __func__);
+    int sensorId = m_getSensorId(m_cameraMode);
+    sensorId = (0 << REPROCESSING_SHFIT) | ((FIMC_IS_VIDEO_SCP_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) | (sensorId << 0);
+
+    if (cam_int_s_input(&(m_camera_info[m_cameraMode].preview), sensorId) < 0) {
+        CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    if (cam_int_s_fmt(&m_camera_info[m_cameraMode].preview) < 0) {
+        CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
+        return false;
+    }
 
-    if (m_camera_info[m_camera_default].preview.flagStart == false) {
-        int sensorId = m_getSensorId(m_cameraId);
-        sensorId = (0 << REPROCESSING_SHFIT) | ((FIMC_IS_VIDEO_SCP_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) | (sensorId << 0);
+    if (cam_int_reqbufs(&m_camera_info[m_cameraMode].preview) < 0) {
+        CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
+        return false;
+    }
 
-        if (cam_int_s_input(&(m_camera_info[m_camera_default].preview), sensorId) < 0) {
-            CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
-            return false;
-        }
+    m_camera_info[m_cameraMode].dummy_shot.request_scp = 1;
 
-        if (cam_int_s_fmt(&m_camera_info[m_camera_default].preview) < 0) {
-            CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
-            return false;
-        }
-
-        if (cam_int_reqbufs(&m_camera_info[m_camera_default].preview) < 0) {
-            CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
-            return false;
-        }
-
-        m_camera_info[m_camera_default].dummy_shot.request_scp = 1;
-
-        for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-            if (m_camera_info[m_camera_default].preview.buffer[i].virt.p != NULL ||
-                m_camera_info[m_camera_default].preview.buffer[i].phys.p != 0) {
-                CLOGV("DEBUG(%s): preview buffer[%d], virt.P = %x", __func__, i, m_camera_info[m_camera_default].preview.buffer[i].virt.p);
-                if (cam_int_qbuf(&m_camera_info[m_camera_default].preview, i) < 0) {
-                    CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
-                    return false;
-                }
+    for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
+        if (m_camera_info[m_cameraMode].preview.buffer[i].virt.p != NULL ||
+            m_camera_info[m_cameraMode].preview.buffer[i].phys.p != 0) {
+            CLOGV("DEBUG(%s): preview buffer[%d], virt.P = %x", __func__, i, m_camera_info[m_cameraMode].preview.buffer[i].virt.p);
+            if (cam_int_qbuf(&m_camera_info[m_cameraMode].preview, i) < 0) {
+                CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
+                return false;
             }
         }
+    }
 
-        if (cam_int_streamon(&(m_camera_info[m_camera_default].preview)) < 0) {
+    if (cam_int_streamon(&(m_camera_info[m_cameraMode].preview)) < 0) {
+        CLOGE("ERR(%s):cam_int_streamon(preview) fail", __func__);
+        return false;
+    }
+#ifdef USE_VDIS
+    if ((m_recordingHint == true) &&
+        (getCameraId() == CAMERA_ID_BACK) &&
+        (getVideoStabilization() == true)) {
+
+        if (startVdisCapture() == false) {
+            CLOGE("ERR(%s):Fail on m_secCamera->startVdisCapture()", __func__);
+            return false;
+        }
+
+        if (startVdisOutput() == false) {
+            CLOGE("ERR(%s):Fail on m_secCamera->startVdisOutput()", __func__);
+            return false;
+        }
+
+        if (cam_int_streamon(&(m_camera_info[m_cameraMode].vdisc)) < 0) {
             CLOGE("ERR(%s):cam_int_streamon(preview) fail", __func__);
             return false;
         }
-#ifdef USE_VDIS
-        if ((m_recordingHint == true) &&
-            (getCameraId() == CAMERA_ID_BACK) &&
-            (getVideoStabilization() == true)) {
 
-            if (startVdisCapture() == false) {
-                CLOGE("ERR(%s):Fail on m_secCamera->startVdisCapture()", __func__);
-                return false;
-            }
-
-            if (startVdisOutput() == false) {
-                CLOGE("ERR(%s):Fail on m_secCamera->startVdisOutput()", __func__);
-                return false;
-            }
-
-            if (cam_int_streamon(&(m_camera_info[m_camera_default].vdisc)) < 0) {
-                CLOGE("ERR(%s):cam_int_streamon(preview) fail", __func__);
-                return false;
-            }
-
-            if (cam_int_streamon(&(m_camera_info[m_camera_default].vdiso)) < 0) {
-                CLOGE("ERR(%s):cam_int_streamon(preview) fail", __func__);
-                return false;
-            }
-        }
-#endif
-
-        // HACK : This from startIsp
-        if (cam_int_streamon(&(m_camera_info[m_camera_default].isp)) < 0) {
-            CLOGE("ERR(%s):cam_int_streamon(isp) fail", __func__);
+        if (cam_int_streamon(&(m_camera_info[m_cameraMode].vdiso)) < 0) {
+            CLOGE("ERR(%s):cam_int_streamon(preview) fail", __func__);
             return false;
         }
-#ifdef FORCE_LEADER_OFF
-        m_forceIspOff = 0;
-#endif
-        /* zoom setting */
-        int zoom, srcW, srcH, dstW, dstH;
-        zoom = m_curCameraInfo[m_camera_default]->zoom;
-        srcW = m_curCameraInfo[m_camera_default]->pictureW;
-        srcH = m_curCameraInfo[m_camera_default]->pictureH;
-        dstW = m_curCameraInfo[m_camera_default]->ispW;
-        dstH = m_curCameraInfo[m_camera_default]->ispH;
-#ifdef SCALABLE_SENSOR
-        if (getScalableSensorStart() == true) {
-            CLOGD("DEBUG(%s):zoom setting(ScalableSensor)", __func__);
-            getScalableSensorSizeOnPreview(&srcW, &srcH);
-        }
-#endif
-        if (m_setZoom(zoom, srcW, srcH, dstW, dstH,
-                      (void *)&m_camera_info[m_camera_default].dummy_shot) == false) {
-            CLOGE("ERR(%s):m_setZoom() fail", __func__);
-        }
-
-        m_tryPreviewStop = false;
-        m_camera_info[m_camera_default].preview.flagStart = true;
-
-        bool toggle = getVideoStabilization();
-        if (setVideoStabilization(toggle) == false)
-            CLOGE("ERR(%s):setVideoStabilization() fail", __func__);
-
     }
+#endif
+
+    // HACK : This from startIsp
+    if (cam_int_streamon(&(m_camera_info[m_cameraMode].isp)) < 0) {
+        CLOGE("ERR(%s):cam_int_streamon(isp) fail", __func__);
+        return false;
+    }
+
+#ifdef FORCE_LEADER_OFF
+    m_forceIspOff = 0;
+#endif
+
+    /* zoom setting */
+    int zoom, srcW, srcH, dstW, dstH;
+    zoom = m_curCameraInfo[m_cameraMode]->zoom;
+    srcW = m_curCameraInfo[m_cameraMode]->pictureW;
+    srcH = m_curCameraInfo[m_cameraMode]->pictureH;
+    dstW = m_curCameraInfo[m_cameraMode]->ispW;
+    dstH = m_curCameraInfo[m_cameraMode]->ispH;
+
+#ifdef SCALABLE_SENSOR
+    if (getScalableSensorStart() == true) {
+        CLOGD("DEBUG(%s):zoom setting(ScalableSensor)", __func__);
+        getScalableSensorSizeOnPreview(&srcW, &srcH);
+    }
+#endif
+
+    if (m_setZoom(zoom, srcW, srcH, dstW, dstH,
+                  (void *)&m_camera_info[m_cameraMode].dummy_shot) == false) {
+        CLOGE("ERR(%s):m_setZoom() fail", __func__);
+    }
+
+    bool toggle = getVideoStabilization();
+    if (setVideoStabilization(toggle) == false)
+        CLOGE("ERR(%s):setVideoStabilization() fail", __func__);
 
     return true;
 }
 
 bool ExynosCamera::qAll3a1Buf(void)
 {
-    int sensor_enum = m_camera_default;
+    int cameraMode = m_cameraMode;
     if (m_flagCreate == false) {
         CLOGD("ERR(%s):Not yet created", __func__);
         return true;
     }
 
-    if (m_camera_info[sensor_enum].is3a1Output.flagStart == false) {
-        CLOGD("ERR(%s):Not yet is3a1Output started", __func__);
+    if (m_camera_info[cameraMode].is3a1Src.flagStart == false) {
+        CLOGD("ERR(%s):Not yet is3a1Src started", __func__);
         return true;
     }
 
-    if (m_camera_info[sensor_enum].is3a1Capture.flagStart == false) {
-        CLOGD("ERR(%s):Not yet is3a1Capture started", __func__);
+    if (m_camera_info[cameraMode].is3a1Dst.flagStart == false) {
+        CLOGD("ERR(%s):Not yet is3a1Dst started", __func__);
         return true;
     }
 
-    if (m_setSetfile(sensor_enum) == false) {
-        CLOGE("ERR(%s):m_setSetfile(%d) fail", __func__, sensor_enum);
+    if (m_setSetfile(cameraMode) == false) {
+        CLOGE("ERR(%s):m_setSetfile(%d) fail", __func__, cameraMode);
         return false;
     }
 
     /* qbuf at least 3 buffers */
     for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-        if (m_camera_info[sensor_enum].isp.buffer[i].virt.p != NULL ||
-            m_camera_info[sensor_enum].isp.buffer[i].phys.p != 0) {
+        if (m_camera_info[cameraMode].isp.buffer[i].virt.p != NULL ||
+            m_camera_info[cameraMode].isp.buffer[i].phys.p != 0) {
 
             //metadata buffer
-            memset(metaBuffer[i].virt.extP[1], 0, metaBuffer[i].size.extS[1]);
-            if (cam_int_m2m_qbuf_for_3a1(&(m_camera_info[sensor_enum].isp), i,
-                &(m_camera_info[sensor_enum].is3a1Capture), i, metaBuffer[i]) < 0) {
-                CLOGE("ERR(%s):is3a1Capture cam_int_m2m_qbuf(%d) failed", __func__, i);
+            memset(m_metaBuf[i].virt.extP[1], 0, m_metaBuf[i].size.extS[1]);
+            if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a1Dst), i,
+                             &(m_camera_info[cameraMode].isp),
+                             m_metaBuf[i]) < 0) {
+                CLOGE("ERR(%s):is3a1Dst cam_int_qbuf(%d) fail", __func__, i);
                 return false;
             }
         }
@@ -3254,28 +2711,28 @@ bool ExynosCamera::qAll3a1Buf(void)
 
     /* qbuf at least 3 buffers */
     for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-        if (m_camera_info[sensor_enum].sensor.buffer[i].virt.p != NULL ||
-            m_camera_info[sensor_enum].sensor.buffer[i].phys.p != 0) {
+        if (m_camera_info[cameraMode].sensor.buffer[i].virt.p != NULL ||
+            m_camera_info[cameraMode].sensor.buffer[i].phys.p != 0) {
             struct camera2_shot_ext *shot_ext;
-            shot_ext = (struct camera2_shot_ext *)m_camera_info[sensor_enum].sensor.buffer[i].virt.extP[1];
+            shot_ext = (struct camera2_shot_ext *)m_camera_info[cameraMode].sensor.buffer[i].virt.extP[1];
 
-            memcpy(&shot_ext->shot.ctl, &m_camera_info[sensor_enum].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
+            memcpy(&shot_ext->shot.ctl, &m_camera_info[cameraMode].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
 
-            shot_ext->setfile = m_camera_info[sensor_enum].dummy_shot.setfile;
-            shot_ext->request_3ax = m_camera_info[sensor_enum].dummy_shot.request_3ax;
-            shot_ext->request_isp = m_camera_info[sensor_enum].dummy_shot.request_isp;
-            shot_ext->request_scc = m_camera_info[sensor_enum].dummy_shot.request_scc;
-            shot_ext->request_scp = m_camera_info[sensor_enum].dummy_shot.request_scp;
-            shot_ext->request_dis = m_camera_info[sensor_enum].dummy_shot.request_dis;
+            shot_ext->setfile = m_camera_info[cameraMode].dummy_shot.setfile;
+            shot_ext->request_3ax = m_camera_info[cameraMode].dummy_shot.request_3ax;
+            shot_ext->request_isp = m_camera_info[cameraMode].dummy_shot.request_isp;
+            shot_ext->request_scc = m_camera_info[cameraMode].dummy_shot.request_scc;
+            shot_ext->request_scp = m_camera_info[cameraMode].dummy_shot.request_scp;
+            shot_ext->request_dis = m_camera_info[cameraMode].dummy_shot.request_dis;
 
-            shot_ext->dis_bypass = m_camera_info[sensor_enum].dummy_shot.dis_bypass;
-            shot_ext->dnr_bypass = m_camera_info[sensor_enum].dummy_shot.dnr_bypass;
-            shot_ext->fd_bypass = m_camera_info[sensor_enum].dummy_shot.fd_bypass;
-            shot_ext->shot.magicNumber= m_camera_info[sensor_enum].dummy_shot.shot.magicNumber;
+            shot_ext->dis_bypass = m_camera_info[cameraMode].dummy_shot.dis_bypass;
+            shot_ext->dnr_bypass = m_camera_info[cameraMode].dummy_shot.dnr_bypass;
+            shot_ext->fd_bypass = m_camera_info[cameraMode].dummy_shot.fd_bypass;
+            shot_ext->shot.magicNumber= m_camera_info[cameraMode].dummy_shot.shot.magicNumber;
 
-            if (cam_int_m2m_qbuf(&(m_camera_info[sensor_enum].sensor), i,
-                &(m_camera_info[sensor_enum].is3a1Output), i) < 0) {
-                CLOGE("ERR(%s):is3a1Output cam_int_qbuf(%d) failed", __func__, i);
+            if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a1Src), i,
+                             &(m_camera_info[cameraMode].sensor)) < 0) {
+                CLOGE("ERR(%s):is3a1Src cam_int_qbuf(%d) fail", __func__, i);
                 return false;
             }
         }
@@ -3283,55 +2740,56 @@ bool ExynosCamera::qAll3a1Buf(void)
     return true;
 }
 
-#if 0
 bool ExynosCamera::dqAll3a1Buf(void)
 {
-    int index_output;
-    int index_capture;
-    struct camera2_shot_ext *shot_ext_output;
-    struct camera2_shot_ext *shot_ext_capture;
-    int sensor_enum = m_camera_default;
+    int srcIndex;
+    int dstIndex;
+    struct camera2_shot_ext *shot_ext_src;
+    struct camera2_shot_ext *shot_ext_dst;
+    int cameraMode = m_cameraMode;
 
     if (m_flagCreate == false) {
         CLOGD("ERR(%s):Not yet created", __func__);
         return true;
     }
 
-    if (m_camera_info[sensor_enum].is3a1Output.flagStart == false) {
-        CLOGD("ERR(%s):Not yet is3a1Output started", __func__);
+    if (m_camera_info[cameraMode].is3a1Src.flagStart == false) {
+        CLOGD("ERR(%s):Not yet is3a1Src started", __func__);
         return true;
     }
 
-    if (m_camera_info[sensor_enum].is3a1Capture.flagStart == false) {
-        CLOGD("ERR(%s):Not yet is3a1Capture started", __func__);
+    if (m_camera_info[cameraMode].is3a1Dst.flagStart == false) {
+        CLOGD("ERR(%s):Not yet is3a1Dst started", __func__);
         return true;
     }
 
     for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
-        index_capture = cam_int_dqbuf(&(m_camera_info[sensor_enum].is3a1Capture));
-        if (index_capture < 0) {
-            CLOGE("ERR(%s):is3a1Capture cam_int_dqbuf() on is3a1 fail", __func__);
+        dstIndex = cam_int_dqbuf(&(m_camera_info[cameraMode].is3a1Dst));
+        if (dstIndex < 0) {
+            CLOGE("ERR(%s):is3a1Dst cam_int_dqbuf() fail", __func__);
             return false;
         }
-        beforeBufCap = index_capture;
-        shot_ext_capture = (struct camera2_shot_ext *)m_camera_info[sensor_enum].isp.buffer[index_capture].virt.extP[1];
 
-        index_output = cam_int_dqbuf(&(m_camera_info[sensor_enum].is3a1Output));
-        if (index_output < 0) {
-            CLOGE("ERR(%s):is3a1Output cam_int_dqbuf() on is3a1 fail", __func__);
+        m_is3a1DstLastBufIndex = dstIndex;
+        shot_ext_dst = (struct camera2_shot_ext *)m_camera_info[cameraMode].isp.buffer[dstIndex].virt.extP[1];
+
+        srcIndex = cam_int_dqbuf(&(m_camera_info[cameraMode].is3a1Src));
+        if (srcIndex < 0) {
+            CLOGE("ERR(%s):is3a1Src cam_int_dqbuf() fail", __func__);
             return false;
         }
-        beforeBufOut = index_output;
-        shot_ext_output = (struct camera2_shot_ext *)m_camera_info[sensor_enum].sensor.buffer[index_output].virt.extP[1];
+
+        m_is3a1SrcLastBufIndex = srcIndex;
+        shot_ext_src = (struct camera2_shot_ext *)m_camera_info[cameraMode].sensor.buffer[srcIndex].virt.extP[1];
 
         CLOGV("DEBUG(%s): index(output:%d, capture:%d), (free:%d) (request:%d) (process:%d) (complete:%d)",
-            __func__, index_output, index_capture,
-            shot_ext_output->free_cnt,
-            shot_ext_output->request_cnt,
-            shot_ext_output->process_cnt,
-            shot_ext_output->complete_cnt);
+            __func__, srcIndex, dstIndex,
+            shot_ext_src->free_cnt,
+            shot_ext_src->request_cnt,
+            shot_ext_src->process_cnt,
+            shot_ext_src->complete_cnt);
 
-        if (shot_ext_output->request_cnt || shot_ext_output->process_cnt || shot_ext_output->complete_cnt)
+        if (shot_ext_src->request_cnt || shot_ext_src->process_cnt || shot_ext_src->complete_cnt)
             continue;
         else
             break;
@@ -3340,84 +2798,68 @@ bool ExynosCamera::dqAll3a1Buf(void)
 
     return true;
 }
-#endif
-bool ExynosCamera::stopPreviewOff(void)
+
+bool ExynosCamera::m_stopPreview(void)
 {
     bool ret = true;
-
-    int previewPlane;
 
     if (m_flagCreate == false) {
         CLOGW("WARN(%s):Not yet Created", __func__);
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    if (setFlashMode(FLASH_MODE_OFF) == false)
+        CLOGE("ERR(%s):setFlashMode() fail", __func__);
 
-    if (m_camera_info[m_camera_default].preview.flagStart == true) {
+    if (m_autofocusMgr->flagLockAutofocus() == true)
+        m_autofocusMgr->unlockAutofocus();
 
-        if (setFlashMode(FLASH_MODE_OFF) == false)
-            CLOGE("ERR(%s):setFlashMode() fail", __func__);
+    if (m_autofocusMgr->flagAutofocusStart() == true)
+        m_autofocusMgr->stopAutofocus();
 
-        m_tryPreviewStop = true;
+    if (getVideoStabilization() == true) {
+        if (setVideoStabilization(false) == false)
+            CLOGE("ERR(%s):setVideoStabilization() fail", __func__);
+    }
 
-        // skip stopPreview
-        if ((m_camera_info[m_camera_default].preview.fd == m_camera_info[m_camera_default].video.fd   && m_tryVideoStop == false)
-            || (m_camera_info[m_camera_default].preview.fd == m_camera_info[m_camera_default].picture.fd && m_tryPictureStop == false)) {
-            CLOGD("DEBUG(%s):stopPreview is skipped...", __func__);
-            goto done;
-        }
+    if (set3DNR(false) == false)
+        CLOGE("ERR(%s):set3DNR() fail", __func__);
 
-        if(m_autofocusMgr->flagLockAutofocus() == true)
-            m_autofocusMgr->unlockAutofocus();
-
-        if (m_autofocusMgr->flagAutofocusStart() == true)
-            m_autofocusMgr->stopAutofocus();
-
-        if (getVideoStabilization() == true) {
-            if (setVideoStabilization(false) == false)
-                CLOGE("ERR(%s):setVideoStabilization() fail", __func__);
-        }
-
-        if (set3DNR(false) == false)
-            CLOGE("ERR(%s):set3DNR() fail", __func__);
 #ifdef THREAD_PROFILE
-        timeUs = 0;
-        gettimeofday(&mTimeStart, NULL);
+    timeUs = 0;
+    gettimeofday(&mTimeStart, NULL);
 #endif
-        if (cam_int_streamoff(&m_camera_info[m_camera_default].preview) < 0) {
-            CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
+    if (cam_int_streamoff(&m_camera_info[m_cameraMode].preview) < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
+        ret = false;
+    }
+#ifdef THREAD_PROFILE
+    gettimeofday(&mTimeStop, NULL);
+    timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
+    CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
+#endif
+
+    m_camera_info[m_cameraMode].dummy_shot.request_scp = 0;
+    if (m_recordingHint == true && getCameraId() == CAMERA_ID_BACK) {
+        m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
+    }
+
+    if (0 < m_camera_info[m_cameraMode].preview.buffers) {
+        if (cam_int_clrbufs(&m_camera_info[m_cameraMode].preview) < 0) {
+            CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
             ret = false;
         }
-#ifdef THREAD_PROFILE
-        gettimeofday(&mTimeStop, NULL);
-        timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
-#endif
-
-        m_camera_info[m_camera_default].dummy_shot.request_scp = 0;
-        if (m_recordingHint == true && getCameraId() == CAMERA_ID_BACK) {
-            m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
-        }
-
-        if (0 < m_camera_info[m_camera_default].preview.buffers) {
-            if (cam_int_clrbufs(&m_camera_info[m_camera_default].preview) < 0) {
-                CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
-                ret = false;
-            }
-        }
-        m_flagStartFaceDetection = false;
-
-        m_camera_info[m_camera_default].preview.flagStart = false;
     }
+    m_flagStartFaceDetection = false;
 
 done:
     return ret;
-
 }
 
 bool ExynosCamera::stopPreview(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     bool ret = true;
     int previewPlane;
 
@@ -3426,25 +2868,27 @@ bool ExynosCamera::stopPreview(void)
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    if (m_camera_info[m_cameraMode].preview.flagStart == true) {
+        if (m_stopPreview() == false) {
+            CLOGE("ERR(%s):m_stopPreview() fail", __func__);
+            ret = false;
+        }
 
-    if (stopPreviewOff() == false) {
-        CLOGE("ERR(%s):stopPreviewOff() fail", __func__);
-        ret = false;
+        previewPlane = m_camera_info[m_cameraMode].preview.planes - 1;
+
+        // for frame sync
+        for (int i = 0; i < VIDEO_MAX_FRAME; i++)
+            freeMemSinglePlane(&m_camera_info[m_cameraMode].preview.buffer[i], previewPlane);
+
+        m_camera_info[m_cameraMode].preview.flagStart = false;
     }
-
-    previewPlane = m_camera_info[m_camera_default].preview.planes - 1;
-
-    // for frame sync
-    for (int i = 0; i < VIDEO_MAX_FRAME; i++)
-        freeMemSinglePlane(&m_camera_info[m_camera_default].preview.buffer[i], previewPlane);
 
     return ret;
 }
 
 bool ExynosCamera::flagStartPreview(void)
 {
-    return m_camera_info[m_camera_default].preview.flagStart;
+    return m_camera_info[m_cameraMode].preview.flagStart;
 }
 
 int ExynosCamera::getPreviewMaxBuf(void)
@@ -3465,39 +2909,36 @@ bool ExynosCamera::setPreviewBuf(ExynosBuffer *buf)
         return false;
     }
 
-    m_camera_info[m_camera_default].preview.buffer[index] = *buf;
+    m_camera_info[m_cameraMode].preview.buffer[index] = *buf;
 
     // for frame sync
-    int planeNum = m_camera_info[m_camera_default].preview.planes - 1;
+    int planeNum = m_camera_info[m_cameraMode].preview.planes - 1;
 
-    m_camera_info[m_camera_default].preview.buffer[index].virt.extP[planeNum]
-        = previewMetaBuffer[index].virt.p;
-    m_camera_info[m_camera_default].preview.buffer[index].size.extS[planeNum]
-        = previewMetaBuffer[index].size.s;
-    m_camera_info[m_camera_default].preview.buffer[index].fd.extFd[planeNum]
-        = previewMetaBuffer[index].fd.fd;
+    m_camera_info[m_cameraMode].preview.buffer[index].virt.extP[planeNum] = m_previewMetaBuffer[index].virt.p;
+    m_camera_info[m_cameraMode].preview.buffer[index].size.extS[planeNum] = m_previewMetaBuffer[index].size.s;
+    m_camera_info[m_cameraMode].preview.buffer[index].fd.extFd[planeNum] = m_previewMetaBuffer[index].fd.fd;
 
     return true;
 }
 
 bool ExynosCamera::cancelPreviewBuf(int index)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet created fail", __func__);
         return false;
     }
 
-    if (m_camera_info[m_camera_default].preview.flagStart == true) {
-        CLOGE("ERR(%s): preview is running, cannot cancel preview buffer!!", __func__);
+    if (m_camera_info[m_cameraMode].preview.flagStart == true) {
+        CLOGE("ERR(%s):preview is running, cannot cancel preview buffer!!", __func__);
         return false;
     }
 
-    CLOGV("DEBUG(%s): cancel preview buffer(index %d)", __FUNCTION__, index);
-
-    for (int i = 0; i < m_curCameraInfo[m_camera_default]->previewBufPlane; i++) {
-        m_camera_info[m_camera_default].preview.buffer[index].fd.extFd[i] = -1;
-        m_camera_info[m_camera_default].preview.buffer[index].virt.extP[i] = NULL;
-        m_camera_info[m_camera_default].preview.buffer[index].size.extS[i] = 0;
+    for (int i = 0; i < m_curCameraInfo[m_cameraMode]->previewBufPlane; i++) {
+        m_camera_info[m_cameraMode].preview.buffer[index].fd.extFd[i] = -1;
+        m_camera_info[m_cameraMode].preview.buffer[index].virt.extP[i] = NULL;
+        m_camera_info[m_cameraMode].preview.buffer[index].size.extS[i] = 0;
     }
 
     return true;
@@ -3505,25 +2946,25 @@ bool ExynosCamera::cancelPreviewBuf(int index)
 
 bool ExynosCamera::clearPreviewBuf(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet created fail", __func__);
         return false;
     }
 
-    if (m_camera_info[m_camera_default].preview.flagStart == true) {
-        CLOGE("ERR(%s): preview is running, cannot clear preview buffer!!", __func__);
+    if (m_camera_info[m_cameraMode].preview.flagStart == true) {
+        CLOGE("ERR(%s):preview is running, cannot clear preview buffer!!", __func__);
         return false;
     }
 
-    CLOGD("DEBUG(%s): Deinitialize structure of preview buffer", __FUNCTION__);
-
-    int planeNum = m_camera_info[m_camera_default].preview.planes;
+    int planeNum = m_camera_info[m_cameraMode].preview.planes;
 
     for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
         for (int j = 0; j < planeNum; j++) {
-            m_camera_info[m_camera_default].preview.buffer[i].fd.extFd[j] = -1;
-            m_camera_info[m_camera_default].preview.buffer[i].virt.extP[j] = NULL;
-            m_camera_info[m_camera_default].preview.buffer[i].size.extS[j] = 0;
+            m_camera_info[m_cameraMode].preview.buffer[i].fd.extFd[j] = -1;
+            m_camera_info[m_cameraMode].preview.buffer[i].virt.extP[j] = NULL;
+            m_camera_info[m_cameraMode].preview.buffer[i].size.extS[j] = 0;
         }
     }
 
@@ -3532,12 +2973,12 @@ bool ExynosCamera::clearPreviewBuf(void)
 
 bool ExynosCamera::allocInternalPreviewBuf(ExynosBuffer *buf)
 {
-    if (getFlagInternalPreviewBuf() != true) {
-        CLOGE("ERR(%s): Internal preview mem alloc", __FUNCTION__);
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (getFlagInternalPreviewBuf() == false) {
+        CLOGE("ERR(%s):getFlagInternalPreviewBuf() == false", __func__);
         return false;
     }
-
-    CLOGV("DEBUG(%s): alloc preview internal buffer", __FUNCTION__);
 
     if (allocMem(m_ionCameraClient, buf, (1 << 1) | (1 << 2) | (1 << 3)) == false) {
         CLOGE("ERR(%s):allocMem() fail", __func__);
@@ -3549,21 +2990,21 @@ bool ExynosCamera::allocInternalPreviewBuf(ExynosBuffer *buf)
 
 void ExynosCamera::releaseInternalPreviewBuf(int index)
 {
-    if (getFlagInternalPreviewBuf() != true) {
-        CLOGD("DEBUG(%s): No internal preview mem alloc", __FUNCTION__);
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (getFlagInternalPreviewBuf() == false) {
+        CLOGE("ERR(%s):getFlagInternalPreviewBuf() == false", __func__);
         return;
     }
 
-    CLOGV("DEBUG(%s): release preview buffer", __FUNCTION__);
+    freeMem(&m_camera_info[m_cameraMode].preview.buffer[index]);
 
-    freeMem(&m_camera_info[m_camera_default].preview.buffer[index]);
-
-    m_camera_info[m_camera_default].preview.buffers = 0;
+    m_camera_info[m_cameraMode].preview.buffers = 0;
 }
 
 void ExynosCamera::releaseAllInternalPreviewBuf(void)
 {
-    CLOGD("DEBUG(%s): release all internal preview buffer", __FUNCTION__);
+    CLOGD("DEBUG(%s):in", __func__);
 
     for (int i = 0; i < NUM_PREVIEW_BUFFERS; i++)
         releaseInternalPreviewBuf(i);
@@ -3571,7 +3012,7 @@ void ExynosCamera::releaseAllInternalPreviewBuf(void)
 
 void ExynosCamera::setFlagInternalPreviewBuf(bool flag)
 {
-    CLOGD("TEST DEBUG(%s): preview use internal memory alloc %s", __FUNCTION__, flag?"true":"false");
+    CLOGD("DEBUG(%s):in flag(%d)", __func__, flag);
 
     m_previewInternalMemAlloc = flag;
 }
@@ -3584,7 +3025,7 @@ bool ExynosCamera::getFlagInternalPreviewBuf(void)
 bool ExynosCamera::getPreviewBuf(ExynosBuffer *buf, bool *isValid, nsecs_t *timestamp)
 {
     int index = 0;
-    struct camera2_stream *shot_ext;
+    struct camera2_stream *metadata;
     bool found = false;
 
     if (m_flagCreate == false) {
@@ -3592,62 +3033,65 @@ bool ExynosCamera::getPreviewBuf(ExynosBuffer *buf, bool *isValid, nsecs_t *time
         return false;
     }
 
-    if (m_camera_info[m_camera_default].preview.flagStart == false) {
+    if (m_camera_info[m_cameraMode].preview.flagStart == false) {
         CLOGE("ERR(%s):Not yet preview started fail", __func__);
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): dq in", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): dq in", __func__);
 
 #ifdef USE_CAMERA_ESD_RESET
-    if (polling(m_camera_info[m_camera_default].preview.fd) < 0) {
+    if (cam_int_polling(&(m_camera_info[m_cameraMode].preview)) < 0) {
         CLOGE("[esdtest](%s): polling() fail", __func__);
         return false;
     }
 #endif
 
-    index = cam_int_dqbuf(&(m_camera_info[m_camera_default].preview));
+    index = cam_int_dqbuf(&(m_camera_info[m_cameraMode].preview));
     if (index < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on preview fail", __func__);
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): dq out(index %d)", __FUNCTION__, index);
+    CLOGT(m_traceCount, "(%s): dq out(index %d)", __func__, index);
 
     m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SCP_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].preview.buffer[index]));
+        (void *)&(m_camera_info[m_cameraMode].preview.buffer[index]));
 
-    *buf = m_camera_info[m_camera_default].preview.buffer[index];
+    *buf = m_camera_info[m_cameraMode].preview.buffer[index];
     buf->reserved.p = index;
 
-    shot_ext = (struct camera2_stream *)(m_camera_info[m_camera_default].preview.buffer[index].virt.extP[m_curCameraInfo[m_camera_default]->previewBufPlane - 1]);
-    if (shot_ext) {
-        *isValid = shot_ext->fvalid ? true : false;
+    metadata = (struct camera2_stream *)(m_camera_info[m_cameraMode].preview.buffer[index].virt.extP[m_curCameraInfo[m_cameraMode]->previewBufPlane - 1]);
+    if (metadata) {
+        *isValid = metadata->fvalid ? true : false;
+
         CLOGT(m_traceCount, "(%s:%d) index(%d, %p), fcount(%d), rcount(%d)", __func__, __LINE__,
-                index, m_camera_info[m_camera_default].preview.buffer[index].virt.extP[m_curCameraInfo[m_camera_default]->previewBufPlane - 1],
-                shot_ext->fcount, shot_ext->rcount);
+                index, m_camera_info[m_cameraMode].preview.buffer[index].virt.extP[m_curCameraInfo[m_cameraMode]->previewBufPlane - 1],
+                metadata->fcount, metadata->rcount);
+
         if (timestamp) {
             *timestamp = 0;
             struct camera2_shot_ext *shot_ext_temp;
-            nsecs_t monotonicTime;
-            nsecs_t realTime;
-            for (int i = 0; i <  m_camera_info[m_camera_mode].isp.buffers; i++) {
-                shot_ext_temp = (struct camera2_shot_ext *)m_camera_info[m_camera_mode].isp.buffer[i].virt.extP[1];
-                if (shot_ext_temp->shot.dm.request.frameCount == shot_ext->fcount && shot_ext_temp->shot.dm.sensor.timeStamp != 0) {
-                    monotonicTime = systemTime(SYSTEM_TIME_MONOTONIC);
-                    realTime = systemTime(SYSTEM_TIME_REALTIME);
-                    *timestamp = monotonicTime + ((nsecs_t)shot_ext_temp->shot.dm.sensor.timeStamp * 1000 - realTime);
+
+            for (int i = 0; i <  m_camera_info[m_cameraMode].isp.buffers; i++) {
+                shot_ext_temp = (struct camera2_shot_ext *)m_camera_info[m_cameraMode].isp.buffer[i].virt.extP[1];
+
+                if (shot_ext_temp->shot.dm.request.frameCount == metadata->fcount &&
+                    shot_ext_temp->shot.dm.sensor.timeStamp != 0) {
+                    *timestamp = (nsecs_t)shot_ext_temp->shot.dm.sensor.timeStamp;
                     found = true;
                 }
             }
         }
+
         if (!found && timestamp)
             *timestamp = systemTime(SYSTEM_TIME_MONOTONIC);
     } else {
         *isValid = false;
-        CLOGD("(%s) shot_ext is null\n", __func__);
+        CLOGD("(%s) metadata is null\n", __func__);
         return false;
     }
+
     return true;
 }
 
@@ -3658,23 +3102,23 @@ bool ExynosCamera::putPreviewBuf(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[m_camera_default].preview.flagStart == false) {
+    if (m_camera_info[m_cameraMode].preview.flagStart == false) {
         CLOGE("ERR(%s):Not yet preview started fail", __func__);
         return false;
     }
 
-    if (cam_int_qbuf(&(m_camera_info[m_camera_default].preview), buf->reserved.p) < 0) {
-        CLOGE("ERR(%s):cam_int_qbuf(%d) failed", __func__, buf->reserved.p);
+    if (cam_int_qbuf(&(m_camera_info[m_cameraMode].preview), buf->reserved.p) < 0) {
+        CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, buf->reserved.p);
         return false;
     }
 
     return true;
 }
 
-bool ExynosCamera::getIs3a0Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inBuf, ExynosBuffer *outBuf)
+bool ExynosCamera::getIs3a0Buf(enum CAMERA_MODE cameraMode, ExynosBuffer *inBuf, ExynosBuffer *outBuf)
 {
-    int index_output = 0;
-    int index_capture = 0;
+    int srcIndex = 0;
+    int dstIndex = 0;
     unsigned int fcount_buf = 0;
     int position_buf = inBuf->reserved.p;
     struct camera2_shot_ext * shot_ext_src = NULL;
@@ -3685,78 +3129,85 @@ bool ExynosCamera::getIs3a0Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inB
         return false;
     }
 
-    if (m_camera_info[sensor_enum].is3a0Output.flagStart == false) {
-        CLOGE("ERR(%s):Not yet is3a0Output started fail", __func__);
+    if (m_camera_info[cameraMode].is3a0Src.flagStart == false) {
+        CLOGE("ERR(%s):Not yet is3a0Src started fail", __func__);
         return false;
     }
 
-    if (m_camera_info[sensor_enum].is3a0Capture.flagStart == false) {
-        CLOGE("ERR(%s):Not yet is3a0Capture started fail", __func__);
+    if (m_camera_info[cameraMode].is3a0Dst.flagStart == false) {
+        CLOGE("ERR(%s):Not yet is3a0Dst started fail", __func__);
         return false;
     }
 
     /* use same buffer number */
-    *outBuf = m_camera_info[sensor_enum].isp.buffer[position_buf];
+    *outBuf = m_camera_info[cameraMode].isp.buffer[position_buf];
     outBuf->reserved.p = position_buf;
 
-    activatedIs3a0 = sensor_enum;
+    m_cameraModeIs3a0 = cameraMode;
 
     shot_ext_src = (camera2_shot_ext *)inBuf->virt.extP[1];
     fcount_buf = shot_ext_src->shot.dm.request.frameCount;
 
-    memcpy(&shot_ext_src->shot.ctl, &m_camera_info[sensor_enum].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
+    memcpy(&shot_ext_src->shot.ctl, &m_camera_info[cameraMode].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
 
-    m_turnOffEffectByFps(shot_ext_src, m_curCameraInfo[sensor_enum]->fpsRange[1]);
+    m_turnOffEffectByFps(shot_ext_src, m_curCameraInfo[cameraMode]->fpsRange[1]);
 
-    memcpy(&m_camera_info[sensor_enum].dummy_shot.shot.ctl, &shot_ext_src->shot.ctl, sizeof(struct camera2_ctl));
+    memcpy(&m_camera_info[cameraMode].dummy_shot.shot.ctl, &shot_ext_src->shot.ctl, sizeof(struct camera2_ctl));
 
-    CLOGT(m_traceCount, "(%s): q in", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): q in", __func__);
 
     //metadata buffer
-    memset(metaBuffer[position_buf].virt.extP[1], 0, metaBuffer[position_buf].size.extS[1]);
-    if (cam_int_m2m_qbuf_for_3a0(&(m_camera_info[sensor_enum].isp), position_buf,
-        &(m_camera_info[sensor_enum].is3a0Capture), position_buf, metaBuffer[position_buf]) < 0) {
-        CLOGE("ERR(%s):is3a0Capture cam_int_qbuf(%d) failed", __func__, position_buf);
-        activatedIs3a0 = SENSOR_MAX_NUM;
+    memset(m_metaBuf[position_buf].virt.extP[1], 0, m_metaBuf[position_buf].size.extS[1]);
+
+    if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a0Dst), position_buf,
+                     &(m_camera_info[cameraMode].isp),
+                     m_metaBuf[position_buf]) < 0) {
+        CLOGE("ERR(%s):is3a0Dst cam_int_qbuf(%d) fail", __func__, position_buf);
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
 
         return false;
     }
 
-    if (cam_int_m2m_qbuf(&(m_camera_info[sensor_enum].sensor), position_buf,
-        &(m_camera_info[sensor_enum].is3a0Output), position_buf) < 0) {
-        CLOGE("ERR(%s):is3a0Output cam_int_qbuf(%d) failed", __func__, position_buf);
-        activatedIs3a0 = SENSOR_MAX_NUM;
+    if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a0Src), position_buf,
+                     &(m_camera_info[cameraMode].sensor)) < 0) {
+        CLOGE("ERR(%s):is3a0Src cam_int_qbuf(%d) fail", __func__, position_buf);
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
 
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): q out(index %d)", __FUNCTION__, index_output);
+    CLOGT(m_traceCount, "(%s): q out(index %d)", __func__, srcIndex);
 
-    CLOGT(m_traceCount, "(%s): dq in", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): dq in", __func__);
 
-    index_capture = cam_int_dqbuf(&(m_camera_info[sensor_enum].is3a0Capture));
-    if (index_capture < 0) {
+    dstIndex = cam_int_dqbuf(&(m_camera_info[cameraMode].is3a0Dst));
+    if (dstIndex < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on is3a0 fail", __func__);
-        activatedIs3a0 = SENSOR_MAX_NUM;
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
 
         return false;
     }
 
-    index_output = cam_int_dqbuf(&(m_camera_info[sensor_enum].is3a0Output));
-    if (index_output < 0) {
+    srcIndex = cam_int_dqbuf(&(m_camera_info[cameraMode].is3a0Src));
+    if (srcIndex < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on is3a0 fail", __func__);
-        activatedIs3a0 = SENSOR_MAX_NUM;
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
 
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): dq out(index %d)", __FUNCTION__, index_output);
+    CLOGT(m_traceCount, "(%s): dq out(index %d)", __func__, srcIndex);
 
-    /* keep frameCount's udm */
-    m_udmArr[0] = &(shot_ext_src->shot.udm);
+    if (inBuf->virt.extP[1] == NULL || outBuf->virt.extP[1] == NULL) {
+        CLOGE("ERR(%s):inBuf->virt.extP[1] == %p || outBuf->virt.extP[1] == %p",
+            __func__, inBuf->virt.extP[1], outBuf->virt.extP[1]);
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
+
+        return false;
+    }
 
     /* back-up is3aa_dm : result of isp metadata */
-    memcpy(&m_camera_info[sensor_enum].is3aa_dm, shot_ext_src, sizeof(struct camera2_shot_ext));
+    memcpy(&m_camera_info[cameraMode].is3aa_dm, shot_ext_src, sizeof(struct camera2_shot_ext));
 
     /* copy 3a0 to isp */
     memcpy(outBuf->virt.extP[1], inBuf->virt.extP[1], META_DATA_SIZE);
@@ -3765,25 +3216,25 @@ bool ExynosCamera::getIs3a0Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inB
     if (shot_ext_src->shot.dm.request.frameCount != fcount_buf) {
         shot_ext_src = (camera2_shot_ext *)inBuf->virt.extP[1];
         shot_ext_dst = (camera2_shot_ext *)outBuf->virt.extP[1];
-        CLOGD("[%s] (%d) (%d %d)", __func__, __LINE__, shot_ext_src->shot.dm.request.frameCount, fcount_buf);
 
+        CLOGD("DEBUG(%s):(%d) (%d %d)", __func__, __LINE__, shot_ext_src->shot.dm.request.frameCount, fcount_buf);
         shot_ext_dst->shot.dm.request.frameCount = fcount_buf;
     }
 
-    if (shot_ext_src->request_3ax != m_camera_info[sensor_enum].dummy_shot.request_3ax) {
+    if (shot_ext_src->request_3ax != m_camera_info[cameraMode].dummy_shot.request_3ax) {
         outBuf->reserved.p = -1;
         m_traceCount = TRACE_COUNT;
-        CLOGE("ERR(%s): 3a0 Shot done is invalid(expected request_3ax is %d, but we got %d), skip frame(%d)",
-                __func__, m_camera_info[sensor_enum].dummy_shot.request_3ax, shot_ext_src->request_3ax, shot_ext_src->shot.dm.request.frameCount);
+        CLOGE("ERR(%s):3a0 Shot done is invalid(expected request_3ax is %d, but we got %d), skip frame(%d)",
+                __func__, m_camera_info[cameraMode].dummy_shot.request_3ax, shot_ext_src->request_3ax, shot_ext_src->shot.dm.request.frameCount);
     }
 
     return true;
 }
 
-bool ExynosCamera::getIs3a0BufLpzsl(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inBuf, ExynosBuffer *outBuf)
+bool ExynosCamera::getIs3a0BufReprocessing(enum CAMERA_MODE cameraMode, ExynosBuffer *inBuf, ExynosBuffer *outBuf)
 {
-    int index_output = 0;
-    int index_capture = 0;
+    int srcIndex = 0;
+    int dstIndex = 0;
     unsigned int fcount_buf = 0;
     int position_buf = inBuf->reserved.p;
     struct camera2_shot_ext * shot_ext = NULL;
@@ -3796,56 +3247,50 @@ bool ExynosCamera::getIs3a0BufLpzsl(enum CAMERA_SENSOR sensor_enum, ExynosBuffer
         return false;
     }
 
-    if (m_camera_info[sensor_enum].is3a0Output.flagStart == false) {
-        CLOGE("ERR(%s):Not yet is3a0Output started fail", __func__);
+    if (m_camera_info[cameraMode].is3a0Src.flagStart == false) {
+        CLOGE("ERR(%s):Not yet is3a0Src started fail", __func__);
         return false;
     }
 
-    if (m_camera_info[sensor_enum].is3a0Capture.flagStart == false) {
-        CLOGE("ERR(%s):Not yet is3a0Capture started fail", __func__);
+    if (m_camera_info[cameraMode].is3a0Dst.flagStart == false) {
+        CLOGE("ERR(%s):Not yet is3a0Dst started fail", __func__);
         return false;
     }
 
     shot_ext_src = (camera2_shot_ext *)inBuf->virt.extP[1];
     fcount_buf = shot_ext_src->shot.dm.request.frameCount;
 
-    /* back-up udm info for exif's maker note */
-    if (m_udmArr[fcount_buf % NUM_BAYER_BUFFERS] != NULL)
-        memcpy(&m_udm, m_udmArr[fcount_buf % NUM_BAYER_BUFFERS], sizeof(struct camera2_udm));
-    else
-        CLOGE("ERR(%s):m_udmArr[%d] is NULL", __func__, fcount_buf);
-
-    if (sensor_enum == SENSOR_FAKE) {
+    if (cameraMode == CAMERA_MODE_REPROCESSING) {
         int pictureW = 0, pictureH = 0;
         int cropX = 0, cropY = 0, cropW = 0, cropH = 0;
         struct v4l2_crop crop;
         struct v4l2_rect rect;
 /* TODO: remove if unused
-        camera2_shot_ext *shot_ext_fake;
-        shot_ext_fake = (struct camera2_shot_ext *)(m_camera_info[SENSOR_FAKE].sensor.buffer[position_buf].virt.extP[1]);
+        camera2_shot_ext *shot_ext_reprocessing;
+        shot_ext_reprocessing = (struct camera2_shot_ext *)(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[position_buf].virt.extP[1]);
 
-        memcpy(shot_ext_fake, shot_ext_src, sizeof(struct camera2_shot_ext));
+        memcpy(shot_ext_reprocessing, shot_ext_src, sizeof(struct camera2_shot_ext));
 */
 
         ExynosBuffer *inBufTemp = inBuf;
-        inBuf = &(m_camera_info[SENSOR_FAKE].sensor.buffer[position_buf]);
+        inBuf = &(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[position_buf]);
         memcpy(inBuf->virt.extP[1], inBufTemp->virt.extP[1], sizeof(struct camera2_shot_ext));
-        shot_ext = (struct camera2_shot_ext *)m_camera_info[sensor_enum].sensor.buffer[position_buf].virt.extP[1];
+        shot_ext = (struct camera2_shot_ext *)m_camera_info[cameraMode].sensor.buffer[position_buf].virt.extP[1];
         if (shot_ext != NULL) {
-            shot_ext->setfile = m_camera_info[sensor_enum].dummy_shot.setfile;
+            shot_ext->setfile = m_camera_info[cameraMode].dummy_shot.setfile;
             shot_ext->shot.dm.request.frameCount = fcount_buf;
 
-            if (m_setZoom(m_curCameraInfo[m_camera_default]->zoom,
-                          m_curCameraInfo[SENSOR_FAKE]->pictureW,
-                          m_curCameraInfo[SENSOR_FAKE]->pictureH,
-                          m_curCameraInfo[SENSOR_FAKE]->ispW,
-                          m_curCameraInfo[SENSOR_FAKE]->ispH,
+            if (m_setZoom(m_curCameraInfo[m_cameraMode]->zoom,
+                          m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureW,
+                          m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureH,
+                          m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispW,
+                          m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispH,
                           (void *)shot_ext) == false) {
                 CLOGE("ERR(%s):m_setZoom() fail", __func__);
                 return false;
             }
         } else {
-            CLOGE("ERR(%s): sesnor buffer[%d] is NULL", __FUNCTION__, position_buf);
+            CLOGE("ERR(%s):sesnor buffer[%d] is NULL", __func__, position_buf);
             return false;
         }
 
@@ -3854,72 +3299,77 @@ bool ExynosCamera::getIs3a0BufLpzsl(enum CAMERA_SENSOR sensor_enum, ExynosBuffer
     if (shot_ext != NULL)
         request_3ax = shot_ext->request_3ax;
 
-    CLOGT(m_traceCount, "(%s): q in", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): q in", __func__);
 
-    if (cam_int_m2m_qbuf(&(m_camera_info[sensor_enum].isp), 0,
-        &(m_camera_info[sensor_enum].is3a0Capture), 0) < 0) {
-        CLOGE("ERR(%s):is3a0Capture cam_int_qbuf(%d) failed", __func__, position_buf);
-        activatedIs3a0 = SENSOR_MAX_NUM;
-
-        return false;
-    }
-
-    if (cam_int_m2m_qbuf(&(m_camera_info[sensor_enum].sensor), position_buf,
-        &(m_camera_info[sensor_enum].is3a0Output), position_buf) < 0) {
-        CLOGE("ERR(%s):is3a0Output cam_int_qbuf(%d) failed", __func__, position_buf);
-        activatedIs3a0 = SENSOR_MAX_NUM;
+    if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a0Dst), 0,
+                     &(m_camera_info[cameraMode].isp)) < 0) {
+        CLOGE("ERR(%s):is3a0Dst cam_int_qbuf(%d) fail", __func__, position_buf);
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
 
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): q out(index %d)", __FUNCTION__, index_output);
+    if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a0Src), position_buf,
+                     &(m_camera_info[cameraMode].sensor)) < 0) {
+        CLOGE("ERR(%s):is3a0Src cam_int_qbuf(%d) fail", __func__, position_buf);
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
 
-    CLOGT(m_traceCount, "(%s): dq in", __FUNCTION__);
+        return false;
+    }
 
-    index_capture = cam_int_dqbuf(&(m_camera_info[sensor_enum].is3a0Capture));
-    if (index_capture < 0) {
+    CLOGT(m_traceCount, "(%s): q out(index %d)", __func__, srcIndex);
+
+    CLOGT(m_traceCount, "(%s): dq in", __func__);
+
+    dstIndex = cam_int_dqbuf(&(m_camera_info[cameraMode].is3a0Dst));
+    if (dstIndex < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on is3a0 fail", __func__);
-        activatedIs3a0 = SENSOR_MAX_NUM;
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
 
         return false;
     }
 
-    index_output = cam_int_dqbuf(&(m_camera_info[sensor_enum].is3a0Output));
-    if (index_output < 0) {
+    srcIndex = cam_int_dqbuf(&(m_camera_info[cameraMode].is3a0Src));
+    if (srcIndex < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on is3a0 fail", __func__);
-        activatedIs3a0 = SENSOR_MAX_NUM;
+        m_cameraModeIs3a0 = CAMERA_MODE_MAX;
 
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): dq out(index %d)", __FUNCTION__, index_output);
+    CLOGT(m_traceCount, "(%s): dq out(index %d)", __func__, srcIndex);
 
     /* back-up is3aa_dm : result of isp metadata */
-    memcpy(&m_camera_info[sensor_enum].is3aa_dm, shot_ext_src, sizeof(struct camera2_shot_ext));
+    memcpy(&m_camera_info[cameraMode].is3aa_dm, shot_ext_src, sizeof(struct camera2_shot_ext));
 
     /* copy 3a0 to isp */
-    memcpy(m_camera_info[sensor_enum].isp.buffer[0].virt.extP[1],
-                m_camera_info[sensor_enum].sensor.buffer[position_buf].virt.extP[1], META_DATA_SIZE);
+    memcpy(m_camera_info[cameraMode].isp.buffer[0].virt.extP[1],
+                m_camera_info[cameraMode].sensor.buffer[position_buf].virt.extP[1], META_DATA_SIZE);
 
     /* use same buffer number */
-    *outBuf = m_camera_info[sensor_enum].isp.buffer[0];
+    *outBuf = m_camera_info[cameraMode].isp.buffer[0];
 
-    if (request_3ax == shot_ext->request_3ax) {
-        outBuf->reserved.p = 0;
+    if (shot_ext != NULL) {
+        if (request_3ax == shot_ext->request_3ax) {
+            outBuf->reserved.p = 0;
+        } else {
+            outBuf->reserved.p = -1;
+            m_traceCount = TRACE_COUNT;
+            CLOGE("ERR(%s):3a0 Shot done is invalid(expected request_3ax is %d, but we got %d), skip frame(%d)",
+                    __func__, request_3ax, shot_ext->request_3ax, shot_ext->shot.dm.request.frameCount);
+        }
     } else {
-        outBuf->reserved.p = -1;
-        m_traceCount = TRACE_COUNT;
-        CLOGE("ERR(%s): 3a0 Shot done is invalid(expected request_3ax is %d, but we got %d), skip frame(%d)",
-                __func__, request_3ax, shot_ext->request_3ax, shot_ext->shot.dm.request.frameCount);
+        CLOGE("ERR(%s):shot_ext is NULL", __func__);
     }
 
-    activatedIs3a0 = sensor_enum;
+    m_cameraModeIs3a0 = cameraMode;
 
     shot_ext_src = (camera2_shot_ext *)inBuf->virt.extP[1];
     if (shot_ext_src->shot.dm.request.frameCount != fcount_buf) {
         shot_ext_src = (camera2_shot_ext *)inBuf->virt.extP[1];
         shot_ext_dst = (camera2_shot_ext *)outBuf->virt.extP[1];
-        CLOGD("[%s] (%d) [src %d] [dst %d] [fcount %d] [pos %d] [in index %d] [out index %d]",
+
+        CLOGD("DEBUG(%s):(%d) [src %d] [dst %d] [fcount %d] [pos %d] [in index %d] [out index %d]",
             __func__, __LINE__,
             shot_ext_src->shot.dm.request.frameCount,
             shot_ext_dst->shot.dm.request.frameCount,
@@ -3934,7 +3384,6 @@ bool ExynosCamera::getIs3a0BufLpzsl(enum CAMERA_SENSOR sensor_enum, ExynosBuffer
     return true;
 }
 
-
 bool ExynosCamera::putIs3a0Buf(ExynosBuffer *buf)
 {
     if (m_flagCreate == false) {
@@ -3945,13 +3394,13 @@ bool ExynosCamera::putIs3a0Buf(ExynosBuffer *buf)
     return true;
 }
 
-bool ExynosCamera::getIs3a1Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inBuf, ExynosBuffer *outBuf)
+bool ExynosCamera::getIs3a1Buf(enum CAMERA_MODE cameraMode, ExynosBuffer *inBuf, ExynosBuffer *outBuf)
 {
-    int index_output = 0;
-    int index_capture = 0;
+    int srcIndex = 0;
+    int dstIndex = 0;
     int position_buf = inBuf->reserved.p;
     struct camera2_shot_ext *shot_ext;
-    struct camera2_shot_ext *shot_ext_output;
+    struct camera2_shot_ext *shot_ext_src;
     bool ret = true;
 
     if (m_flagCreate == false) {
@@ -3959,19 +3408,19 @@ bool ExynosCamera::getIs3a1Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inB
         return false;
     }
 
-    if (m_camera_info[sensor_enum].is3a1Output.flagStart == false) {
-        CLOGE("ERR(%s):Not yet is3a1Output started fail", __func__);
+    if (m_camera_info[cameraMode].is3a1Src.flagStart == false) {
+        CLOGE("ERR(%s):Not yet is3a1Src started fail", __func__);
         return false;
     }
 
-    if (m_camera_info[sensor_enum].is3a1Capture.flagStart == false) {
-        CLOGE("ERR(%s):Not yet is3a1Capture started fail", __func__);
+    if (m_camera_info[cameraMode].is3a1Dst.flagStart == false) {
+        CLOGE("ERR(%s):Not yet is3a1Dst started fail", __func__);
         return false;
     }
 
     if (position_buf < 0 &&
-        !(m_camera_mode == CAMERA_ACTIVATE_MODE_BACK)) {
-        CLOGE("ERR(%s): Invalid inBuf index(%d)", __func__, position_buf);
+        !(m_cameraMode == CAMERA_MODE_BACK)) {
+        CLOGE("ERR(%s):Invalid inBuf index(%d)", __func__, position_buf);
         return false;
     }
 
@@ -3981,189 +3430,187 @@ bool ExynosCamera::getIs3a1Buf(enum CAMERA_SENSOR sensor_enum, ExynosBuffer *inB
         return true;
     }
 
-    if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK) {
-        if (beforeBufCap >= 0) {
-            CLOGT(m_traceCount, "(%s): qbuf in(out %d, cap %d", __FUNCTION__, beforeBufOut, beforeBufCap);
+    if (m_cameraMode == CAMERA_MODE_BACK) {
+        if (0 <= m_is3a1DstLastBufIndex) {
+            CLOGT(m_traceCount, "(%s): qbuf in(out %d, cap %d", __func__, m_is3a1SrcLastBufIndex, m_is3a1DstLastBufIndex);
 
             //metadata buffer
-            memset(metaBuffer[beforeBufCap].virt.extP[1], 0, metaBuffer[beforeBufCap].size.extS[1]);
-            if (cam_int_m2m_qbuf_for_3a1(&(m_camera_info[sensor_enum].isp), beforeBufCap,
-                &(m_camera_info[sensor_enum].is3a1Capture), beforeBufCap, metaBuffer[beforeBufCap]) < 0) {
-                CLOGE("ERR(%s):is3a1Capture cam_int_m2m_qbuf(%d) failed", __func__, beforeBufCap);
-                beforeBufCap = -1;
+            memset(m_metaBuf[m_is3a1DstLastBufIndex].virt.extP[1], 0, m_metaBuf[m_is3a1DstLastBufIndex].size.extS[1]);
+            if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a1Dst), m_is3a1DstLastBufIndex,
+                             &(m_camera_info[cameraMode].isp),
+                             m_metaBuf[m_is3a1DstLastBufIndex]) < 0) {
+                CLOGE("ERR(%s):is3a1Dst cam_int_qbuf(%d) fail", __func__, m_is3a1DstLastBufIndex);
+                m_is3a1DstLastBufIndex = -1;
                 ret = false;
             }
         }
 
-        if (beforeBufOut >= 0) {
-            shot_ext = (struct camera2_shot_ext *)m_camera_info[sensor_enum].sensor.buffer[beforeBufOut].virt.extP[1];
-            memcpy(&shot_ext->shot.ctl, &m_camera_info[sensor_enum].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
+        if (0 <= m_is3a1SrcLastBufIndex) {
+            shot_ext = (struct camera2_shot_ext *)m_camera_info[cameraMode].sensor.buffer[m_is3a1SrcLastBufIndex].virt.extP[1];
+            memcpy(&shot_ext->shot.ctl, &m_camera_info[cameraMode].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
 #ifdef FD_ROTATION
-//            shot_ext->shot.uctl.scalerUd.orientation = m_camera_info[sensor_enum].dummy_shot.shot.uctl.scalerUd.orientation;
+//            shot_ext->shot.uctl.scalerUd.orientation = m_camera_info[cameraMode].dummy_shot.shot.uctl.scalerUd.orientation;
 #endif
 
-            shot_ext->setfile = m_camera_info[sensor_enum].dummy_shot.setfile;
-            shot_ext->request_3ax = m_camera_info[sensor_enum].dummy_shot.request_3ax;
-            shot_ext->request_isp = m_camera_info[sensor_enum].dummy_shot.request_isp;
-            shot_ext->request_scc = m_camera_info[sensor_enum].dummy_shot.request_scc;
-            shot_ext->request_scp = m_camera_info[sensor_enum].dummy_shot.request_scp;
-            shot_ext->request_dis = m_camera_info[sensor_enum].dummy_shot.request_dis;
+            shot_ext->setfile = m_camera_info[cameraMode].dummy_shot.setfile;
+            shot_ext->request_3ax = m_camera_info[cameraMode].dummy_shot.request_3ax;
+            shot_ext->request_isp = m_camera_info[cameraMode].dummy_shot.request_isp;
+            shot_ext->request_scc = m_camera_info[cameraMode].dummy_shot.request_scc;
+            shot_ext->request_scp = m_camera_info[cameraMode].dummy_shot.request_scp;
+            shot_ext->request_dis = m_camera_info[cameraMode].dummy_shot.request_dis;
 
-            shot_ext->dis_bypass = m_camera_info[sensor_enum].dummy_shot.dis_bypass;
-            shot_ext->dnr_bypass = m_camera_info[sensor_enum].dummy_shot.dnr_bypass;
-            shot_ext->fd_bypass = m_camera_info[sensor_enum].dummy_shot.fd_bypass;
-            shot_ext->shot.magicNumber = m_camera_info[sensor_enum].dummy_shot.shot.magicNumber;
+            shot_ext->dis_bypass = m_camera_info[cameraMode].dummy_shot.dis_bypass;
+            shot_ext->dnr_bypass = m_camera_info[cameraMode].dummy_shot.dnr_bypass;
+            shot_ext->fd_bypass = m_camera_info[cameraMode].dummy_shot.fd_bypass;
+            shot_ext->shot.magicNumber = m_camera_info[cameraMode].dummy_shot.shot.magicNumber;
 
-            m_turnOffEffectByFps(shot_ext, m_curCameraInfo[sensor_enum]->fpsRange[1]);
+            m_turnOffEffectByFps(shot_ext, m_curCameraInfo[cameraMode]->fpsRange[1]);
 
             m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_BEFORE,
-                                         (void *)&(m_camera_info[sensor_enum].sensor.buffer[beforeBufOut]));
+                                         (void *)&(m_camera_info[cameraMode].sensor.buffer[m_is3a1SrcLastBufIndex]));
 
             m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_BEFORE,
-                                         (void *)&(m_camera_info[sensor_enum].sensor.buffer[beforeBufOut]));
+                                         (void *)&(m_camera_info[cameraMode].sensor.buffer[m_is3a1SrcLastBufIndex]));
 
             m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_BEFORE,
-                (void *)&(m_camera_info[sensor_enum].sensor.buffer[beforeBufOut]));
+                (void *)&(m_camera_info[cameraMode].sensor.buffer[m_is3a1SrcLastBufIndex]));
 
-            memcpy(&m_camera_info[sensor_enum].dummy_shot.shot.ctl, &shot_ext->shot.ctl, sizeof(struct camera2_ctl));
+            memcpy(&m_camera_info[cameraMode].dummy_shot.shot.ctl, &shot_ext->shot.ctl, sizeof(struct camera2_ctl));
 
-            if (cam_int_m2m_qbuf(&(m_camera_info[sensor_enum].sensor), beforeBufOut,
-                &(m_camera_info[sensor_enum].is3a1Output), beforeBufOut) < 0) {
-                CLOGE("ERR(%s):is3a1Output cam_int_m2m_qbuf(%d) failed", __func__, beforeBufOut);
-                beforeBufOut = -1;
+            if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a1Src), m_is3a1SrcLastBufIndex,
+                             &(m_camera_info[cameraMode].sensor)) < 0) {
+                CLOGE("ERR(%s):is3a1Src cam_int_qbuf(%d) fail", __func__, m_is3a1SrcLastBufIndex);
+                m_is3a1SrcLastBufIndex = -1;
                 ret = false;
             }
-            CLOGT(m_traceCount, "(%s): qbuf out", __FUNCTION__);
+            CLOGT(m_traceCount, "(%s): qbuf out", __func__);
         }
 
         if (ret == false && m_numOfShotedFrame == 0) {
-            CLOGE("ERR(%s): qbuf fail and m_numOfShotedFrame = %d, Cannot try dqbuf", __FUNCTION__, m_numOfShotedFrame);
+            CLOGE("ERR(%s):qbuf fail and m_numOfShotedFrame = %d, Cannot try dqbuf", __func__, m_numOfShotedFrame);
             return ret;
         }
-
     } else {
         /* use same buffer number */
-        *outBuf = m_camera_info[sensor_enum].isp.buffer[position_buf];
+        *outBuf = m_camera_info[cameraMode].isp.buffer[position_buf];
         outBuf->reserved.p = position_buf;
 
         shot_ext = (struct camera2_shot_ext *)(inBuf->virt.extP[1]);
 
-        memcpy(&shot_ext->shot.ctl, &m_camera_info[sensor_enum].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
+        memcpy(&shot_ext->shot.ctl, &m_camera_info[cameraMode].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
 #ifdef FD_ROTATION
-//        shot_ext->shot.uctl.scalerUd.orientation = m_camera_info[sensor_enum].dummy_shot.shot.uctl.scalerUd.orientation;
+//        shot_ext->shot.uctl.scalerUd.orientation = m_camera_info[cameraMode].dummy_shot.shot.uctl.scalerUd.orientation;
 #endif
-        m_turnOffEffectByFps(shot_ext, m_curCameraInfo[sensor_enum]->fpsRange[1]);
+        m_turnOffEffectByFps(shot_ext, m_curCameraInfo[cameraMode]->fpsRange[1]);
 
         m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_BEFORE,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[position_buf]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[position_buf]));
 
         m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_BEFORE,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[position_buf]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[position_buf]));
 
         m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_BEFORE,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[position_buf]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[position_buf]));
 
-        memcpy(&m_camera_info[sensor_enum].dummy_shot.shot.ctl, &shot_ext->shot.ctl, sizeof(struct camera2_ctl));
+        memcpy(&m_camera_info[cameraMode].dummy_shot.shot.ctl, &shot_ext->shot.ctl, sizeof(struct camera2_ctl));
 
         /* metadata buffer */
-        memset(metaBuffer[position_buf].virt.extP[1], 0, metaBuffer[position_buf].size.extS[1]);
-        if (cam_int_m2m_qbuf_for_3a1(&(m_camera_info[sensor_enum].isp), position_buf,
-            &(m_camera_info[sensor_enum].is3a1Capture), position_buf, metaBuffer[position_buf]) < 0) {
-            CLOGE("ERR(%s):is3a1Capture cam_int_m2m_qbuf(%d) failed", __func__, position_buf);
+        memset(m_metaBuf[position_buf].virt.extP[1], 0, m_metaBuf[position_buf].size.extS[1]);
+        if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a1Dst), position_buf,
+                         &(m_camera_info[cameraMode].isp),
+                         m_metaBuf[position_buf]) < 0) {
+            CLOGE("ERR(%s):is3a1Dst cam_int_qbuf(%d) fail", __func__, position_buf);
             return false;
         }
 
-        if (cam_int_m2m_qbuf(&(m_camera_info[sensor_enum].sensor), position_buf,
-            &(m_camera_info[sensor_enum].is3a1Output), position_buf) < 0) {
-            CLOGE("ERR(%s):is3a1Output cam_int_m2m_qbuf(%d) failed", __func__, position_buf);
+        if (cam_int_qbuf(&(m_camera_info[cameraMode].is3a1Src), position_buf,
+                         &(m_camera_info[cameraMode].sensor)) < 0) {
+            CLOGE("ERR(%s):is3a1Src cam_int_qbuf(%d) fail", __func__, position_buf);
             return false;
         }
     }
 
-    CLOGT(m_traceCount, "(%s): dqbuf in", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): dqbuf in", __func__);
 
-    index_capture = cam_int_dqbuf(&(m_camera_info[sensor_enum].is3a1Capture));
-    index_output = cam_int_dqbuf(&(m_camera_info[sensor_enum].is3a1Output));
+    dstIndex = cam_int_dqbuf(&(m_camera_info[cameraMode].is3a1Dst));
+    srcIndex = cam_int_dqbuf(&(m_camera_info[cameraMode].is3a1Src));
 
-    CLOGT(m_traceCount, "(%s): dqbuf out(out %d, cap %d)", __FUNCTION__, index_output, index_capture);
+    CLOGT(m_traceCount, "(%s): dqbuf out(out %d, cap %d)", __func__, srcIndex, dstIndex);
 
-    if (index_capture < 0 || index_output < 0) {
-        CLOGE("ERR(%s): cam_int_dqbuf() on is3a1 fail. index(capture:%d, output:%d)", __func__, index_capture, index_output);
+    if (dstIndex < 0 || srcIndex < 0) {
+        CLOGE("ERR(%s):cam_int_dqbuf() on is3a1 fail. index(capture:%d, output:%d)", __func__, dstIndex, srcIndex);
         ret = false;
     }
 
     if (m_notifyStopMsg == true) {
-        beforeBufOut = -1;
-        beforeBufCap = -1;
+        m_is3a1SrcLastBufIndex = -1;
+        m_is3a1DstLastBufIndex = -1;
     } else {
-        beforeBufOut = index_output;
-        beforeBufCap = index_capture;
+        m_is3a1SrcLastBufIndex = srcIndex;
+        m_is3a1DstLastBufIndex = dstIndex;
     }
 
     if (ret == false)
         return ret;
 
-    if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK) {
+    if (m_cameraMode == CAMERA_MODE_BACK) {
         /* TODO: Flash and AF */
         m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_AFTER,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[index_output]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[srcIndex]));
 
         m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_AFTER,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[index_output]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[srcIndex]));
 
         m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_AFTER,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[index_output]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[srcIndex]));
 
-        shot_ext = (struct camera2_shot_ext *)m_camera_info[sensor_enum].sensor.buffer[index_capture].virt.extP[1];
-
-        /* keep frameCount's udm */
-        m_udmArr[shot_ext->shot.dm.request.frameCount % NUM_BAYER_BUFFERS] = &(shot_ext->shot.udm);
+        shot_ext = (struct camera2_shot_ext *)m_camera_info[cameraMode].sensor.buffer[dstIndex].virt.extP[1];
 
         /* back-up is3aa_dm : result of isp metadata */
-        memcpy(&m_camera_info[sensor_enum].is3aa_dm, shot_ext, sizeof(struct camera2_shot_ext));
+        memcpy(&m_camera_info[cameraMode].is3aa_dm, shot_ext, sizeof(struct camera2_shot_ext));
 
         /* copy 3a1 to isp */
-        memcpy(m_camera_info[sensor_enum].isp.buffer[index_capture].virt.extP[1],
-                    m_camera_info[sensor_enum].sensor.buffer[index_output].virt.extP[1], META_DATA_SIZE);
+        memcpy(m_camera_info[cameraMode].isp.buffer[dstIndex].virt.extP[1],
+                    m_camera_info[cameraMode].sensor.buffer[srcIndex].virt.extP[1], META_DATA_SIZE);
 
-        g3a1FrameCount = shot_ext->shot.dm.request.frameCount;
+        m_is3a1FrameCount = shot_ext->shot.dm.request.frameCount;
 
-        CLOGT(m_traceCount, "(%s:%d): dm.request count %d", __func__, __LINE__, g3a1FrameCount);
+        CLOGT(m_traceCount, "(%s:%d): dm.request count %d", __func__, __LINE__, m_is3a1FrameCount);
 
-        shot_ext_output = (struct camera2_shot_ext *)m_camera_info[sensor_enum].sensor.buffer[index_output].virt.extP[1];
+        shot_ext_src = (struct camera2_shot_ext *)m_camera_info[cameraMode].sensor.buffer[srcIndex].virt.extP[1];
 
         /* use same buffer number */
-        *outBuf = m_camera_info[sensor_enum].isp.buffer[index_capture];
+        *outBuf = m_camera_info[cameraMode].isp.buffer[dstIndex];
 
-        if (shot_ext_output->request_3ax == m_camera_info[sensor_enum].dummy_shot.request_3ax) {
-            outBuf->reserved.p = index_capture;
+        if (shot_ext_src->request_3ax == m_camera_info[cameraMode].dummy_shot.request_3ax) {
+            outBuf->reserved.p = dstIndex;
         } else {
             outBuf->reserved.p = -1;
             m_traceCount = TRACE_COUNT;
-            CLOGE("ERR(%s): 3a1 Shot done is invalid(expected request_3ax is %d, but we got %d), skip frame(%d)",
-                    __func__, m_camera_info[sensor_enum].dummy_shot.request_3ax, shot_ext_output->request_3ax, shot_ext->shot.dm.request.frameCount);
+            CLOGE("ERR(%s):3a1 Shot done is invalid(expected request_3ax is %d, but we got %d), skip frame(%d)",
+                    __func__, m_camera_info[cameraMode].dummy_shot.request_3ax, shot_ext_src->request_3ax, shot_ext->shot.dm.request.frameCount);
         }
 
         CLOGT(m_traceCount, "(%s): index(output:%d, capture:%d), (free:%d) (request:%d) (process:%d) (complete:%d)",
-                __func__, index_output, index_capture,
-                shot_ext_output->free_cnt,
-                shot_ext_output->request_cnt,
-                shot_ext_output->process_cnt,
-                shot_ext_output->complete_cnt);
+                __func__, srcIndex, dstIndex,
+                shot_ext_src->free_cnt,
+                shot_ext_src->request_cnt,
+                shot_ext_src->process_cnt,
+                shot_ext_src->complete_cnt);
 
-        m_numOfShotedFrame = shot_ext_output->request_cnt + shot_ext_output->process_cnt + shot_ext_output->complete_cnt;
+        m_numOfShotedFrame = shot_ext_src->request_cnt + shot_ext_src->process_cnt + shot_ext_src->complete_cnt;
     } else {
         m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_AFTER,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[position_buf]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[position_buf]));
 
         m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_AFTER,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[position_buf]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[position_buf]));
 
         m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_3A_AFTER,
-            (void *)&(m_camera_info[sensor_enum].sensor.buffer[position_buf]));
+            (void *)&(m_camera_info[cameraMode].sensor.buffer[position_buf]));
 
         /* back-up is3aa_dm : result of isp metadata */
-        memcpy(&m_camera_info[sensor_enum].is3aa_dm, shot_ext, sizeof(struct camera2_shot_ext));
+        memcpy(&m_camera_info[cameraMode].is3aa_dm, shot_ext, sizeof(struct camera2_shot_ext));
 
         /* copy 3a1 to isp */
         memcpy(outBuf->virt.extP[1], inBuf->virt.extP[1], META_DATA_SIZE);
@@ -4184,10 +3631,10 @@ int ExynosCamera::getNumOfShotedIspFrame(void)
 
 void ExynosCamera::notifyStop(bool msg)
 {
-    if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK)
+    if (m_cameraMode == CAMERA_MODE_BACK)
         m_notifyStopMsg = msg;
     else
-        CLOGV("DEBUG(%s): Front camera dose not need notify stop msg", __FUNCTION__);
+        CLOGV("DEBUG(%s): Front camera dose not need notify stop msg", __func__);
 
     m_traceCount = msg ? TRACE_COUNT : 0;
 }
@@ -4244,16 +3691,16 @@ bool ExynosCamera::getVDisSrcBuf(ExynosBuffer *buf, int *rcount, int *fcount)
     struct camera2_stream *metadata;
 
     CLOGV("[%s] (%d)", __func__, __LINE__);
-    index = cam_int_dqbuf(&(m_camera_info[m_camera_default].vdisc));
+    index = cam_int_dqbuf(&(m_camera_info[m_cameraMode].vdisc));
     if (index < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf(1) on preview fail", __func__);
         return false;
     }
 
-    *buf = m_camera_info[m_camera_default].vdisc.buffer[index];
+    *buf = m_camera_info[m_cameraMode].vdisc.buffer[index];
     buf->reserved.p = index;
 
-    metadata = (struct camera2_stream *)m_camera_info[m_camera_default].vdisc.buffer[index].virt.extP[1];
+    metadata = (struct camera2_stream *)m_camera_info[m_cameraMode].vdisc.buffer[index].virt.extP[1];
     *rcount = metadata->rcount;
     *fcount = metadata->fcount;
 
@@ -4263,13 +3710,13 @@ bool ExynosCamera::getVDisSrcBuf(ExynosBuffer *buf, int *rcount, int *fcount)
 bool ExynosCamera::putVDisSrcBuf(ExynosBuffer *buf)
 {
     if (m_isHWVDis) {
-        m_camera_info[m_camera_default].vdisc.buffer[buf->reserved.p].fd.extFd[0] = buf->fd.extFd[0];
-        m_camera_info[m_camera_default].vdisc.buffer[buf->reserved.p].virt.extP[0] = buf->virt.extP[0];
+        m_camera_info[m_cameraMode].vdisc.buffer[buf->reserved.p].fd.extFd[0] = buf->fd.extFd[0];
+        m_camera_info[m_cameraMode].vdisc.buffer[buf->reserved.p].virt.extP[0] = buf->virt.extP[0];
     }
 
     CLOGV("[%s] (%d)", __func__, __LINE__);
-    if (cam_int_qbuf(&(m_camera_info[m_camera_default].vdisc), buf->reserved.p) < 0) {
-        CLOGE("%s: cam_int_qbuf(%d) failed", __func__, buf->reserved.p);
+    if (cam_int_qbuf(&(m_camera_info[m_cameraMode].vdisc), buf->reserved.p) < 0) {
+        CLOGE("%s: cam_int_qbuf(%d) fail", __func__, buf->reserved.p);
         return false;
     }
 
@@ -4281,22 +3728,22 @@ bool ExynosCamera::getVDisDstBuf(ExynosBuffer *buf)
     int index = 0;
 
     CLOGV("[%s] (%d)", __func__, __LINE__);
-    index = cam_int_dqbuf(&(m_camera_info[m_camera_default].vdiso));
+    index = cam_int_dqbuf(&(m_camera_info[m_cameraMode].vdiso));
     if (index < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf(1) on preview fail", __func__);
         return false;
     }
 
-    *buf = m_camera_info[m_camera_default].vdiso.buffer[index];
+    *buf = m_camera_info[m_cameraMode].vdiso.buffer[index];
     buf->reserved.p = index;
 
     return true;
 }
 bool ExynosCamera::getVDisDstBufAddr(ExynosBuffer **buf, int i)
 {
-    *buf = &m_camera_info[m_camera_default].vdiso.buffer[i];
+    *buf = &m_camera_info[m_cameraMode].vdiso.buffer[i];
 
-    if (&m_camera_info[m_camera_default].vdiso.buffer[i] != NULL);
+    if (&m_camera_info[m_cameraMode].vdiso.buffer[i] != NULL);
         CLOGD("%s, index(%d)", __func__, index);
 
     return true;
@@ -4308,103 +3755,108 @@ bool ExynosCamera::putVDisDstBuf(ExynosBuffer *buf, int rcount, int fcount)
     int index = 0;
 
     index = buf->reserved.p;
-    shot_ext = (struct camera2_shot_ext *)m_camera_info[m_camera_default].vdiso.buffer[index].virt.extP[1];
+    shot_ext = (struct camera2_shot_ext *)m_camera_info[m_cameraMode].vdiso.buffer[index].virt.extP[1];
 
-    shot_ext->request_3ax = m_camera_info[m_camera_default].dummy_shot.request_3ax;
-    shot_ext->request_isp = m_camera_info[m_camera_default].dummy_shot.request_isp;
-    shot_ext->request_scc = m_camera_info[m_camera_default].dummy_shot.request_scc;
-    shot_ext->request_scp = m_camera_info[m_camera_default].dummy_shot.request_scp;
+    shot_ext->request_3ax = m_camera_info[m_cameraMode].dummy_shot.request_3ax;
+    shot_ext->request_isp = m_camera_info[m_cameraMode].dummy_shot.request_isp;
+    shot_ext->request_scc = m_camera_info[m_cameraMode].dummy_shot.request_scc;
+    shot_ext->request_scp = m_camera_info[m_cameraMode].dummy_shot.request_scp;
 
     if (m_isHWVDis) {
-        m_camera_info[m_camera_default].vdiso.buffer[index].fd.extFd[0] = buf->fd.extFd[0];
-        m_camera_info[m_camera_default].vdiso.buffer[index].virt.extP[0] = buf->virt.extP[0];
+        m_camera_info[m_cameraMode].vdiso.buffer[index].fd.extFd[0] = buf->fd.extFd[0];
+        m_camera_info[m_cameraMode].vdiso.buffer[index].virt.extP[0] = buf->virt.extP[0];
     }
 
-    shot_ext->dis_bypass = m_camera_info[m_camera_default].dummy_shot.dis_bypass;
-    shot_ext->dnr_bypass = m_camera_info[m_camera_default].dummy_shot.dnr_bypass;
-    shot_ext->fd_bypass = m_camera_info[m_camera_default].dummy_shot.fd_bypass;
+    shot_ext->dis_bypass = m_camera_info[m_cameraMode].dummy_shot.dis_bypass;
+    shot_ext->dnr_bypass = m_camera_info[m_cameraMode].dummy_shot.dnr_bypass;
+    shot_ext->fd_bypass = m_camera_info[m_cameraMode].dummy_shot.fd_bypass;
 
     shot_ext->shot.ctl.request.frameCount = rcount;
     shot_ext->shot.dm.request.frameCount = fcount;
     shot_ext->shot.magicNumber = 0x23456789;
 
     CLOGV("[%s] (%d)", __func__, __LINE__);
-    if (cam_int_qbuf(&(m_camera_info[m_camera_default].vdiso), index) < 0) {
-        CLOGE("%s: cam_int_qbuf(%d) failed", __func__, index);
+    if (cam_int_qbuf(&(m_camera_info[m_cameraMode].vdiso), index) < 0) {
+        CLOGE("%s: cam_int_qbuf(%d) fail", __func__, index);
         return false;
     }
 
     return true;
 }
 #endif
+
 bool ExynosCamera::startSensor(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[m_camera_default].sensor.flagStart,
-        m_camera_info[m_camera_default].sensor.width,
-        m_camera_info[m_camera_default].sensor.height,
-        m_camera_info[m_camera_default].sensor.format);
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[m_cameraMode].sensor.flagStart,
+        m_camera_info[m_cameraMode].sensor.width,
+        m_camera_info[m_cameraMode].sensor.height,
+        m_camera_info[m_cameraMode].sensor.format);
 
-    beforeBufOut = -1;
-    beforeBufCap = -1;
-    recent_get_sensor_buf_index = 0;
+    m_is3a1SrcLastBufIndex = -1;
+    m_is3a1DstLastBufIndex = -1;
+    m_recentCaptureBayerBufIndex = 0;
 
-    if (m_camera_info[m_camera_default].sensor.flagStart == false) {
+    if (m_camera_info[m_cameraMode].sensor.flagStart == false) {
 
         Mutex::Autolock lock(m_sensorLock);
 
-        if (m_camera_default == SENSOR_BACK) {
-            m_camera_info[m_camera_default].sensor.width   = SIZE_OTF_WIDTH;
-            m_camera_info[m_camera_default].sensor.height  = SIZE_OTF_HEIGHT;
+        if (m_cameraMode == CAMERA_MODE_BACK) {
+            m_camera_info[m_cameraMode].sensor.width   = SIZE_OTF_WIDTH;
+            m_camera_info[m_cameraMode].sensor.height  = SIZE_OTF_HEIGHT;
         } else {
-            m_camera_info[m_camera_default].sensor.width   = m_curCameraInfo[m_camera_default]->pictureW + 16;
-            m_camera_info[m_camera_default].sensor.height  = m_curCameraInfo[m_camera_default]->pictureH + 10;
+            m_camera_info[m_cameraMode].sensor.width   = m_curCameraInfo[m_cameraMode]->pictureW + 16;
+            m_camera_info[m_cameraMode].sensor.height  = m_curCameraInfo[m_cameraMode]->pictureH + 10;
         }
-        m_camera_info[m_camera_default].sensor.format  = V4L2_PIX_FMT_SBGGR12;
-        m_camera_info[m_camera_default].sensor.planes  = 2;
-        m_camera_info[m_camera_default].sensor.buffers = NUM_BAYER_BUFFERS;
-        m_camera_info[m_camera_default].sensor.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[m_camera_default].sensor.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[m_camera_default].sensor.ionClient = m_ionCameraClient;
+
+        m_camera_info[m_cameraMode].sensor.format  = V4L2_PIX_FMT_SBGGR12;
+        m_camera_info[m_cameraMode].sensor.planes  = 2;
+        m_camera_info[m_cameraMode].sensor.buffers = NUM_BAYER_BUFFERS;
+        m_camera_info[m_cameraMode].sensor.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[m_cameraMode].sensor.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[m_cameraMode].sensor.ionClient = m_ionCameraClient;
 
         ExynosBuffer nullBuf;
         int planeSize;
-        planeSize = m_camera_info[m_camera_default].sensor.width * m_camera_info[m_camera_default].sensor.height * 2;
+        planeSize = getPlaneSizePackedFLiteOutput(m_camera_info[m_cameraMode].sensor.width , m_camera_info[m_cameraMode].sensor.height);
 
-        for (int i = 0; i < m_camera_info[m_camera_default].sensor.buffers; i++) {
-            m_camera_info[m_camera_default].sensor.buffer[i] = nullBuf;
-            m_camera_info[m_camera_default].sensor.buffer[i].size.extS[0] = planeSize;
-            m_camera_info[m_camera_default].sensor.buffer[i].size.extS[1] = META_DATA_SIZE;
+        for (int i = 0; i < m_camera_info[m_cameraMode].sensor.buffers; i++) {
+            m_camera_info[m_cameraMode].sensor.buffer[i] = nullBuf;
+            m_camera_info[m_cameraMode].sensor.buffer[i].size.extS[0] = planeSize;
+            m_camera_info[m_cameraMode].sensor.buffer[i].size.extS[1] = META_DATA_SIZE;
 
-            if (allocMem(m_camera_info[m_camera_default].sensor.ionClient, &m_camera_info[m_camera_default].sensor.buffer[i], 1 << 1) == false) {
+            if (allocMem(m_camera_info[m_cameraMode].sensor.ionClient, &m_camera_info[m_cameraMode].sensor.buffer[i], 1 << 1) == false) {
                 CLOGE("ERR(%s):allocMem() fail", __func__);
                 goto err;
             } else {
-                memset(m_camera_info[m_camera_default].sensor.buffer[i].virt.extP[1],
-                        0, m_camera_info[m_camera_default].sensor.buffer[i].size.extS[1]);
+                memset(m_camera_info[m_cameraMode].sensor.buffer[i].virt.extP[1],
+                        0, m_camera_info[m_cameraMode].sensor.buffer[i].size.extS[1]);
             }
         }
 
-        m_camera_info[m_camera_default].sensor.flagStart = true;
+        m_camera_info[m_cameraMode].sensor.flagStart = true;
     }
 
     return true;
 
 err:
-    m_camera_info[m_camera_default].sensor.flagStart = true;
+    m_camera_info[m_cameraMode].sensor.flagStart = true;
     if (stopSensor() == false)
         CLOGE("ERR(%s):stopSensor() fail", __func__);
 
     return false;
 }
 
-bool ExynosCamera::startSensorOn(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::startSensorOn(enum CAMERA_MODE cameraMode)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
@@ -4414,52 +3866,54 @@ bool ExynosCamera::startSensorOn(enum CAMERA_SENSOR sensor_enum)
 
     // HACK : ISP need to skip s_input on second Preview (fw?)
     if (m_isFirtstSensorStart == true) {
-        int sensorId = m_getSensorId(m_cameraId);
+        int sensorId = m_getSensorId(m_cameraMode);
         sensorId = (0 << REPROCESSING_SHFIT) | ((FIMC_IS_VIDEO_SEN0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) | (sensorId << 0);
 
-        if (cam_int_s_input(&(m_camera_info[sensor_enum].sensor), sensorId) < 0) {
+        if (cam_int_s_input(&(m_camera_info[cameraMode].sensor), sensorId) < 0) {
             CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
             return false;
         }
         m_isFirtstSensorStart = false;
     }
 
-    if (cam_int_s_fmt(&(m_camera_info[sensor_enum].sensor)) < 0) {
-        CLOGE("ERR(%s): sensor s_fmt fail",  __func__);
+    if (cam_int_s_fmt(&(m_camera_info[cameraMode].sensor)) < 0) {
+        CLOGE("ERR(%s):sensor s_fmt fail",  __func__);
         return false;
     }
 
-    int fps = m_camera_info[m_camera_default].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1];
+    int fps = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1];
     CLOGV("DEBUG(%s):fps(%d)", __func__, fps);
     if (setFPSParam(fps) < 0) {
         CLOGE("ERR(%s):setFPSParam(%d) fail", __func__, fps);
         return false;
     }
 
-    if (cam_int_reqbufs(&(m_camera_info[sensor_enum].sensor)) < 0) {
+    if (cam_int_reqbufs(&(m_camera_info[cameraMode].sensor)) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
         return false;
     }
 
     m_sensorFrameCount = 0;
 
-    m_camera_info[m_camera_default].dummy_shot.request_3ax = 1;
-    m_camera_info[m_camera_default].dummy_shot.request_isp = 1;
-    m_camera_info[m_camera_default].dummy_shot.request_scp = 1;
-    m_camera_info[m_camera_default].dummy_shot.request_scc = 0;
-    m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
+    m_camera_info[m_cameraMode].dummy_shot.request_3ax = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_isp = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_scp = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_scc = 0;
+    m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
 
-    int numOfInitialSensorBuf = m_camera_info[sensor_enum].sensor.buffers;
+    int numOfInitialSensorBuf = m_camera_info[cameraMode].sensor.buffers;
 
 #ifdef SCALABLE_SENSOR
     if (getScalableSensorStart()) {
         int width, height;
+
         getScalableSensorSizeOnPreview(&width, &height);
         width  += 16;
         height += 10;
+
         CLOGD("DEBUG(%s):getScalableSensorStart(%d/%d) sensor ", __func__, width, height);
-        m_camera_info[sensor_enum].sensor.width   = width;
-        m_camera_info[sensor_enum].sensor.height  = height;
+        m_camera_info[cameraMode].sensor.width   = width;
+        m_camera_info[cameraMode].sensor.height  = height;
 
         struct v4l2_crop crop;
         memset(&crop, 0x00, sizeof(struct v4l2_crop));
@@ -4468,8 +3922,9 @@ bool ExynosCamera::startSensorOn(enum CAMERA_SENSOR sensor_enum)
         crop.c.width  = width;
         crop.c.height = height;
         crop.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        if (exynos_v4l2_s_crop(m_camera_info[sensor_enum].sensor.fd, &crop) < 0) {
-            CLOGE("ERR(%s): sensor s_crop fail",  __func__);
+
+        if (exynos_v4l2_s_crop(m_camera_info[cameraMode].sensor.fd, &crop) < 0) {
+            CLOGE("ERR(%s):sensor s_crop fail",  __func__);
             return false;
         }
     }
@@ -4477,11 +3932,13 @@ bool ExynosCamera::startSensorOn(enum CAMERA_SENSOR sensor_enum)
 
     if (NUM_MIN_SENSOR_QBUF < numOfInitialSensorBuf)
         numOfInitialSensorBuf = NUM_MIN_SENSOR_QBUF;
+
 #ifdef DYNAMIC_BAYER_BACK_REC
-    if ((m_recordingHint == true) && (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK)) {
+    if ((m_recordingHint == true) && (m_cameraMode == CAMERA_MODE_BACK)) {
         numOfInitialSensorBuf = NO_BAYER_SENSOR_Q_NUM;
     }
 #endif
+
 #ifdef SCALABLE_SENSOR
     if (getScalableSensorStart() == true) {
         numOfInitialSensorBuf = 0;
@@ -4489,30 +3946,30 @@ bool ExynosCamera::startSensorOn(enum CAMERA_SENSOR sensor_enum)
 #endif
 
     for (int i = 0; i < numOfInitialSensorBuf; i++) {
-        memcpy(m_camera_info[sensor_enum].sensor.buffer[i].virt.extP[1], &(m_camera_info[m_camera_default].dummy_shot), sizeof(camera2_shot_ext));
-        m_camera_info[sensor_enum].sensor.buffer[i].reserved.extP[FRAME_COUNT_INDEX] = m_sensorFrameCount++;
+        memcpy(m_camera_info[cameraMode].sensor.buffer[i].virt.extP[1], &(m_camera_info[m_cameraMode].dummy_shot), sizeof(camera2_shot_ext));
+        m_camera_info[cameraMode].sensor.buffer[i].reserved.extP[FRAME_COUNT_INDEX] = m_sensorFrameCount++;
 
-        camera2_shot_ext *shot_ext = (struct camera2_shot_ext *)(m_camera_info[sensor_enum].sensor.buffer[i].virt.extP[1]);
+        camera2_shot_ext *shot_ext = (struct camera2_shot_ext *)(m_camera_info[cameraMode].sensor.buffer[i].virt.extP[1]);
 
-        m_turnOffEffectByFps(shot_ext, m_curCameraInfo[m_camera_default]->fpsRange[1]);
+        m_turnOffEffectByFps(shot_ext, m_curCameraInfo[m_cameraMode]->fpsRange[1]);
 
-        if (m_setSetfile(sensor_enum) == false) {
-            CLOGE("ERR(%s):m_setSetfile(%d) fail", __func__, sensor_enum);
+        if (m_setSetfile(cameraMode) == false) {
+            CLOGE("ERR(%s):m_setSetfile(%d) fail", __func__, cameraMode);
             return false;
         }
 
-        shot_ext->setfile = m_camera_info[sensor_enum].dummy_shot.setfile;
+        shot_ext->setfile = m_camera_info[cameraMode].dummy_shot.setfile;
 
-        if (cam_int_qbuf(&(m_camera_info[sensor_enum].sensor), i) < 0) {
-            CLOGE("ERR(%s):cam_int_qbuf(%d) failed", __func__, i);
+        if (cam_int_qbuf(&(m_camera_info[cameraMode].sensor), i) < 0) {
+            CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
             return false;
         }
     }
 
-    for (int i = NUM_MIN_SENSOR_QBUF; i < m_camera_info[sensor_enum].sensor.buffers; i++)
+    for (int i = NUM_MIN_SENSOR_QBUF; i < m_camera_info[cameraMode].sensor.buffers; i++)
         m_pushSensorQ(i);
 
-    if (cam_int_streamon(&(m_camera_info[sensor_enum].sensor)) < 0) {
+    if (cam_int_streamon(&(m_camera_info[cameraMode].sensor)) < 0) {
         CLOGE("ERR(%s):cam_int_streamon(sensor) fail", __func__);
         return false;
     }
@@ -4520,40 +3977,40 @@ bool ExynosCamera::startSensorOn(enum CAMERA_SENSOR sensor_enum)
     return true;
 }
 
-bool ExynosCamera::stopSensorOff(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::stopSensorOff(enum CAMERA_MODE cameraMode)
 {
     if (m_flagCreate == false) {
         CLOGW("WARN(%s):Not yet Created", __func__);
         return false;
     }
 
-    if (m_camera_info[sensor_enum].sensor.flagStart == true) {
+    if (m_camera_info[cameraMode].sensor.flagStart == true) {
 #ifdef THREAD_PROFILE
         timeUs = 0;
         gettimeofday(&mTimeStart, NULL);
 #endif
-        if (cam_int_streamoff(&m_camera_info[sensor_enum].sensor) < 0) {
+        if (cam_int_streamoff(&m_camera_info[cameraMode].sensor) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
             return false;
         }
 #ifdef THREAD_PROFILE
         gettimeofday(&mTimeStop, NULL);
         timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
+        CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
 
-        m_camera_info[sensor_enum].dummy_shot.request_3ax = 0;
-        m_camera_info[sensor_enum].dummy_shot.request_isp = 0;
+        m_camera_info[cameraMode].dummy_shot.request_3ax = 0;
+        m_camera_info[cameraMode].dummy_shot.request_isp = 0;
 
-        m_camera_info[sensor_enum].sensor.buffers = 0;
-        if (cam_int_reqbufs(&m_camera_info[sensor_enum].sensor) < 0) {
+        m_camera_info[cameraMode].sensor.buffers = 0;
+        if (cam_int_reqbufs(&m_camera_info[cameraMode].sensor) < 0) {
             CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
             return false;
         }
 
         m_releaseSensorQ();
         m_releaseBayerQ();
-        minCaptureBayerBuf = MIN_CAPTURE_BAYER_COUNT;
+        m_minCaptureBayerBuf = MIN_CAPTURE_BAYER_COUNT;
     }
 
     return true;
@@ -4566,20 +4023,20 @@ bool ExynosCamera::stopSensor(void)
         return false;
     }
 
-    if (m_camera_info[m_camera_default].sensor.flagStart == true) {
+    if (m_camera_info[m_cameraMode].sensor.flagStart == true) {
         Mutex::Autolock lock(m_sensorLock);
 
         m_isFirtstSensorStart = true;
 
         for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
-            freeMem(&m_camera_info[m_camera_default].sensor.buffer[i]);
-            CLOGV("ERR(%s):freeMem sensor (%d)", __func__, m_camera_info[m_camera_default].sensor.buffers);
+            freeMem(&m_camera_info[m_cameraMode].sensor.buffer[i]);
+            CLOGV("ERR(%s):freeMem sensor (%d)", __func__, m_camera_info[m_cameraMode].sensor.buffers);
          }
 
         for (int i = 0; i < VIDEO_MAX_FRAME; i++)
-            freeMemSinglePlane(&m_camera_info[m_camera_default].sensor.buffer[i], m_camera_info[m_camera_default].sensor.planes - 1);
+            freeMemSinglePlane(&m_camera_info[m_cameraMode].sensor.buffer[i], m_camera_info[m_cameraMode].sensor.planes - 1);
 
-        m_camera_info[m_camera_default].sensor.flagStart = false;
+        m_camera_info[m_cameraMode].sensor.flagStart = false;
     }
 
     return true;
@@ -4587,7 +4044,7 @@ bool ExynosCamera::stopSensor(void)
 
 bool ExynosCamera::flagStartSensor(void)
 {
-    return m_camera_info[m_camera_default].sensor.flagStart;
+    return m_camera_info[m_cameraMode].sensor.flagStart;
 }
 
 bool ExynosCamera::flagEmptySensorBuf(ExynosBuffer *buf)
@@ -4606,12 +4063,12 @@ bool ExynosCamera::flagEmptySensorBuf(ExynosBuffer *buf)
 #if CAPTURE_BUF_GET
 int ExynosCamera::getCapturerBufIndex()
 {
-    return recent_get_sensor_buf_index;
+    return m_recentCaptureBayerBufIndex;
 }
 
 int ExynosCamera::getCapturerBuf(ExynosBuffer *buf)
 {
-    *buf = m_camera_info[m_camera_default].sensor.buffer[recent_get_sensor_buf_index];
+    *buf = m_camera_info[m_cameraMode].sensor.buffer[m_recentCaptureBayerBufIndex];
 
     return 1;
 }
@@ -4626,22 +4083,20 @@ bool ExynosCamera::getSensorBuf(ExynosBuffer *buf)
 
     Mutex::Autolock lock(m_sensorLock);
 
-    if (m_camera_info[m_camera_default].sensor.flagStart == false) {
+    if (m_camera_info[m_cameraMode].sensor.flagStart == false) {
         CLOGE("ERR(%s):Not yet sensor started fail", __func__);
         return false;
     }
 
     int index_sensor = 0;
-    int putSensorIndex = -1;
     int waitBayerFcount;
     int capture_ret = 0;
     int dqTryCount = 0;
     ExynosBuffer firstBuf;
 
-
 #ifdef BAYER_TRACKING
-    camera2_shot_ext *tempShot = NULL;
-    int *tempImage = NULL;
+    camera2_shot_ext *shot_ext = NULL;
+    int *bayerImage = NULL;
 #endif
 
     int maxDqTryCount = 1;
@@ -4649,71 +4104,56 @@ bool ExynosCamera::getSensorBuf(ExynosBuffer *buf)
     int unQueuedBufCount = 0;
     ExynosBuffer unQueuedBuf[NUM_BAYER_BUFFERS];
 
-    if(m_camera_default == SENSOR_FRONT)
+    if (m_cameraMode == CAMERA_MODE_FRONT)
         maxDqTryCount = NUM_BAYER_BUFFERS;
 
     for (int dqTryCount = 0; dqTryCount < maxDqTryCount; dqTryCount++) {
         /* sensor dq */
-        index_sensor = cam_int_dqbuf(&(m_camera_info[m_camera_default].sensor));
+        index_sensor = cam_int_dqbuf(&(m_camera_info[m_cameraMode].sensor));
         if (index_sensor < 0) {
-#ifdef NON_BLOCK_MODE
-            /* TODO: this work non-block mode */
-            if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK) {
-                if (m_camera_default == SENSOR_BACK) {
-                    *buf = m_camera_info[SENSOR_FAKE].sensor.buffer[index_sensor];
-                    buf->reserved.p = index_sensor;
-                    return true;
-                } else {
-                    CLOGE("ERR(%s): FRONT CAM cam_int_dqbuf() on sensor fail, index(%d)", __func__, index_sensor);
-                    return false;
-                }
-            } else {
-                CLOGE("ERR(%s):cam_int_dqbuf() on sensor fail", __func__);
-                return false;
-            }
-#else
             CLOGE("ERR(%s):cam_int_dqbuf() on sensor fail", __func__);
             return false;
-#endif
         }
 
-        if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK) {
-            *buf = m_camera_info[SENSOR_FAKE].sensor.buffer[index_sensor];
-            m_camera_info[m_camera_default].sensor.buffer[index_sensor].reserved.p = index_sensor;
-            m_camera_info[SENSOR_FAKE].sensor.buffer[index_sensor].reserved.p = index_sensor;
-        } else
-            *buf = m_camera_info[m_camera_default].sensor.buffer[index_sensor];
+        if (m_cameraMode == CAMERA_MODE_BACK) {
+            *buf = m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[index_sensor];
+
+            m_camera_info[m_cameraMode].sensor.buffer[index_sensor].reserved.p = index_sensor;
+            m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[index_sensor].reserved.p = index_sensor;
+        } else {
+            *buf = m_camera_info[m_cameraMode].sensor.buffer[index_sensor];
+        }
 
         buf->reserved.p = index_sensor;
 
-        captureBayerIndex[index_sensor] = 2;
+        m_captureBayerIndex[index_sensor] = 2;
 
         m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_AFTER,
-            (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+            (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
         m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_AFTER,
-            (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+            (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
         capture_ret = m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_AFTER,
             (void *)buf);
 
 #ifdef BAYER_TRACKING
-        tempShot = (camera2_shot_ext *)(buf->virt.extP[1]);
-        tempImage = (int *)(buf->virt.extP[0]);
+        shot_ext = (camera2_shot_ext *)(buf->virt.extP[1]);
+        bayerImage = (int *)(buf->virt.extP[0]);
 
-        if( tempShot != NULL && tempImage != NULL) {
-            tempImage[0] = tempShot->shot.dm.request.frameCount;
-            CLOGD("%d %d", tempImage[0], tempShot->shot.dm.request.frameCount);
+        if ( shot_ext != NULL && bayerImage != NULL) {
+            bayerImage[0] = shot_ext->shot.dm.request.frameCount;
+            CLOGD("%d %d", bayerImage[0], shot_ext->shot.dm.request.frameCount);
         }
 #endif
 
 #if CAPTURE_BUF_GET
-        if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK) {
+        if (m_cameraMode == CAMERA_MODE_BACK) {
 
-            if (minCaptureBayerBuf > 0) {
+            if (0 < m_minCaptureBayerBuf) {
                 m_pushSensorQ(index_sensor);
-                minCaptureBayerBuf --;
-                notInsertBayer = true;
+                m_minCaptureBayerBuf--;
+                m_notInsertBayer = true;
             } else {
                 if ((capture_ret == 2) || (capture_ret == 3) || (capture_ret == 4)) {
                     /* setBayerLockIndex(index_sensor, true); */
@@ -4721,10 +4161,10 @@ bool ExynosCamera::getSensorBuf(ExynosBuffer *buf)
                 }
                 /* HAL Bayer Buffer */
                 m_pushSensorQ(index_sensor);
-                notInsertBayer = false;
+                m_notInsertBayer = false;
             }
 
-            recent_get_sensor_buf_index = index_sensor;
+            m_recentCaptureBayerBufIndex = index_sensor;
         } else {
             m_pushSensorQ(index_sensor);
         }
@@ -4732,6 +4172,7 @@ bool ExynosCamera::getSensorBuf(ExynosBuffer *buf)
         m_pushSensorQ(index_sensor);
 #endif
 
+        /* if sensorBuf not empty, just use the first one */
         if (this->flagEmptySensorBuf(buf) == true) {
             if (0 < dqTryCount) {
                 unQueuedBuf[unQueuedBufCount] = *buf;
@@ -4768,12 +4209,12 @@ bool ExynosCamera::getSensorBuf(ExynosBuffer *buf)
 
 bool ExynosCamera::putSensorBuf(ExynosBuffer *buf)
 {
-    int enum_camera;
+    int cameraMode;
 
-    if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK)
-        enum_camera = SENSOR_FAKE;
+    if (m_cameraMode == CAMERA_MODE_BACK)
+        cameraMode = CAMERA_MODE_REPROCESSING;
     else
-        enum_camera = m_camera_default;
+        cameraMode = m_cameraMode;
 
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
@@ -4782,12 +4223,12 @@ bool ExynosCamera::putSensorBuf(ExynosBuffer *buf)
 
     Mutex::Autolock lock(m_sensorLock);
 
-    if (m_camera_info[m_camera_default].sensor.flagStart == false) {
+    if (m_camera_info[m_cameraMode].sensor.flagStart == false) {
         CLOGE("ERR(%s):Not yet sensor started fail", __func__);
         return false;
     }
 
-    if (notInsertBayer == false) {
+    if (m_notInsertBayer == false) {
         camera2_shot_ext *shot_ext;
 
         /* sensor q */
@@ -4807,7 +4248,7 @@ bool ExynosCamera::putSensorBuf(ExynosBuffer *buf)
                 return true;
             }
 
-            if (captureBayerLock[index_sensor] == true) {
+            if (m_captureBayerLock[index_sensor] == true) {
                 m_pushSensorQ(index_sensor);
                 index_sensor = m_popSensorQ();
                 if (index_sensor < 0) {
@@ -4820,42 +4261,42 @@ bool ExynosCamera::putSensorBuf(ExynosBuffer *buf)
             }
         }
 
-        shot_ext = (struct camera2_shot_ext *)(m_camera_info[enum_camera].sensor.buffer[index_sensor].virt.extP[1]);
+        shot_ext = (struct camera2_shot_ext *)(m_camera_info[cameraMode].sensor.buffer[index_sensor].virt.extP[1]);
 
-        shot_ext->setfile = m_camera_info[m_camera_default].dummy_shot.setfile;
-        shot_ext->request_3ax = m_camera_info[m_camera_default].dummy_shot.request_3ax;
-        shot_ext->request_isp = m_camera_info[m_camera_default].dummy_shot.request_isp;
-        shot_ext->request_scc = m_camera_info[m_camera_default].dummy_shot.request_scc;
-        shot_ext->request_scp = m_camera_info[m_camera_default].dummy_shot.request_scp;
-        shot_ext->request_dis = m_camera_info[m_camera_default].dummy_shot.request_dis;
+        shot_ext->setfile = m_camera_info[m_cameraMode].dummy_shot.setfile;
+        shot_ext->request_3ax = m_camera_info[m_cameraMode].dummy_shot.request_3ax;
+        shot_ext->request_isp = m_camera_info[m_cameraMode].dummy_shot.request_isp;
+        shot_ext->request_scc = m_camera_info[m_cameraMode].dummy_shot.request_scc;
+        shot_ext->request_scp = m_camera_info[m_cameraMode].dummy_shot.request_scp;
+        shot_ext->request_dis = m_camera_info[m_cameraMode].dummy_shot.request_dis;
 
-    shot_ext->dis_bypass = m_camera_info[m_camera_default].dummy_shot.dis_bypass;
-    shot_ext->dnr_bypass = m_camera_info[m_camera_default].dummy_shot.dnr_bypass;
-    shot_ext->fd_bypass = m_camera_info[m_camera_default].dummy_shot.fd_bypass;
-    shot_ext->shot.magicNumber= m_camera_info[m_camera_default].dummy_shot.shot.magicNumber;
+        shot_ext->dis_bypass = m_camera_info[m_cameraMode].dummy_shot.dis_bypass;
+        shot_ext->dnr_bypass = m_camera_info[m_cameraMode].dummy_shot.dnr_bypass;
+        shot_ext->fd_bypass = m_camera_info[m_cameraMode].dummy_shot.fd_bypass;
+        shot_ext->shot.magicNumber= m_camera_info[m_cameraMode].dummy_shot.shot.magicNumber;
 
-    m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+        m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_BEFORE,
+            (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
-    m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+        m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_BEFORE,
+            (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
         m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_BEFORE,
-            (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+            (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
-        captureBayerIndex[index_sensor] = 1;
+        m_captureBayerIndex[index_sensor] = 1;
 
 #ifdef BAYER_TRACKING
         CLOGD("sensor qbuf indx[%d]", index_sensor);
         printBayerLockStatus();
 #endif
 
-        if (cam_int_qbuf(&(m_camera_info[enum_camera].sensor), index_sensor) < 0)  {
-            CLOGE("ERR(%s):cam_int_qbuf(%d) on sensor failed", __func__, index_sensor);
+        if (cam_int_qbuf(&(m_camera_info[cameraMode].sensor), index_sensor) < 0)  {
+            CLOGE("ERR(%s):cam_int_qbuf(%d) on sensor fail", __func__, index_sensor);
             return false;
         }
 
-        m_camera_info[m_camera_default].sensor.buffer[index_sensor].reserved.extP[FRAME_COUNT_INDEX] = m_sensorFrameCount++;
+        m_camera_info[m_cameraMode].sensor.buffer[index_sensor].reserved.extP[FRAME_COUNT_INDEX] = m_sensorFrameCount++;
     }
 
     return true;
@@ -4870,40 +4311,44 @@ bool ExynosCamera::getFixedSensorBuf(ExynosBuffer *buf)
 
     Mutex::Autolock lock(m_sensorLock);
 
-    if (m_camera_info[m_camera_default].sensor.flagStart == false) {
+    if (m_camera_info[m_cameraMode].sensor.flagStart == false) {
         CLOGE("ERR(%s):Not yet sensor started fail", __func__);
         return false;
     }
 
     camera2_shot_ext *shot_ext;
     int index_sensor = 0;
-    int putSensorIndex = -1;
     int waitBayerFcount;
     int capture_ret = 0;
 
     /* sensor dq */
-    index_sensor = cam_int_dqbuf(&(m_camera_info[m_camera_default].sensor));
+    index_sensor = cam_int_dqbuf(&(m_camera_info[m_cameraMode].sensor));
+    if (index_sensor < 0) {
+        CLOGE("ERR(%s):cam_int_dqbuf() on sensor fail", __func__);
+        return false;
+    }
+
 #ifdef BAYER_TRACKING
     CLOGD("getReservedSensorBuf dqbuf indx[%d]", index_sensor);
     printBayerLockStatus();
 #endif
 
-    if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK) {
-        *buf = m_camera_info[SENSOR_FAKE].sensor.buffer[index_sensor];
-        m_camera_info[m_camera_default].sensor.buffer[index_sensor].reserved.p = index_sensor;
-        m_camera_info[SENSOR_FAKE].sensor.buffer[index_sensor].reserved.p = index_sensor;
+    if (m_cameraMode == CAMERA_MODE_BACK) {
+        *buf = m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[index_sensor];
+        m_camera_info[m_cameraMode].sensor.buffer[index_sensor].reserved.p = index_sensor;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[index_sensor].reserved.p = index_sensor;
     } else
-        *buf = m_camera_info[m_camera_default].sensor.buffer[index_sensor];
+        *buf = m_camera_info[m_cameraMode].sensor.buffer[index_sensor];
 
     buf->reserved.p = index_sensor;
 
-    captureBayerIndex[index_sensor] = 2;
+    m_captureBayerIndex[index_sensor] = 2;
 
     m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_AFTER,
-        (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+        (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
     m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_AFTER,
-        (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+        (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
     capture_ret = m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_AFTER,
         (void *)buf);
@@ -4918,62 +4363,73 @@ bool ExynosCamera::putFixedSensorBuf(ExynosBuffer *buf)
         return false;
     }
 
-    int enum_camera;
+    int cameraMode;
     /* use fixed buffer */
     int index_sensor = 0;
 
-    if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK)
-        enum_camera = SENSOR_FAKE;
+    if (m_cameraMode == CAMERA_MODE_BACK)
+        cameraMode = CAMERA_MODE_REPROCESSING;
     else
-        enum_camera = m_camera_default;
+        cameraMode = m_cameraMode;
 
     Mutex::Autolock lock(m_sensorLock);
 
-    if (m_camera_info[m_camera_default].sensor.flagStart == false) {
+    if (m_camera_info[m_cameraMode].sensor.flagStart == false) {
         CLOGE("ERR(%s):Not yet sensor started fail", __func__);
         return false;
     }
 
     camera2_shot_ext *shot_ext;
 
-    shot_ext = (struct camera2_shot_ext *)(m_camera_info[enum_camera].sensor.buffer[index_sensor].virt.extP[1]);
+    shot_ext = (struct camera2_shot_ext *)(m_camera_info[cameraMode].sensor.buffer[index_sensor].virt.extP[1]);
 
-    shot_ext->setfile = m_camera_info[m_camera_default].dummy_shot.setfile;
-    shot_ext->request_3ax = m_camera_info[m_camera_default].dummy_shot.request_3ax;
-    shot_ext->request_isp = m_camera_info[m_camera_default].dummy_shot.request_isp;
-    shot_ext->request_scc = m_camera_info[m_camera_default].dummy_shot.request_scc;
-    shot_ext->request_scp = m_camera_info[m_camera_default].dummy_shot.request_scp;
-    shot_ext->request_dis = m_camera_info[m_camera_default].dummy_shot.request_dis;
+    shot_ext->setfile = m_camera_info[m_cameraMode].dummy_shot.setfile;
+    shot_ext->request_3ax = m_camera_info[m_cameraMode].dummy_shot.request_3ax;
+    shot_ext->request_isp = m_camera_info[m_cameraMode].dummy_shot.request_isp;
+    shot_ext->request_scc = m_camera_info[m_cameraMode].dummy_shot.request_scc;
+    shot_ext->request_scp = m_camera_info[m_cameraMode].dummy_shot.request_scp;
+    shot_ext->request_dis = m_camera_info[m_cameraMode].dummy_shot.request_dis;
 
-    shot_ext->dis_bypass = m_camera_info[m_camera_default].dummy_shot.dis_bypass;
-    shot_ext->dnr_bypass = m_camera_info[m_camera_default].dummy_shot.dnr_bypass;
-    shot_ext->fd_bypass = m_camera_info[m_camera_default].dummy_shot.fd_bypass;
-    shot_ext->shot.magicNumber= m_camera_info[m_camera_default].dummy_shot.shot.magicNumber;
+    shot_ext->dis_bypass = m_camera_info[m_cameraMode].dummy_shot.dis_bypass;
+    shot_ext->dnr_bypass = m_camera_info[m_cameraMode].dummy_shot.dnr_bypass;
+    shot_ext->fd_bypass = m_camera_info[m_cameraMode].dummy_shot.fd_bypass;
+    shot_ext->shot.magicNumber= m_camera_info[m_cameraMode].dummy_shot.shot.magicNumber;
 
     m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+        (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
     m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+        (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
     m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_SENSOR_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].sensor.buffer[index_sensor]));
+        (void *)&(m_camera_info[m_cameraMode].sensor.buffer[index_sensor]));
 
-    captureBayerIndex[index_sensor] = 1;
+    m_captureBayerIndex[index_sensor] = 1;
 
 #ifdef BAYER_TRACKING
     CLOGD("putReservedSensorBuf qbuf indx[%d]", index_sensor);
     printBayerLockStatus();
 #endif
 
-    if (cam_int_qbuf(&(m_camera_info[enum_camera].sensor), index_sensor) < 0)  {
-        CLOGE("ERR(%s):cam_int_qbuf(%d) on sensor failed", __func__, index_sensor);
+    if (cam_int_qbuf(&(m_camera_info[cameraMode].sensor), index_sensor) < 0)  {
+        CLOGE("ERR(%s):cam_int_qbuf(%d) on sensor fail", __func__, index_sensor);
         return false;
     }
 
-    m_camera_info[m_camera_default].sensor.buffer[index_sensor].reserved.extP[FRAME_COUNT_INDEX] = m_sensorFrameCount++;
+    m_camera_info[m_cameraMode].sensor.buffer[index_sensor].reserved.extP[FRAME_COUNT_INDEX] = m_sensorFrameCount++;
 
+    return true;
+}
 
+bool ExynosCamera::StartStream(void)
+{
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].sensor.fd,
+                V4L2_CID_IS_S_STREAM, IS_ENABLE_STREAM) < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(IS_ENABLE_STREAM)", __func__);
+        return false;
+    }
     return true;
 }
 
@@ -4984,7 +4440,7 @@ bool ExynosCamera::getISPBuf(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[m_camera_default].isp.flagStart == false) {
+    if (m_camera_info[m_cameraMode].isp.flagStart == false) {
         CLOGE("ERR(%s):Not yet isp started fail", __func__);
         return false;
     }
@@ -4993,26 +4449,26 @@ bool ExynosCamera::getISPBuf(ExynosBuffer *buf)
     int index_isp = 0;
     camera2_shot_ext *shot_ext;
 
-    CLOGT(m_traceCount, "(%s): dq in", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): dq in", __func__);
 
-    index_isp = cam_int_dqbuf(&(m_camera_info[m_camera_default].isp));
+    index_isp = cam_int_dqbuf(&(m_camera_info[m_cameraMode].isp));
     if (index_isp < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on isp fail", __func__);
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): dq out(index %d)", __FUNCTION__, index_isp);
+    CLOGT(m_traceCount, "(%s): dq out(index %d)", __func__, index_isp);
 
-    shot_ext = (struct camera2_shot_ext *)m_camera_info[m_camera_default].isp.buffer[index_isp].virt.extP[1];
+    shot_ext = (struct camera2_shot_ext *)m_camera_info[m_cameraMode].isp.buffer[index_isp].virt.extP[1];
 
     if (shot_ext->request_isp == 0) {
         /* TODO: Error handling ISP shot done invalid */
         m_traceCount = TRACE_COUNT;
-        CLOGE("ERR(%s): isp Shot done is invalid(expected request_isp is %d, but we got %d), skip frame(%d)",
-                __func__, m_camera_info[m_camera_default].dummy_shot.request_isp, shot_ext->request_isp, shot_ext->shot.dm.request.frameCount);
+        CLOGE("ERR(%s):isp Shot done is invalid(expected request_isp is %d, but we got %d), skip frame(%d)",
+                __func__, m_camera_info[m_cameraMode].dummy_shot.request_isp, shot_ext->request_isp, shot_ext->shot.dm.request.frameCount);
     }
 
-    CLOGT(m_traceCount, "(%s:%d): cam(%d) dq buf(%d), fre(%d) req(%d), pro(%d), cmp(%d)", __func__, __LINE__, m_camera_default,  shot_ext->shot.dm.request.frameCount,
+    CLOGT(m_traceCount, "(%s:%d): cam(%d) dq buf(%d), fre(%d) req(%d), pro(%d), cmp(%d)", __func__, __LINE__, m_cameraMode,  shot_ext->shot.dm.request.frameCount,
         shot_ext->free_cnt,
         shot_ext->request_cnt,
         shot_ext->process_cnt,
@@ -5021,16 +4477,18 @@ bool ExynosCamera::getISPBuf(ExynosBuffer *buf)
     m_numOfShotedIspFrame = shot_ext->request_cnt + shot_ext->process_cnt + shot_ext->complete_cnt;
 
     m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_ISP_AFTER,
-        (void *)&(m_camera_info[m_camera_default].isp.buffer[index_isp]));
+        (void *)&(m_camera_info[m_cameraMode].isp.buffer[index_isp]));
 
     m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_ISP_AFTER,
-        (void *)&(m_camera_info[m_camera_default].isp.buffer[index_isp]));
+        (void *)&(m_camera_info[m_cameraMode].isp.buffer[index_isp]));
 
     m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_ISP_AFTER,
-        (void *)&(m_camera_info[m_camera_default].isp.buffer[index_isp]));
+        (void *)&(m_camera_info[m_cameraMode].isp.buffer[index_isp]));
 
     /* back-up isp_dm : result of isp metadata */
-    memcpy(&m_camera_info[m_camera_default].isp_dm.shot.dm.stats, &shot_ext->shot.dm.stats, sizeof(struct camera2_stats_dm));
+    memcpy(&m_camera_info[m_cameraMode].isp_dm.shot.dm.stats, &shot_ext->shot.dm.stats, sizeof(struct camera2_stats_dm));
+
+    buf->reserved.p = index_isp;
 
     if (m_traceCount > 0)
         m_traceCount--;
@@ -5045,7 +4503,7 @@ bool ExynosCamera::putISPBuf(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[m_camera_default].isp.flagStart == false) {
+    if (m_camera_info[m_cameraMode].isp.flagStart == false) {
         CLOGE("ERR(%s):Not yet sensor started fail", __func__);
         return false;
     }
@@ -5054,58 +4512,50 @@ bool ExynosCamera::putISPBuf(ExynosBuffer *buf)
     camera2_shot_ext * shot_ext;
 
     /* post setting */
-    shot_ext = (struct camera2_shot_ext *)(m_camera_info[m_camera_default].isp.buffer[index_isp].virt.extP[1]);
+    shot_ext = (struct camera2_shot_ext *)(m_camera_info[m_cameraMode].isp.buffer[index_isp].virt.extP[1]);
 
-    memcpy(&shot_ext->shot.ctl, &m_camera_info[m_camera_default].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
+    memcpy(&shot_ext->shot.ctl, &m_camera_info[m_cameraMode].dummy_shot.shot.ctl, sizeof(struct camera2_ctl));
 
-    shot_ext->setfile = m_camera_info[m_camera_default].dummy_shot.setfile;
-    shot_ext->request_3ax = m_camera_info[m_camera_default].dummy_shot.request_3ax;
-    shot_ext->request_isp = m_camera_info[m_camera_default].dummy_shot.request_isp;
-    shot_ext->request_scc = m_camera_info[m_camera_default].dummy_shot.request_scc;
-    shot_ext->request_scp = m_camera_info[m_camera_default].dummy_shot.request_scp;
+    shot_ext->setfile = m_camera_info[m_cameraMode].dummy_shot.setfile;
+    shot_ext->request_3ax = m_camera_info[m_cameraMode].dummy_shot.request_3ax;
+    shot_ext->request_isp = m_camera_info[m_cameraMode].dummy_shot.request_isp;
+    shot_ext->request_scc = m_camera_info[m_cameraMode].dummy_shot.request_scc;
+    shot_ext->request_scp = m_camera_info[m_cameraMode].dummy_shot.request_scp;
+
 #ifdef USE_VDIS
     if (m_recordingHint == true) {
-        if (m_curCameraInfo[m_camera_default]->videoStabilization == true) {
-            m_camera_info[m_camera_default].dummy_shot.request_dis = 1;
+        if (m_curCameraInfo[m_cameraMode]->videoStabilization == true) {
+            m_camera_info[m_cameraMode].dummy_shot.request_dis = 1;
 
             if (m_isHWVDis) {
-                 m_camera_info[m_camera_default].dummy_shot.dis_bypass = 0;
+                 m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 0;
             } else {
-                m_camera_info[m_camera_default].dummy_shot.dis_bypass = 1;
+                m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 1;
             }
         } else {
-            m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
-            m_camera_info[m_camera_default].dummy_shot.dis_bypass = 1;
+            m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
+            m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 1;
         }
     } else {
-        m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
-        m_camera_info[m_camera_default].dummy_shot.dis_bypass = 1;
+        m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
+        m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 1;
     }
 #else
-    m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
-    m_camera_info[m_camera_default].dummy_shot.dis_bypass = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
+    m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 1;
 #endif
 
-    shot_ext->request_dis = m_camera_info[m_camera_default].dummy_shot.request_dis;
+    shot_ext->request_dis = m_camera_info[m_cameraMode].dummy_shot.request_dis;
 
-    shot_ext->dis_bypass = m_camera_info[m_camera_default].dummy_shot.dis_bypass;
-    shot_ext->dnr_bypass = m_camera_info[m_camera_default].dummy_shot.dnr_bypass;
-    shot_ext->fd_bypass = m_camera_info[m_camera_default].dummy_shot.fd_bypass;
-    shot_ext->shot.magicNumber= m_camera_info[m_camera_default].dummy_shot.shot.magicNumber;
+    shot_ext->dis_bypass = m_camera_info[m_cameraMode].dummy_shot.dis_bypass;
+    shot_ext->dnr_bypass = m_camera_info[m_cameraMode].dummy_shot.dnr_bypass;
+    shot_ext->fd_bypass = m_camera_info[m_cameraMode].dummy_shot.fd_bypass;
+    shot_ext->shot.magicNumber= m_camera_info[m_cameraMode].dummy_shot.shot.magicNumber;
 #ifdef FD_ROTATION
-    shot_ext->shot.uctl.scalerUd.orientation = m_camera_info[m_camera_default].dummy_shot.shot.uctl.scalerUd.orientation;
+    shot_ext->shot.uctl.scalerUd.orientation = m_camera_info[m_cameraMode].dummy_shot.shot.uctl.scalerUd.orientation;
 #endif
 
-#ifdef MULTI_INSTANCE_CHECK
-    if (this->multi_instance == 2) {
-        shot_ext->dis_bypass = 1;
-        shot_ext->dnr_bypass = 1;
-        shot_ext->drc_bypass = 1;
-        shot_ext->fd_bypass = 1;
-    }
-#endif
-
-    shot_ext->shot.ctl.request.frameCount = m_camera_info[m_camera_default].isp.buffer[index_isp].reserved.extP[FRAME_COUNT_INDEX];
+    shot_ext->shot.ctl.request.frameCount = m_camera_info[m_cameraMode].isp.buffer[index_isp].reserved.extP[FRAME_COUNT_INDEX];
 
     CLOGV("[%s] (%d) %d %d %d %d", __func__, __LINE__,
         shot_ext->shot.udm.internal.vendorSpecific1[0],
@@ -5115,29 +4565,29 @@ bool ExynosCamera::putISPBuf(ExynosBuffer *buf)
     CLOGV("[%s] (%d)(%d)", __func__, __LINE__, shot_ext->shot.dm.request.frameCount);
 
     m_autofocusMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_ISP_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].isp.buffer[buf->reserved.p]));
+        (void *)&(m_camera_info[m_cameraMode].isp.buffer[buf->reserved.p]));
 
     m_flashMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_ISP_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].isp.buffer[buf->reserved.p]));
+        (void *)&(m_camera_info[m_cameraMode].isp.buffer[buf->reserved.p]));
 
     m_sCaptureMgr->execFunction(ExynosCameraActivityBase::CALLBACK_TYPE_ISP_BEFORE,
-        (void *)&(m_camera_info[m_camera_default].isp.buffer[buf->reserved.p]));
+        (void *)&(m_camera_info[m_cameraMode].isp.buffer[buf->reserved.p]));
 
-    memcpy(&m_camera_info[m_camera_default].dummy_shot.shot.ctl, &shot_ext->shot.ctl, sizeof(struct camera2_ctl));
+    memcpy(&m_camera_info[m_cameraMode].dummy_shot.shot.ctl, &shot_ext->shot.ctl, sizeof(struct camera2_ctl));
 
-    CLOGT(m_traceCount, "(%s): q in", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): q in", __func__);
 
 #ifdef FRONT_NO_ZSL
     if (m_frontCaptureStatus == 1) {
         shot_ext->request_scc = 1;
         m_frontCaptureStatus = 2;
 
-        CLOGD("[%s] (%d) m_frontCaptureStatus %d m_frontCaptureStatus %d", __func__, __LINE__, m_frontCaptureStatus, m_frontCaptureStatus);
+        CLOGD("DEBUG(%s):(%d) m_frontCaptureStatus %d m_frontCaptureStatus %d", __func__, __LINE__, m_frontCaptureStatus, m_frontCaptureStatus);
     } else if (m_frontCaptureStatus == 2) {
         shot_ext->request_scc = 0;
         m_frontCaptureStatus = 0;
 
-        CLOGD("[%s] (%d) m_frontCaptureStatus %d m_frontCaptureStatus %d", __func__, __LINE__, m_frontCaptureStatus, m_frontCaptureStatus);
+        CLOGD("DEBUG(%s):(%d) m_frontCaptureStatus %d m_frontCaptureStatus %d", __func__, __LINE__, m_frontCaptureStatus, m_frontCaptureStatus);
     }
 #endif
 
@@ -5146,17 +4596,17 @@ bool ExynosCamera::putISPBuf(ExynosBuffer *buf)
 #endif
 
     /* isp q */
-    if (cam_int_qbuf(&(m_camera_info[m_camera_default].isp), index_isp) < 0) {
-        CLOGE("ERR(%s):cam_int_qbuf(%d) on isp failed", __func__, index_isp);
+    if (cam_int_qbuf(&(m_camera_info[m_cameraMode].isp), index_isp) < 0) {
+        CLOGE("ERR(%s):cam_int_qbuf(%d) on isp fail", __func__, index_isp);
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): q out", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): q out", __func__);
 
     return true;
 }
 
-bool ExynosCamera::getISPBufLpzsl(ExynosBuffer *buf)
+bool ExynosCamera::getISPBufReprocessing(ExynosBuffer *buf)
 {
     camera2_shot_ext *shot_ext;
 
@@ -5165,46 +4615,46 @@ bool ExynosCamera::getISPBufLpzsl(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[SENSOR_FAKE].isp.flagStart == false) {
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart == false) {
         CLOGE("ERR(%s):Not yet isp started fail", __func__);
         return false;
     }
 
-    CLOGT(m_traceCount, "(%s): dq in", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): dq in", __func__);
 
     /* isp dq */
     int index_isp = 0;
-    index_isp = cam_int_dqbuf(&(m_camera_info[SENSOR_FAKE].isp));
+    index_isp = cam_int_dqbuf(&(m_camera_info[CAMERA_MODE_REPROCESSING].isp));
 
-    CLOGT(m_traceCount, "(%s): dq out", __FUNCTION__);
+    CLOGT(m_traceCount, "(%s): dq out", __func__);
 
     if (index_isp < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on isp fail", __func__);
         return false;
     }
 
-    shot_ext = (struct camera2_shot_ext *)m_camera_info[SENSOR_FAKE].isp.buffer[index_isp].virt.extP[1];
+    shot_ext = (struct camera2_shot_ext *)m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[index_isp].virt.extP[1];
     if (shot_ext->request_isp == 0) {
         /* TODO: Error handling ISP shot done invalid */
         m_traceCount = TRACE_COUNT;
-        CLOGE("ERR(%s): isp Shot done is invalid(expected request_isp is %d, but we got %d), skip frame(%d)",
-                __func__, m_camera_info[SENSOR_FAKE].dummy_shot.request_isp, shot_ext->request_isp, shot_ext->shot.dm.request.frameCount);
+        CLOGE("ERR(%s):isp Shot done is invalid(expected request_isp is %d, but we got %d), skip frame(%d)",
+                __func__, m_camera_info[CAMERA_MODE_REPROCESSING].dummy_shot.request_isp, shot_ext->request_isp, shot_ext->shot.dm.request.frameCount);
     }
 
-    *buf = m_camera_info[m_camera_default].isp.buffer[index_isp];
+    *buf = m_camera_info[m_cameraMode].isp.buffer[index_isp];
     buf->reserved.p = index_isp;
 
     return true;
 }
 
-bool ExynosCamera::putISPBufLpzsl(ExynosBuffer *buf)
+bool ExynosCamera::putISPBufReprocessing(ExynosBuffer *buf)
 {
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
     }
 
-    if (m_camera_info[SENSOR_FAKE].isp.flagStart == false) {
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart == false) {
         CLOGE("ERR(%s):Not yet isp started fail", __func__);
         return false;
     }
@@ -5212,13 +4662,13 @@ bool ExynosCamera::putISPBufLpzsl(ExynosBuffer *buf)
     camera2_shot_ext * shot_ext;
 
     /* post setting */
-    shot_ext = (struct camera2_shot_ext *)(m_camera_info[SENSOR_FAKE].isp.buffer[buf->reserved.p].virt.extP[1]);
-    shot_ext->request_scc = m_camera_info[SENSOR_FAKE].dummy_shot.request_scc;
+    shot_ext = (struct camera2_shot_ext *)(m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[buf->reserved.p].virt.extP[1]);
+    shot_ext->request_scc = m_camera_info[CAMERA_MODE_REPROCESSING].dummy_shot.request_scc;
     shot_ext->request_scp = 0;
-    shot_ext->shot.ctl.scaler.cropRegion[0] = m_camera_info[m_camera_default].dummy_shot.shot.ctl.scaler.cropRegion[0];
-    shot_ext->shot.ctl.scaler.cropRegion[1] = m_camera_info[m_camera_default].dummy_shot.shot.ctl.scaler.cropRegion[1];
-    shot_ext->shot.ctl.scaler.cropRegion[2] = m_camera_info[m_camera_default].dummy_shot.shot.ctl.scaler.cropRegion[2];
-    shot_ext->shot.ctl.scaler.cropRegion[3] = m_camera_info[m_camera_default].dummy_shot.shot.ctl.scaler.cropRegion[3];
+    shot_ext->shot.ctl.scaler.cropRegion[0] = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.scaler.cropRegion[0];
+    shot_ext->shot.ctl.scaler.cropRegion[1] = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.scaler.cropRegion[1];
+    shot_ext->shot.ctl.scaler.cropRegion[2] = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.scaler.cropRegion[2];
+    shot_ext->shot.ctl.scaler.cropRegion[3] = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.scaler.cropRegion[3];
 
 /* TODO: remove if unused */
     shot_ext->dis_bypass = 1;
@@ -5226,38 +4676,16 @@ bool ExynosCamera::putISPBufLpzsl(ExynosBuffer *buf)
     shot_ext->drc_bypass = 1;
     shot_ext->fd_bypass = 1;
 
-#ifdef MULTI_INSTANCE_CHECK
-    if (this->multi_instance == 2) {
-        shot_ext->dis_bypass = 1;
-        shot_ext->dnr_bypass = 1;
-        shot_ext->drc_bypass = 1;
-        shot_ext->fd_bypass = 1;
-    }
-#endif
-
-
     shot_ext->request_scc = 1;
 
     shot_ext->shot.ctl.request.frameCount = buf->reserved.extP[FRAME_COUNT_INDEX];
 
     /* isp q */
-    if (cam_int_qbuf(&(m_camera_info[SENSOR_FAKE].isp), buf->reserved.p) < 0) {
-        CLOGE("ERR(%s):cam_int_qbuf(%d) on isp failed", __func__, buf->reserved.p);
+    if (cam_int_qbuf(&(m_camera_info[CAMERA_MODE_REPROCESSING].isp), buf->reserved.p) < 0) {
+        CLOGE("ERR(%s):cam_int_qbuf(%d) on isp fail", __func__, buf->reserved.p);
         return false;
     }
 
-    return true;
-}
-
-bool ExynosCamera::StartStream()
-{
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].sensor.fd,
-                V4L2_CID_IS_S_STREAM, IS_ENABLE_STREAM) < 0) {
-        CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(IS_ENABLE_STREAM)", __func__);
-        return false;
-    }
     return true;
 }
 
@@ -5268,11 +4696,11 @@ bool ExynosCamera::DvfsLock()
     Mutex::Autolock lock(m_dvfsLock);
 
     if (m_isDVFSLocked == true) {
-        CLOGW("WRN(%s): DVFS level is already locked", __FUNCTION__);
+        CLOGW("WRN(%s): DVFS level is already locked", __func__);
         return true;
     }
 
-    if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].isp.fd,
+    if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].isp.fd,
                 V4L2_CID_IS_DVFS_LOCK, 800000) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(IS_DVFS_LOCK)", __func__);
         m_isDVFSLocked = false;
@@ -5292,11 +4720,11 @@ bool ExynosCamera::DvfsUnLock()
     Mutex::Autolock lock(m_dvfsLock);
 
     if (m_isDVFSLocked == false) {
-        CLOGW("WRN(%s): DVFS level is not locked", __FUNCTION__);
+        CLOGW("WRN(%s): DVFS level is not locked", __func__);
         return false;
     }
 
-    if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].isp.fd,
+    if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].isp.fd,
                 V4L2_CID_IS_DVFS_UNLOCK, 800000) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(IS_DVFS_UNLOCK)", __func__);
         return false;
@@ -5310,90 +4738,77 @@ bool ExynosCamera::DvfsUnLock()
 
 bool ExynosCamera::startIsp(void)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[m_camera_default].isp.flagStart,
-        m_camera_info[m_camera_default].isp.width,
-        m_camera_info[m_camera_default].isp.height,
-        m_camera_info[m_camera_default].isp.format);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (m_camera_info[m_camera_default].isp.flagStart == false) {
-        m_camera_info[m_camera_default].isp.width   = m_curCameraInfo[m_camera_default]->ispW;
-        m_camera_info[m_camera_default].isp.height  = m_curCameraInfo[m_camera_default]->ispH;
-        m_camera_info[m_camera_default].isp.format  = V4L2_PIX_FMT_SBGGR12;
-        m_camera_info[m_camera_default].isp.planes  = 2;
-        m_camera_info[m_camera_default].isp.buffers = NUM_BAYER_BUFFERS;
-        m_camera_info[m_camera_default].isp.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[m_camera_default].isp.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-        m_camera_info[m_camera_default].isp.ionClient = m_ionCameraClient;
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[m_cameraMode].isp.flagStart,
+        m_camera_info[m_cameraMode].isp.width,
+        m_camera_info[m_cameraMode].isp.height,
+        m_camera_info[m_cameraMode].isp.format);
+
+    if (m_camera_info[m_cameraMode].isp.flagStart == false) {
+        m_camera_info[m_cameraMode].isp.width   = m_curCameraInfo[m_cameraMode]->ispW;
+        m_camera_info[m_cameraMode].isp.height  = m_curCameraInfo[m_cameraMode]->ispH;
+        m_camera_info[m_cameraMode].isp.format  = V4L2_PIX_FMT_SBGGR12;
+        m_camera_info[m_cameraMode].isp.planes  = 2;
+        m_camera_info[m_cameraMode].isp.buffers = NUM_BAYER_BUFFERS;
+        m_camera_info[m_cameraMode].isp.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[m_cameraMode].isp.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+        m_camera_info[m_cameraMode].isp.ionClient = m_ionCameraClient;
 
         ExynosBuffer nullBuf;
+        int planeSize;
+        planeSize = getPlaneSizePackedFLiteOutput(m_curCameraInfo[m_cameraMode]->ispW, m_curCameraInfo[m_cameraMode]->ispH);
 
-#ifdef MULTI_INSTANCE_CHECK
-        if (this->multi_instance == 2) {
-            for (int i = 0; i < m_camera_info[m_camera_default].isp.buffers; i++) {
-                m_camera_info[m_camera_default].isp.buffer[i] = nullBuf;
-                m_camera_info[m_camera_default].isp.buffer[i].size.extS[0] = m_curCameraInfo[m_camera_default]->ispW * m_curCameraInfo[m_camera_default]->ispH * 2;
-                m_camera_info[m_camera_default].isp.buffer[i].size.extS[1] = META_DATA_SIZE; /* HACK, driver use 12*1024, should be use predefined value */
+        if (m_cameraMode == CAMERA_MODE_FRONT) {
+            for (int i = 0; i < m_camera_info[m_cameraMode].isp.buffers; i++) {
+                m_camera_info[m_cameraMode].isp.buffer[i] = nullBuf;
+                m_camera_info[m_cameraMode].isp.buffer[i].size.extS[0] = planeSize;
+                m_camera_info[m_cameraMode].isp.buffer[i].size.extS[1] = META_DATA_SIZE; /* driver use 12*1024, should be use predefined value */
 
-                if (allocMem(m_camera_info[m_camera_default].isp.ionClient, &m_camera_info[m_camera_default].isp.buffer[i], 1 << 1) == false) {
+                if (allocMem(m_camera_info[m_cameraMode].isp.ionClient, &m_camera_info[m_cameraMode].isp.buffer[i], 1 << 1) == false) {
                     CLOGE("ERR(%s):allocMem() fail", __func__);
                     goto err;
                 } else {
-                    memset(m_camera_info[m_camera_default].isp.buffer[i].virt.extP[1],
-                            0, m_camera_info[m_camera_default].isp.buffer[i].size.extS[1]);
+                    memset(m_camera_info[m_cameraMode].isp.buffer[i].virt.extP[1],
+                            0, m_camera_info[m_cameraMode].isp.buffer[i].size.extS[1]);
                 }
             }
-        } else 
-#endif
-	{
-            if (m_camera_mode == CAMERA_ACTIVATE_MODE_FRONT) {
-                for (int i = 0; i < m_camera_info[m_camera_default].isp.buffers; i++) {
-                    m_camera_info[m_camera_default].isp.buffer[i] = nullBuf;
-                    m_camera_info[m_camera_default].isp.buffer[i].size.extS[0] = m_curCameraInfo[m_camera_default]->ispW * m_curCameraInfo[m_camera_default]->ispH * 2;
-                    m_camera_info[m_camera_default].isp.buffer[i].size.extS[1] = META_DATA_SIZE; /* driver use 12*1024, should be use predefined value */
+        } else if (m_cameraMode == CAMERA_MODE_BACK) {
+            for (int i = 0; i < m_camera_info[m_cameraMode].isp.buffers; i++) {
+                m_camera_info[m_cameraMode].isp.buffer[i] = nullBuf;
+                m_camera_info[m_cameraMode].isp.buffer[i].size.extS[0] = planeSize;
+                m_camera_info[m_cameraMode].isp.buffer[i].size.extS[1] = META_DATA_SIZE;
 
-                    if (allocMem(m_camera_info[m_camera_default].isp.ionClient, &m_camera_info[m_camera_default].isp.buffer[i], 1 << 1) == false) {
-                        CLOGE("ERR(%s):allocMem() fail", __func__);
-                        goto err;
-                    } else {
-                        memset(m_camera_info[m_camera_default].isp.buffer[i].virt.extP[1],
-                                0, m_camera_info[m_camera_default].isp.buffer[i].size.extS[1]);
-                    }
-                }
-            } else if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK) {
-                for (int i = 0; i < m_camera_info[m_camera_default].isp.buffers; i++) {
-                    m_camera_info[m_camera_default].isp.buffer[i] = nullBuf;
-                    m_camera_info[m_camera_default].isp.buffer[i].size.extS[0] = m_curCameraInfo[m_camera_default]->ispW * m_curCameraInfo[m_camera_default]->ispH * 2;
-                    m_camera_info[m_camera_default].isp.buffer[i].size.extS[1] = META_DATA_SIZE;
-
-                    if (allocMem(m_camera_info[m_camera_default].isp.ionClient, &m_camera_info[m_camera_default].isp.buffer[i], 1 << 1) == false) {
-                        CLOGE("ERR(%s):allocMem() fail", __func__);
-                        goto err;
-                    } else {
-                        memset(m_camera_info[m_camera_default].isp.buffer[i].virt.extP[1],
-                                0, m_camera_info[m_camera_default].isp.buffer[i].size.extS[1]);
-                    }
+                if (allocMem(m_camera_info[m_cameraMode].isp.ionClient, &m_camera_info[m_cameraMode].isp.buffer[i], 1 << 1) == false) {
+                    CLOGE("ERR(%s):allocMem() fail", __func__);
+                    goto err;
+                } else {
+                    memset(m_camera_info[m_cameraMode].isp.buffer[i].virt.extP[1],
+                            0, m_camera_info[m_cameraMode].isp.buffer[i].size.extS[1]);
                 }
             }
         }
 
         /* meatadata buffer */
         for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
-            metaBuffer[i] = nullBuf;
-            metaBuffer[i].size.extS[0] = 0;
-            metaBuffer[i].size.extS[1] = META_DATA_SIZE;
+            m_metaBuf[i] = nullBuf;
+            m_metaBuf[i].size.extS[0] = 0;
+            m_metaBuf[i].size.extS[1] = META_DATA_SIZE;
 
-            if (allocMem(m_camera_info[m_camera_default].isp.ionClient, &metaBuffer[i], 1 << 1) == false) {
+            if (allocMem(m_camera_info[m_cameraMode].isp.ionClient, &m_metaBuf[i], 1 << 1) == false) {
                 CLOGE("ERR(%s):allocMem() fail", __func__);
                 goto err;
             } else {
-                memset(metaBuffer[i].virt.extP[1], 0, metaBuffer[i].size.extS[1]);
+                memset(m_metaBuf[i].virt.extP[1], 0, m_metaBuf[i].size.extS[1]);
             }
         }
-        if (startIspOn() == false) {
-            CLOGE("ERR(%s):startIspOn() fail", __func__);
+
+        if (m_startIsp() == false) {
+            CLOGE("ERR(%s):m_startIsp() fail", __func__);
             goto err;
         }
+
+        m_camera_info[m_cameraMode].isp.flagStart = true;
     }
 
     return true;
@@ -5405,91 +4820,86 @@ err:
     return false;
 }
 
-bool ExynosCamera::startIspOn(void)
+bool ExynosCamera::m_startIsp(void)
 {
-   CLOGD("[%s] (%d)", __func__, __LINE__);
+   CLOGD("DEBUG(%s):in", __func__);
 
-    if (m_camera_info[m_camera_default].isp.flagStart == false) {
-        /* Reset Dummy Shot's request */
-        m_camera_info[m_camera_default].dummy_shot.request_3ax = 1;
-        m_camera_info[m_camera_default].dummy_shot.request_isp = 1;
-        m_camera_info[m_camera_default].dummy_shot.request_scc = 0;
-        m_camera_info[m_camera_default].dummy_shot.request_scp = 1;
+    /* Reset Dummy Shot's request */
+    m_camera_info[m_cameraMode].dummy_shot.request_3ax = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_isp = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_scc = 0;
+    m_camera_info[m_cameraMode].dummy_shot.request_scp = 1;
 
 #ifdef USE_VDIS
-        if (m_recordingHint == true) {
-            if (m_curCameraInfo[m_camera_default]->videoStabilization == true) {
-                m_camera_info[m_camera_default].dummy_shot.request_dis = 1;
+    if (m_recordingHint == true) {
+        if (m_curCameraInfo[m_cameraMode]->videoStabilization == true) {
+            m_camera_info[m_cameraMode].dummy_shot.request_dis = 1;
 
-                if (m_isHWVDis) {
-                    m_camera_info[m_camera_default].dummy_shot.dis_bypass = 0;
-                } else {
-                    m_camera_info[m_camera_default].dummy_shot.dis_bypass = 1;
-                }
+            if (m_isHWVDis) {
+                m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 0;
             } else {
-                m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
-                m_camera_info[m_camera_default].dummy_shot.dis_bypass = 1;
+                m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 1;
             }
         } else {
-            m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
-            m_camera_info[m_camera_default].dummy_shot.dis_bypass = 1;
+            m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
+            m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 1;
         }
+    } else {
+        m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
+        m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 1;
+    }
 #else
-        m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
-        m_camera_info[m_camera_default].dummy_shot.dis_bypass = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
+    m_camera_info[m_cameraMode].dummy_shot.dis_bypass = 1;
 #endif
 
-        if (getVideoStabilization() == true) {
-            if (setVideoStabilization(true) == false)
-                CLOGE("ERR(%s):setVideoStabilization() fail", __func__);
-        }
+    if (getVideoStabilization() == true) {
+        if (setVideoStabilization(true) == false)
+            CLOGE("ERR(%s):setVideoStabilization() fail", __func__);
+    }
 
-        /* FD-AE */
-        if (this->getRecordingHint() == true) {
-            if (m_startFaceDetection((enum CAMERA_SENSOR)m_camera_default, false) == false)
-                CLOGE("ERR(%s):m_startFaceDetection(%d, %d) fail", __func__, m_camera_default, false);
-        } else { /* turn on at most case. */
-            if (m_startFaceDetection((enum CAMERA_SENSOR)m_camera_default, true) == false)
-                CLOGE("ERR(%s):m_startFaceDetection(%d, %d) fail", __func__, m_camera_default, true);
-        }
+    /* FD-AE */
+    if (this->getRecordingHint() == true) {
+        if (m_startFaceDetection((enum CAMERA_MODE)m_cameraMode, false) == false)
+            CLOGE("ERR(%s):m_startFaceDetection(%d, %d) fail", __func__, m_cameraMode, false);
+    } else { /* turn on at most case. */
+        if (m_startFaceDetection((enum CAMERA_MODE)m_cameraMode, true) == false)
+            CLOGE("ERR(%s):m_startFaceDetection(%d, %d) fail", __func__, m_cameraMode, true);
+    }
 
-        // HACK : ISP need to skip s_input on second Preview (fw?)
-        if (m_isFirtstIspStart == true) {
-            int sensorId = m_getSensorId(m_cameraId);
+    // HACK : ISP need to skip s_input on second Preview (fw?)
+    if (m_isFirtstIspStart == true) {
+        int sensorId = m_getSensorId(m_cameraMode);
 
-            if (m_camera_mode == CAMERA_ACTIVATE_MODE_FRONT)
-                sensorId = (0 << REPROCESSING_SHFIT) |
-                    ((FIMC_IS_VIDEO_SEN1_NUM - FIMC_IS_VIDEO_SEN0_NUM) << SENSOR_INDEX_SHFIT) |
-                    ((FIMC_IS_VIDEO_3A0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) |
-                    (sensorId << 0);
-            else if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK)
-                sensorId = (0 << REPROCESSING_SHFIT) |
-                    ((FIMC_IS_VIDEO_SEN0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << SENSOR_INDEX_SHFIT) |
-                    ((FIMC_IS_VIDEO_3A1_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) |
-                    (sensorId << 0);
+        if (m_cameraMode == CAMERA_MODE_FRONT)
+            sensorId = (0 << REPROCESSING_SHFIT) |
+                ((FIMC_IS_VIDEO_SEN1_NUM - FIMC_IS_VIDEO_SEN0_NUM) << SENSOR_INDEX_SHFIT) |
+                ((FIMC_IS_VIDEO_3A0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) |
+                (sensorId << 0);
+        else if (m_cameraMode == CAMERA_MODE_BACK)
+            sensorId = (0 << REPROCESSING_SHFIT) |
+                ((FIMC_IS_VIDEO_SEN0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << SENSOR_INDEX_SHFIT) |
+                ((FIMC_IS_VIDEO_3A1_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) |
+                (sensorId << 0);
 
-            if (cam_int_s_input(&(m_camera_info[m_camera_default].isp), sensorId) < 0) {
-                CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
-                return false;
-            }
-            m_isFirtstIspStart = false;
-            }
-
-        if (cam_int_s_fmt(&(m_camera_info[m_camera_default].isp)) < 0) {
-            CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
+        if (cam_int_s_input(&(m_camera_info[m_cameraMode].isp), sensorId) < 0) {
+            CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
             return false;
         }
+        m_isFirtstIspStart = false;
+    }
 
-        if (cam_int_reqbufs(&(m_camera_info[m_camera_default].isp)) < 0) {
-            CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
-            return false;
-        }
+    if (cam_int_s_fmt(&(m_camera_info[m_cameraMode].isp)) < 0) {
+        CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
+        return false;
+    }
 
-        m_camera_info[m_camera_default].isp.flagStart = true;
+    if (cam_int_reqbufs(&(m_camera_info[m_cameraMode].isp)) < 0) {
+        CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
+        return false;
     }
 
     return true;
-
 }
 
 bool ExynosCamera::stopIspForceOff(void)
@@ -5497,7 +4907,7 @@ bool ExynosCamera::stopIspForceOff(void)
     CLOGD("[esdreset] [%s] START ", __func__);
 
     // isp stream off
-    if (cam_int_streamoff(&m_camera_info[m_camera_default].isp) < 0) {
+    if (cam_int_streamoff(&m_camera_info[m_cameraMode].isp) < 0) {
         CLOGE("[esdreset] ERR(%s):exynos_v4l2_streamoff() fail", __func__);
         return false;
     }
@@ -5514,7 +4924,7 @@ bool ExynosCamera::stopIspForceOff(void)
 bool ExynosCamera::stopSensorForceOff(void)
 {
     //sensor
-    if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].isp.fd, V4L2_CID_IS_FORCE_DONE, 0x1000) < 0) {
+    if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].isp.fd, V4L2_CID_IS_FORCE_DONE, 0x1000) < 0) {
         CLOGE("[esdreset]ERR(%s): sensor exynos_v4l2_s_ctrl force_done fail(sensor)", __func__);
     }
     CLOGD("[esdreset] [%s] DONE", __func__);
@@ -5522,56 +4932,52 @@ bool ExynosCamera::stopSensorForceOff(void)
     return true;
 }
 
-bool ExynosCamera::stopIspOff(void)
+bool ExynosCamera::m_stopIsp(void)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
     bool ret = true;
 
-    if (m_camera_info[m_camera_default].isp.flagStart == true) {
 #ifdef FORCE_DONE
 #ifdef FORCE_LEADER_OFF
-        if (m_forceIspOff != true) {
+    if (m_forceIspOff != true) {
 #endif
-            if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].isp.fd,
-                V4L2_CID_IS_FORCE_DONE, 1) < 0) {
-                CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(V4L2_CID_IS_FORCE_DONE)", __func__);
-                ret = false;
-            }
-#ifdef FORCE_LEADER_OFF
+        if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].isp.fd,
+            V4L2_CID_IS_FORCE_DONE, 1) < 0) {
+            CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(V4L2_CID_IS_FORCE_DONE)", __func__);
+            ret = false;
         }
+#ifdef FORCE_LEADER_OFF
+    }
 #endif
 #endif
+
 #ifdef THREAD_PROFILE
-        timeUs = 0;
-        gettimeofday(&mTimeStart, NULL);
+    timeUs = 0;
+    gettimeofday(&mTimeStart, NULL);
 #endif
 
 #ifdef FORCE_LEADER_OFF
-        if (m_forceIspOff != true) {
+    if (m_forceIspOff != true) {
 #endif
-            if (cam_int_streamoff(&m_camera_info[m_camera_default].isp) < 0) {
-                CLOGW("WRR(%s):exynos_v4l2_streamoff() fail", __func__);
-                ret = false;
-            }
-#ifdef FORCE_LEADER_OFF
+        if (cam_int_streamoff(&m_camera_info[m_cameraMode].isp) < 0) {
+            CLOGW("WRR(%s):exynos_v4l2_streamoff() fail", __func__);
+            ret = false;
         }
+#ifdef FORCE_LEADER_OFF
+    }
 #endif
+
 #ifdef THREAD_PROFILE
-        gettimeofday(&mTimeStop, NULL);
-        timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
+    gettimeofday(&mTimeStop, NULL);
+    timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
+    CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
 
-        // HACK : This from stopSensor
-        if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].sensor.fd, V4L2_CID_IS_S_STREAM, IS_DISABLE_STREAM) < 0)
-            CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
-
-        if (0 < m_camera_info[m_camera_default].isp.buffers) {
-            if (cam_int_clrbufs(&m_camera_info[m_camera_default].isp) < 0) {
-                CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
-                ret = false;
-            }
+    if (0 < m_camera_info[m_cameraMode].isp.buffers) {
+        if (cam_int_clrbufs(&m_camera_info[m_cameraMode].isp) < 0) {
+            CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
+            ret = false;
         }
     }
 
@@ -5579,187 +4985,191 @@ bool ExynosCamera::stopIspOff(void)
 }
 bool ExynosCamera::stopIsp(void)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
     bool ret = true;
 
-    if (stopIspOff() == false) {
-        CLOGE("ERR(%s):stopIspOff() fail", __func__);
-        ret = false;
+    if (m_camera_info[m_cameraMode].isp.flagStart == true) {
+
+        if (m_stopIsp() == false) {
+            CLOGE("ERR(%s):m_stopIsp() fail", __func__);
+            ret = false;
+        }
+
+        if (0 < m_camera_info[m_cameraMode].isp.buffers) {
+            for (int i = 0; i < m_camera_info[m_cameraMode].isp.buffers; i++)
+                freeMem(&m_camera_info[m_cameraMode].isp.buffer[i]);
+
+            m_camera_info[m_cameraMode].isp.buffers = 0;
+        }
+
+        for (int i = 0; i < VIDEO_MAX_FRAME; i++)
+            freeMemSinglePlane(&m_camera_info[m_cameraMode].isp.buffer[i], m_camera_info[m_cameraMode].isp.planes - 1);
+
+        /* metadata buffer */
+        for (int i = 0; i < NUM_BAYER_BUFFERS; i++)
+            freeMem(&m_metaBuf[i]);
+
+        m_camera_info[m_cameraMode].isp.flagStart = false;
     }
-
-    if (0 < m_camera_info[m_camera_default].isp.buffers) {
-        for(int i = 0; i < m_camera_info[m_camera_default].isp.buffers; i++)
-            freeMem(&m_camera_info[m_camera_default].isp.buffer[i]);
-
-        m_camera_info[m_camera_default].isp.buffers = 0;
-    }
-
-    for (int i = 0; i < VIDEO_MAX_FRAME; i++)
-        freeMemSinglePlane(&m_camera_info[m_camera_default].isp.buffer[i], m_camera_info[m_camera_default].isp.planes - 1);
-
-    /* metadata buffer */
-    for (int i = 0; i < NUM_BAYER_BUFFERS; i++)
-        freeMem(&metaBuffer[i]);
-
-    m_camera_info[m_camera_default].isp.flagStart = false;
 
     return ret;
 }
 
 bool ExynosCamera::flagStartIsp(void)
 {
-    return m_camera_info[m_camera_default].isp.flagStart;
+    return m_camera_info[m_cameraMode].isp.flagStart;
 }
 
-bool ExynosCamera::startIs3a0(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::startIs3a0(enum CAMERA_MODE cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[sensor_enum].is3a0Output.flagStart,
-        m_camera_info[sensor_enum].is3a0Output.width,
-        m_camera_info[sensor_enum].is3a0Output.height,
-        m_camera_info[sensor_enum].is3a0Output.format);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (m_setSetfile(sensor_enum) == false) {
-        CLOGE("ERR(%s):m_setSetfile(%d) fail", __func__, sensor_enum);
+    if (m_setSetfile(cameraMode) == false) {
+        CLOGE("ERR(%s):m_setSetfile(%d) fail", __func__, cameraMode);
         return false;
     }
 
-    if (m_camera_info[sensor_enum].is3a0Output.flagStart == false) {
-        m_camera_info[sensor_enum].is3a0Output.width   = m_curCameraInfo[sensor_enum]->pictureW + 16;
-        m_camera_info[sensor_enum].is3a0Output.height  = m_curCameraInfo[sensor_enum]->pictureH + 10;
-        m_camera_info[sensor_enum].is3a0Output.format  = V4L2_PIX_FMT_SBGGR12;
-        m_camera_info[sensor_enum].is3a0Output.planes  = 2;
-        m_camera_info[sensor_enum].is3a0Output.buffers = NUM_BAYER_BUFFERS;
-        m_camera_info[sensor_enum].is3a0Output.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[sensor_enum].is3a0Output.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-        m_camera_info[sensor_enum].is3a0Output.ionClient = m_ionCameraClient;
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[cameraMode].is3a0Src.flagStart,
+        m_camera_info[cameraMode].is3a0Src.width,
+        m_camera_info[cameraMode].is3a0Src.height,
+        m_camera_info[cameraMode].is3a0Src.format);
 
-        if (m_isFirtstIs3a0OutputStart == true) {
-            int sensorId = m_getSensorId(m_cameraId);
+    if (m_camera_info[cameraMode].is3a0Src.flagStart == false) {
+        m_camera_info[cameraMode].is3a0Src.width   = m_curCameraInfo[cameraMode]->pictureW + 16;
+        m_camera_info[cameraMode].is3a0Src.height  = m_curCameraInfo[cameraMode]->pictureH + 10;
+        m_camera_info[cameraMode].is3a0Src.format  = V4L2_PIX_FMT_SBGGR12;
+        m_camera_info[cameraMode].is3a0Src.planes  = 2;
+        m_camera_info[cameraMode].is3a0Src.buffers = NUM_BAYER_BUFFERS;
+        m_camera_info[cameraMode].is3a0Src.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[cameraMode].is3a0Src.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+        m_camera_info[cameraMode].is3a0Src.ionClient = m_ionCameraClient;
 
-            if (cam_int_s_input(&(m_camera_info[sensor_enum].is3a0Output), sensorId) < 0) {
+        if (m_isFirtstIs3a0SrcStart == true) {
+            int sensorId = m_getSensorId(m_cameraMode);
+
+            if (cam_int_s_input(&(m_camera_info[cameraMode].is3a0Src), sensorId) < 0) {
                 CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
                 return false;
             }
-            m_isFirtstIs3a0OutputStart = false;
+            m_isFirtstIs3a0SrcStart = false;
         }
 
-        if (cam_int_s_fmt(&(m_camera_info[sensor_enum].is3a0Output)) < 0) {
+        if (cam_int_s_fmt(&(m_camera_info[cameraMode].is3a0Src)) < 0) {
             CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a0Output.buffers = NUM_BAYER_BUFFERS;
-        if (cam_int_reqbufs(&(m_camera_info[sensor_enum].is3a0Output)) < 0) {
-            CLOGE("ERR(%s):is3a0Output cam_int_reqbufs() fail", __func__);
+        m_camera_info[cameraMode].is3a0Src.buffers = NUM_BAYER_BUFFERS;
+        if (cam_int_reqbufs(&(m_camera_info[cameraMode].is3a0Src)) < 0) {
+            CLOGE("ERR(%s):is3a0Src cam_int_reqbufs() fail", __func__);
             return false;
         }
-        if (cam_int_streamon(&(m_camera_info[sensor_enum].is3a0Output)) < 0 ) {
+        if (cam_int_streamon(&(m_camera_info[cameraMode].is3a0Src)) < 0 ) {
             CLOGE("ERR(%s):cam_int_streamon(3a0 output) fail", __func__);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a0Output.flagStart = true;
+        m_camera_info[cameraMode].is3a0Src.flagStart = true;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[sensor_enum].is3a0Capture.flagStart,
-        m_camera_info[sensor_enum].is3a0Capture.width,
-        m_camera_info[sensor_enum].is3a0Capture.height,
-        m_camera_info[sensor_enum].is3a0Capture.format);
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[cameraMode].is3a0Dst.flagStart,
+        m_camera_info[cameraMode].is3a0Dst.width,
+        m_camera_info[cameraMode].is3a0Dst.height,
+        m_camera_info[cameraMode].is3a0Dst.format);
 
-    if (m_camera_info[sensor_enum].is3a0Capture.flagStart == false) {
-        m_camera_info[sensor_enum].is3a0Capture.width   = m_curCameraInfo[sensor_enum]->ispW;
-        m_camera_info[sensor_enum].is3a0Capture.height  = m_curCameraInfo[sensor_enum]->ispH;
-        m_camera_info[sensor_enum].is3a0Capture.format  = V4L2_PIX_FMT_SBGGR12;
-        m_camera_info[sensor_enum].is3a0Capture.planes  = 2;
-        m_camera_info[sensor_enum].is3a0Capture.buffers = NUM_BAYER_BUFFERS;
-        m_camera_info[sensor_enum].is3a0Capture.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[sensor_enum].is3a0Capture.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[sensor_enum].is3a0Capture.ionClient = m_ionCameraClient;
+    if (m_camera_info[cameraMode].is3a0Dst.flagStart == false) {
+        m_camera_info[cameraMode].is3a0Dst.width   = m_curCameraInfo[cameraMode]->ispW;
+        m_camera_info[cameraMode].is3a0Dst.height  = m_curCameraInfo[cameraMode]->ispH;
+        m_camera_info[cameraMode].is3a0Dst.format  = V4L2_PIX_FMT_SBGGR12;
+        m_camera_info[cameraMode].is3a0Dst.planes  = 2;
+        m_camera_info[cameraMode].is3a0Dst.buffers = NUM_BAYER_BUFFERS;
+        m_camera_info[cameraMode].is3a0Dst.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[cameraMode].is3a0Dst.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[cameraMode].is3a0Dst.ionClient = m_ionCameraClient;
 
-        if (m_isFirtstIs3a0CaptureStart == true) {
-            int sensorId = m_getSensorId(m_cameraId);
+        if (m_isFirtstIs3a0DstStart == true) {
+            int sensorId = m_getSensorId(m_cameraMode);
 
-            if (cam_int_s_input(&(m_camera_info[sensor_enum].is3a0Capture), sensorId) < 0) {
+            if (cam_int_s_input(&(m_camera_info[cameraMode].is3a0Dst), sensorId) < 0) {
                 CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
                 return false;
             }
-            m_isFirtstIs3a0CaptureStart = false;
+            m_isFirtstIs3a0DstStart = false;
         }
 
-        if (cam_int_s_fmt(&(m_camera_info[sensor_enum].is3a0Capture)) < 0) {
+        if (cam_int_s_fmt(&(m_camera_info[cameraMode].is3a0Dst)) < 0) {
             CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a0Capture.buffers = NUM_BAYER_BUFFERS;
-        if (cam_int_reqbufs(&(m_camera_info[sensor_enum].is3a0Capture)) < 0) {
-            CLOGE("ERR(%s):is3a0Capture cam_int_reqbufs() fail", __func__);
+        m_camera_info[cameraMode].is3a0Dst.buffers = NUM_BAYER_BUFFERS;
+        if (cam_int_reqbufs(&(m_camera_info[cameraMode].is3a0Dst)) < 0) {
+            CLOGE("ERR(%s):is3a0Dst cam_int_reqbufs() fail", __func__);
             return false;
         }
-        if (cam_int_streamon(&(m_camera_info[sensor_enum].is3a0Capture)) < 0) {
+        if (cam_int_streamon(&(m_camera_info[cameraMode].is3a0Dst)) < 0) {
             CLOGE("ERR(%s):cam_int_streamon(3a0 capture) fail", __func__);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a0Capture.flagStart = true;
+        m_camera_info[cameraMode].is3a0Dst.flagStart = true;
     }
 
     return true;
 }
 
-bool ExynosCamera::stopIs3a0(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::stopIs3a0(enum CAMERA_MODE cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
     bool ret = true;
 
-    if (m_camera_info[sensor_enum].is3a0Output.flagStart == true) {
+    if (m_camera_info[cameraMode].is3a0Src.flagStart == true) {
 #ifdef FORCE_DONE
-        if (exynos_v4l2_s_ctrl(m_camera_info[sensor_enum].is3a0Output.fd,
+        if (exynos_v4l2_s_ctrl(m_camera_info[cameraMode].is3a0Src.fd,
             V4L2_CID_IS_FORCE_DONE, 1) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(V4L2_CID_IS_FORCE_DONE)", __func__);
             ret = false;
         }
 #endif
+
 #ifdef THREAD_PROFILE
         timeUs = 0;
         gettimeofday(&mTimeStart, NULL);
 #endif
-        if (cam_int_streamoff(&(m_camera_info[sensor_enum].is3a0Output)) < 0) {
+        if (cam_int_streamoff(&(m_camera_info[cameraMode].is3a0Src)) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
             ret = false;
         }
 #ifdef THREAD_PROFILE
         gettimeofday(&mTimeStop, NULL);
         timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
+        CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
 
-        if (0 < m_camera_info[sensor_enum].is3a0Output.buffers) {
-            int buffers = m_camera_info[sensor_enum].is3a0Output.buffers;
+        if (0 < m_camera_info[cameraMode].is3a0Src.buffers) {
+            int buffers = m_camera_info[cameraMode].is3a0Src.buffers;
 
-            m_camera_info[sensor_enum].is3a0Output.buffers = 0;
-            if (cam_int_reqbufs(&(m_camera_info[sensor_enum].is3a0Output)) < 0) {
-                CLOGE("ERR(%s):is3a0Output cam_int_reqbufs() fail", __func__);
+            m_camera_info[cameraMode].is3a0Src.buffers = 0;
+            if (cam_int_reqbufs(&(m_camera_info[cameraMode].is3a0Src)) < 0) {
+                CLOGE("ERR(%s):is3a0Src cam_int_reqbufs() fail", __func__);
                 ret = false;
             }
 
-            for(int i = 0; i < buffers; i++)
-                freeMem(&m_camera_info[sensor_enum].is3a0Output.buffer[i]);
+            for (int i = 0; i < buffers; i++)
+                freeMem(&m_camera_info[cameraMode].is3a0Src.buffer[i]);
         }
 
         for (int i = 0; i < VIDEO_MAX_FRAME; i++)
-            freeMemSinglePlane(&m_camera_info[sensor_enum].is3a0Output.buffer[i], m_camera_info[sensor_enum].is3a0Output.planes - 1);
+            freeMemSinglePlane(&m_camera_info[cameraMode].is3a0Src.buffer[i], m_camera_info[cameraMode].is3a0Src.planes - 1);
 
-        m_camera_info[sensor_enum].is3a0Output.flagStart = false;
+        m_camera_info[cameraMode].is3a0Src.flagStart = false;
     }
 
-    if (m_camera_info[sensor_enum].is3a0Capture.flagStart == true) {
+    if (m_camera_info[cameraMode].is3a0Dst.flagStart == true) {
 #ifdef FORCE_DONE
-        if (exynos_v4l2_s_ctrl(m_camera_info[sensor_enum].is3a0Capture.fd,
+        if (exynos_v4l2_s_ctrl(m_camera_info[cameraMode].is3a0Dst.fd,
             V4L2_CID_IS_FORCE_DONE, 1) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(V4L2_CID_IS_FORCE_DONE)", __func__);
             ret = false;
@@ -5769,202 +5179,200 @@ bool ExynosCamera::stopIs3a0(enum CAMERA_SENSOR sensor_enum)
         timeUs = 0;
         gettimeofday(&mTimeStart, NULL);
 #endif
-        if (cam_int_streamoff(&(m_camera_info[sensor_enum].is3a0Capture)) < 0) {
+        if (cam_int_streamoff(&(m_camera_info[cameraMode].is3a0Dst)) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
             ret = false;
         }
 #ifdef THREAD_PROFILE
         gettimeofday(&mTimeStop, NULL);
         timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
+        CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
 
-        if (0 < m_camera_info[sensor_enum].is3a0Capture.buffers) {
-            int buffers = m_camera_info[sensor_enum].is3a0Capture.buffers;
+        if (0 < m_camera_info[cameraMode].is3a0Dst.buffers) {
+            int buffers = m_camera_info[cameraMode].is3a0Dst.buffers;
 
-            m_camera_info[sensor_enum].is3a0Capture.buffers = 0;
-            if (cam_int_reqbufs(&(m_camera_info[sensor_enum].is3a0Capture)) < 0) {
-                CLOGE("ERR(%s):is3a0Capture cam_int_reqbufs() fail", __func__);
+            m_camera_info[cameraMode].is3a0Dst.buffers = 0;
+            if (cam_int_reqbufs(&(m_camera_info[cameraMode].is3a0Dst)) < 0) {
+                CLOGE("ERR(%s):is3a0Dst cam_int_reqbufs() fail", __func__);
                 ret = false;
             }
 
-            for(int i = 0; i < buffers; i++)
-                freeMem(&m_camera_info[sensor_enum].is3a0Capture.buffer[i]);
+            for (int i = 0; i < buffers; i++)
+                freeMem(&m_camera_info[cameraMode].is3a0Dst.buffer[i]);
         }
 
         for (int i = 0; i < VIDEO_MAX_FRAME; i++)
-            freeMemSinglePlane(&m_camera_info[sensor_enum].is3a0Capture.buffer[i], m_camera_info[sensor_enum].is3a0Capture.planes - 1);
+            freeMemSinglePlane(&m_camera_info[cameraMode].is3a0Dst.buffer[i], m_camera_info[cameraMode].is3a0Dst.planes - 1);
 
-        m_camera_info[sensor_enum].is3a0Capture.flagStart = false;
+        m_camera_info[cameraMode].is3a0Dst.flagStart = false;
     }
 
     return ret;
 }
 
-bool ExynosCamera::flagStartIs3a0Output(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::flagStartIs3a0Src(enum CAMERA_MODE cameraMode)
 {
-    return m_camera_info[sensor_enum].is3a0Output.flagStart;
+    return m_camera_info[cameraMode].is3a0Src.flagStart;
 }
 
-bool ExynosCamera::flagStartIs3a0Capture(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::flagStartIs3a0Dst(enum CAMERA_MODE cameraMode)
 {
-    return m_camera_info[sensor_enum].is3a0Capture.flagStart;
+    return m_camera_info[cameraMode].is3a0Dst.flagStart;
 }
 
-bool ExynosCamera::startIs3a1(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::startIs3a1(enum CAMERA_MODE cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[sensor_enum].is3a1Output.flagStart,
-        m_camera_info[sensor_enum].is3a1Output.width,
-        m_camera_info[sensor_enum].is3a1Output.height,
-        m_camera_info[sensor_enum].is3a1Output.format);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (m_setSetfile(sensor_enum) == false) {
-        CLOGE("ERR(%s):m_setSetfile(%d) fail", __func__, sensor_enum);
+    if (m_setSetfile(cameraMode) == false) {
+        CLOGE("ERR(%s):m_setSetfile(%d) fail", __func__, cameraMode);
         return false;
     }
 
-    if (m_camera_info[sensor_enum].is3a1Output.flagStart == false) {
-        m_camera_info[sensor_enum].is3a1Output.width   = SIZE_OTF_WIDTH;
-        m_camera_info[sensor_enum].is3a1Output.height  = SIZE_OTF_HEIGHT;
-        m_camera_info[sensor_enum].is3a1Output.format  = V4L2_PIX_FMT_SBGGR12;
-        m_camera_info[sensor_enum].is3a1Output.planes  = 2;
-        m_camera_info[sensor_enum].is3a1Output.buffers = NUM_BAYER_BUFFERS;
-        m_camera_info[sensor_enum].is3a1Output.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[sensor_enum].is3a1Output.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-        m_camera_info[sensor_enum].is3a1Output.ionClient = m_ionCameraClient;
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[cameraMode].is3a1Src.flagStart,
+        m_camera_info[cameraMode].is3a1Src.width,
+        m_camera_info[cameraMode].is3a1Src.height,
+        m_camera_info[cameraMode].is3a1Src.format);
 
-        if (m_isFirtstIs3a1OutputStart == true) {
-            int sensorId = m_getSensorId(m_cameraId);
+    if (m_camera_info[cameraMode].is3a1Src.flagStart == false) {
+        m_camera_info[cameraMode].is3a1Src.width   = SIZE_OTF_WIDTH;
+        m_camera_info[cameraMode].is3a1Src.height  = SIZE_OTF_HEIGHT;
+        m_camera_info[cameraMode].is3a1Src.format  = V4L2_PIX_FMT_SBGGR12;
+        m_camera_info[cameraMode].is3a1Src.planes  = 2;
+        m_camera_info[cameraMode].is3a1Src.buffers = NUM_BAYER_BUFFERS;
+        m_camera_info[cameraMode].is3a1Src.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[cameraMode].is3a1Src.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+        m_camera_info[cameraMode].is3a1Src.ionClient = m_ionCameraClient;
 
-            if (cam_int_s_input(&(m_camera_info[sensor_enum].is3a1Output), sensorId) < 0) {
+        if (m_isFirtstIs3a1SrcStart == true) {
+            int sensorId = m_getSensorId(m_cameraMode);
+
+            if (cam_int_s_input(&(m_camera_info[cameraMode].is3a1Src), sensorId) < 0) {
                 CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
                 return false;
             }
-            m_isFirtstIs3a1OutputStart = false;
+            m_isFirtstIs3a1SrcStart = false;
         }
 
-        if (cam_int_s_fmt(&(m_camera_info[sensor_enum].is3a1Output)) < 0) {
+        if (cam_int_s_fmt(&(m_camera_info[cameraMode].is3a1Src)) < 0) {
             CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a1Output.buffers = NUM_BAYER_BUFFERS;
-        if (cam_int_reqbufs(&(m_camera_info[sensor_enum].is3a1Output)) < 0) {
-            CLOGE("ERR(%s):is3a1Output cam_int_reqbufs() fail", __func__);
+        m_camera_info[cameraMode].is3a1Src.buffers = NUM_BAYER_BUFFERS;
+        if (cam_int_reqbufs(&(m_camera_info[cameraMode].is3a1Src)) < 0) {
+            CLOGE("ERR(%s):is3a1Src cam_int_reqbufs() fail", __func__);
             return false;
         }
 
-        if (cam_int_streamon(&(m_camera_info[sensor_enum].is3a1Output)) < 0) {
+        if (cam_int_streamon(&(m_camera_info[cameraMode].is3a1Src)) < 0) {
             CLOGE("ERR(%s):cam_int_streamon(3a1 output) fail", __func__);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a1Output.flagStart = true;
+        m_camera_info[cameraMode].is3a1Src.flagStart = true;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[sensor_enum].is3a1Capture.flagStart,
-        m_camera_info[sensor_enum].is3a1Capture.width,
-        m_camera_info[sensor_enum].is3a1Capture.height,
-        m_camera_info[sensor_enum].is3a1Capture.format);
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[cameraMode].is3a1Dst.flagStart,
+        m_camera_info[cameraMode].is3a1Dst.width,
+        m_camera_info[cameraMode].is3a1Dst.height,
+        m_camera_info[cameraMode].is3a1Dst.format);
 
-    if (m_camera_info[sensor_enum].is3a1Capture.flagStart == false) {
-        m_camera_info[sensor_enum].is3a1Capture.width   = m_curCameraInfo[sensor_enum]->ispW;
-        m_camera_info[sensor_enum].is3a1Capture.height  = m_curCameraInfo[sensor_enum]->ispH;
-        m_camera_info[sensor_enum].is3a1Capture.format  = V4L2_PIX_FMT_SBGGR12;
-        m_camera_info[sensor_enum].is3a1Capture.planes  = 2;
-        m_camera_info[sensor_enum].is3a1Capture.buffers = NUM_BAYER_BUFFERS;
-        m_camera_info[sensor_enum].is3a1Capture.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[sensor_enum].is3a1Capture.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[sensor_enum].is3a1Capture.ionClient = m_ionCameraClient;
+    if (m_camera_info[cameraMode].is3a1Dst.flagStart == false) {
+        m_camera_info[cameraMode].is3a1Dst.width   = m_curCameraInfo[cameraMode]->ispW;
+        m_camera_info[cameraMode].is3a1Dst.height  = m_curCameraInfo[cameraMode]->ispH;
+        m_camera_info[cameraMode].is3a1Dst.format  = V4L2_PIX_FMT_SBGGR12;
+        m_camera_info[cameraMode].is3a1Dst.planes  = 2;
+        m_camera_info[cameraMode].is3a1Dst.buffers = NUM_BAYER_BUFFERS;
+        m_camera_info[cameraMode].is3a1Dst.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[cameraMode].is3a1Dst.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[cameraMode].is3a1Dst.ionClient = m_ionCameraClient;
 
-        if (m_isFirtstIs3a1CaptureStart == true) {
-            int sensorId = m_getSensorId(m_cameraId);
+        if (m_isFirtstIs3a1DstStart == true) {
+            int sensorId = m_getSensorId(m_cameraMode);
 
-            if (cam_int_s_input(&(m_camera_info[sensor_enum].is3a1Capture), sensorId) < 0) {
+            if (cam_int_s_input(&(m_camera_info[cameraMode].is3a1Dst), sensorId) < 0) {
                 CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
                 return false;
             }
-            m_isFirtstIs3a1CaptureStart = false;
+            m_isFirtstIs3a1DstStart = false;
         }
 
-        if (cam_int_s_fmt(&(m_camera_info[sensor_enum].is3a1Capture)) < 0) {
+        if (cam_int_s_fmt(&(m_camera_info[cameraMode].is3a1Dst)) < 0) {
             CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a1Capture.buffers = NUM_BAYER_BUFFERS;
-        if (cam_int_reqbufs(&(m_camera_info[sensor_enum].is3a1Capture)) < 0) {
-            CLOGE("ERR(%s):is3a1Capture cam_int_reqbufs() fail", __func__);
+        m_camera_info[cameraMode].is3a1Dst.buffers = NUM_BAYER_BUFFERS;
+        if (cam_int_reqbufs(&(m_camera_info[cameraMode].is3a1Dst)) < 0) {
+            CLOGE("ERR(%s):is3a1Dst cam_int_reqbufs() fail", __func__);
             return false;
         }
-        if (cam_int_streamon(&(m_camera_info[sensor_enum].is3a1Capture)) < 0) {
+        if (cam_int_streamon(&(m_camera_info[cameraMode].is3a1Dst)) < 0) {
             CLOGE("ERR(%s):cam_int_streamon(3a1 capture) fail", __func__);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a1Capture.flagStart = true;
+        m_camera_info[cameraMode].is3a1Dst.flagStart = true;
     }
 
-    for (int i = 0; i < NUM_BAYER_BUFFERS; i++)
-        m_udmArr[i] = NULL;
-
-    activatedIs3a0 = sensor_enum;
+    m_cameraModeIs3a0 = cameraMode;
 
     return true;
 }
 
-bool ExynosCamera::stopIs3a1(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::stopIs3a1(enum CAMERA_MODE cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
     bool ret = true;
 
-    if (m_camera_info[sensor_enum].is3a1Output.flagStart == true) {
+    if (m_camera_info[cameraMode].is3a1Src.flagStart == true) {
 #ifdef FORCE_DONE
-        if (exynos_v4l2_s_ctrl(m_camera_info[sensor_enum].is3a1Output.fd,
+        if (exynos_v4l2_s_ctrl(m_camera_info[cameraMode].is3a1Src.fd,
             V4L2_CID_IS_FORCE_DONE, 1) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(V4L2_CID_IS_FORCE_DONE)", __func__);
             ret = false;
         }
 #endif
+
 #ifdef THREAD_PROFILE
         timeUs = 0;
         gettimeofday(&mTimeStart, NULL);
 #endif
-        if (cam_int_streamoff(&(m_camera_info[sensor_enum].is3a1Output)) < 0) {
+        if (cam_int_streamoff(&(m_camera_info[cameraMode].is3a1Src)) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
             ret = false;
         }
 #ifdef THREAD_PROFILE
         gettimeofday(&mTimeStop, NULL);
         timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
+        CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
 
-        if (0 < m_camera_info[sensor_enum].is3a1Output.buffers) {
-            int buffers = m_camera_info[sensor_enum].is3a1Output.buffers;
+        if (0 < m_camera_info[cameraMode].is3a1Src.buffers) {
+            int buffers = m_camera_info[cameraMode].is3a1Src.buffers;
 
-            m_camera_info[sensor_enum].is3a1Output.buffers = 0;
-            if (cam_int_reqbufs(&(m_camera_info[sensor_enum].is3a1Output)) < 0) {
-                CLOGE("ERR(%s):is3a1Output cam_int_reqbufs() fail", __func__);
+            m_camera_info[cameraMode].is3a1Src.buffers = 0;
+            if (cam_int_reqbufs(&(m_camera_info[cameraMode].is3a1Src)) < 0) {
+                CLOGE("ERR(%s):is3a1Src cam_int_reqbufs() fail", __func__);
                 ret = false;
             }
 
-            for(int i = 0; i < buffers; i++)
-                freeMem(&m_camera_info[sensor_enum].is3a1Output.buffer[i]);
+            for (int i = 0; i < buffers; i++)
+                freeMem(&m_camera_info[cameraMode].is3a1Src.buffer[i]);
         }
 
         for (int i = 0; i < VIDEO_MAX_FRAME; i++)
-            freeMemSinglePlane(&m_camera_info[sensor_enum].is3a1Output.buffer[i], m_camera_info[sensor_enum].is3a1Output.planes - 1);
+            freeMemSinglePlane(&m_camera_info[cameraMode].is3a1Src.buffer[i], m_camera_info[cameraMode].is3a1Src.planes - 1);
 
-        m_camera_info[sensor_enum].is3a1Output.flagStart = false;
+        m_camera_info[cameraMode].is3a1Src.flagStart = false;
     }
 
-    if (m_camera_info[sensor_enum].is3a1Capture.flagStart == true) {
+    if (m_camera_info[cameraMode].is3a1Dst.flagStart == true) {
 #ifdef FORCE_DONE
-        if (exynos_v4l2_s_ctrl(m_camera_info[sensor_enum].is3a1Capture.fd,
+        if (exynos_v4l2_s_ctrl(m_camera_info[cameraMode].is3a1Dst.fd,
             V4L2_CID_IS_FORCE_DONE, 1) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(V4L2_CID_IS_FORCE_DONE)", __func__);
             ret = false;
@@ -5975,78 +5383,77 @@ bool ExynosCamera::stopIs3a1(enum CAMERA_SENSOR sensor_enum)
         timeUs = 0;
         gettimeofday(&mTimeStart, NULL);
 #endif
-
-        if (cam_int_streamoff(&(m_camera_info[sensor_enum].is3a1Capture)) < 0) {
+        if (cam_int_streamoff(&(m_camera_info[cameraMode].is3a1Dst)) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
             ret = false;
         }
 #ifdef THREAD_PROFILE
         gettimeofday(&mTimeStop, NULL);
         timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
+        CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
 
-        if (0 < m_camera_info[sensor_enum].is3a1Capture.buffers) {
-            int buffers = m_camera_info[sensor_enum].is3a1Capture.buffers;
+        if (0 < m_camera_info[cameraMode].is3a1Dst.buffers) {
+            int buffers = m_camera_info[cameraMode].is3a1Dst.buffers;
 
-            m_camera_info[sensor_enum].is3a1Capture.buffers = 0;
-            if (cam_int_reqbufs(&(m_camera_info[sensor_enum].is3a1Capture)) < 0) {
-                CLOGE("ERR(%s):is3a1Capture cam_int_reqbufs() fail", __func__);
+            m_camera_info[cameraMode].is3a1Dst.buffers = 0;
+            if (cam_int_reqbufs(&(m_camera_info[cameraMode].is3a1Dst)) < 0) {
+                CLOGE("ERR(%s):is3a1Dst cam_int_reqbufs() fail", __func__);
                 ret = false;
             }
 
-            for(int i = 0; i < buffers; i++)
-                freeMem(&m_camera_info[sensor_enum].is3a1Capture.buffer[i]);
+            for (int i = 0; i < buffers; i++)
+                freeMem(&m_camera_info[cameraMode].is3a1Dst.buffer[i]);
         }
 
         for (int i = 0; i < VIDEO_MAX_FRAME; i++)
-            freeMemSinglePlane(&m_camera_info[sensor_enum].is3a1Capture.buffer[i], m_camera_info[sensor_enum].is3a1Capture.planes - 1);
+            freeMemSinglePlane(&m_camera_info[cameraMode].is3a1Dst.buffer[i], m_camera_info[cameraMode].is3a1Dst.planes - 1);
 
-        m_camera_info[sensor_enum].is3a1Capture.flagStart = false;
+        m_camera_info[cameraMode].is3a1Dst.flagStart = false;
     }
 
     return ret;
 }
 
-bool ExynosCamera::flagStartIs3a1Output(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::flagStart3a1Src(enum CAMERA_MODE cameraMode)
 {
-    return m_camera_info[sensor_enum].is3a1Output.flagStart;
+    return m_camera_info[cameraMode].is3a1Src.flagStart;
 }
 
-bool ExynosCamera::flagStartIs3a1Capture(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::flagStart3a1Dst(enum CAMERA_MODE cameraMode)
 {
-    return m_camera_info[sensor_enum].is3a1Capture.flagStart;
+    return m_camera_info[cameraMode].is3a1Dst.flagStart;
 }
 
 bool ExynosCamera::setVideoSize(int w, int h)
 {
-    m_curCameraInfo[m_camera_default]->videoW = w;
-    m_curCameraInfo[m_camera_default]->videoH = h;
+    m_curCameraInfo[m_cameraMode]->videoW = w;
+    m_curCameraInfo[m_cameraMode]->videoH = h;
 
 #ifdef USE_3DNR_DMAOUT
     // HACK : Video 3dnr port support resize. So, we must make max size video w, h
-    m_curCameraInfo[m_camera_default]->videoW = m_defaultCameraInfo[m_camera_default]->videoW;
-    m_curCameraInfo[m_camera_default]->videoH = m_defaultCameraInfo[m_camera_default]->videoH;
+    m_curCameraInfo[m_cameraMode]->videoW = m_defaultCameraInfo[m_cameraMode]->videoW;
+    m_curCameraInfo[m_cameraMode]->videoH = m_defaultCameraInfo[m_cameraMode]->videoH;
 #endif
     return true;
 }
 
 bool ExynosCamera::getVideoSize(int *w, int *h)
 {
-    *w = m_curCameraInfo[m_camera_default]->videoW;
-    *h = m_curCameraInfo[m_camera_default]->videoH;
+    *w = m_curCameraInfo[m_cameraMode]->videoW;
+    *h = m_curCameraInfo[m_cameraMode]->videoH;
     return true;
 }
 
 bool ExynosCamera::setVideoFormat(int colorFormat)
 {
-    m_curCameraInfo[m_camera_default]->videoColorFormat = colorFormat;
+    m_curCameraInfo[m_cameraMode]->videoColorFormat = colorFormat;
     return true;
 }
 
 int ExynosCamera::getVideoFormat(void)
 {
-    return m_curCameraInfo[m_camera_default]->videoColorFormat;
+    return m_curCameraInfo[m_cameraMode]->videoColorFormat;
 }
 
 bool ExynosCamera::startVideo(void)
@@ -6056,30 +5463,29 @@ bool ExynosCamera::startVideo(void)
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (m_startFaceDetection((enum CAMERA_SENSOR)m_camera_default, false) == false)
-        CLOGE("ERR(%s):m_startFaceDetection(%d, %d) fail", __func__, m_camera_default, false);
+    if (m_startFaceDetection((enum CAMERA_MODE)m_cameraMode, false) == false)
+        CLOGE("ERR(%s):m_startFaceDetection(%d, %d) fail", __func__, m_cameraMode, false);
 
 #ifdef USE_3DNR_DMAOUT
-    if (m_camera_info[m_camera_default].video.flagStart == false) {
+    if (m_camera_info[m_cameraMode].video.flagStart == false) {
         for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-            if (m_camera_info[m_camera_default].video.buffer[i].virt.p != NULL ||
-                m_camera_info[m_camera_default].video.buffer[i].phys.p != 0) {
-                if (cam_int_qbuf(&m_camera_info[m_camera_default].video, i) < 0) {
+            if (m_camera_info[m_cameraMode].video.buffer[i].virt.p != NULL ||
+                m_camera_info[m_cameraMode].video.buffer[i].phys.p != 0) {
+                if (cam_int_qbuf(&m_camera_info[m_cameraMode].video, i) < 0) {
                     CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
                     return false;
                 }
             }
         }
 
-        if (exynos_v4l2_streamon(m_camera_info[m_camera_default].video.fd, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) < 0) {
+        if (exynos_v4l2_streamon(m_camera_info[m_cameraMode].video.fd, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_streamon() fail", __func__);
             return false;
         }
 
-        m_tryVideoStop = false;
-        m_camera_info[m_camera_default].video.flagStart = true;
+        m_camera_info[m_cameraMode].video.flagStart = true;
     }
 #endif
 
@@ -6093,30 +5499,21 @@ bool ExynosCamera::stopVideo(void)
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (m_camera_info[m_camera_default].video.flagStart == true) {
-
-        m_tryVideoStop = true;
-
-        // skip stopVideo
-        if ((m_camera_info[m_camera_default].video.fd == m_camera_info[m_camera_default].preview.fd && m_tryPreviewStop == false)
-            || (m_camera_info[m_camera_default].video.fd == m_camera_info[m_camera_default].picture.fd && m_tryPictureStop == false)) {
-            CLOGD("DEBUG(%s):stopVideo is skipped...", __func__);
-            return true;
-        }
+    if (m_camera_info[m_cameraMode].video.flagStart == true) {
 #ifdef THREAD_PROFILE
         timeUs = 0;
         gettimeofday(&mTimeStart, NULL);
 #endif
-        if (exynos_v4l2_streamoff(m_camera_info[m_camera_default].video.fd, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) < 0) {
+        if (exynos_v4l2_streamoff(m_camera_info[m_cameraMode].video.fd, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
             return false;
         }
 #ifdef THREAD_PROFILE
         gettimeofday(&mTimeStop, NULL);
         timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
+        CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
 #endif
 
         struct v4l2_requestbuffers req;
@@ -6124,25 +5521,25 @@ bool ExynosCamera::stopVideo(void)
         req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
         req.memory = V4L2_MEMORY_USERPTR;
 
-        if (exynos_v4l2_reqbufs(m_camera_info[m_camera_default].video.fd, &req) < 0) {
+        if (exynos_v4l2_reqbufs(m_camera_info[m_cameraMode].video.fd, &req) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_reqbufs() fail", __func__);
             return false;
         }
 
-        m_camera_info[m_camera_default].video.flagStart = false;
+        m_camera_info[m_cameraMode].video.flagStart = false;
     }
 
     bool toggle = true;
 
-    if (m_startFaceDetection((enum CAMERA_SENSOR)m_camera_default, toggle) == false)
-        CLOGE("ERR(%s):m_startFaceDetection(%d, %d) fail", __func__, m_camera_default, toggle);
+    if (m_startFaceDetection((enum CAMERA_MODE)m_cameraMode, toggle) == false)
+        CLOGE("ERR(%s):m_startFaceDetection(%d, %d) fail", __func__, m_cameraMode, toggle);
 
     return true;
 }
 
 bool ExynosCamera::flagStartVideo(void)
 {
-    return m_camera_info[m_camera_default].video.flagStart;
+    return m_camera_info[m_cameraMode].video.flagStart;
 }
 
 int ExynosCamera::getVideoMaxBuf(void)
@@ -6173,7 +5570,7 @@ bool ExynosCamera::getVideoBuf(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[m_camera_default].video.flagStart == false) {
+    if (m_camera_info[m_cameraMode].video.flagStart == false) {
         CLOGE("ERR(%s):Not yet video started fail", __func__);
         return false;
     }
@@ -6191,7 +5588,7 @@ bool ExynosCamera::getVideoBuf(ExynosBuffer *buf)
             v4l2_buf.length++;
     }
 
-    if (exynos_v4l2_dqbuf(m_camera_info[m_camera_default].video.fd, &v4l2_buf) < 0) {
+    if (exynos_v4l2_dqbuf(m_camera_info[m_cameraMode].video.fd, &v4l2_buf) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_dqbuf() fail", __func__);
         return false;
     }
@@ -6213,7 +5610,7 @@ bool ExynosCamera::putVideoBuf(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[m_camera_default].video.flagStart == false) {
+    if (m_camera_info[m_cameraMode].video.flagStart == false) {
         /* this can happen when recording frames are returned after
          * the recording is stopped at the driver level.  we don't
          * need to return the buffers in this case and we've seen
@@ -6241,7 +5638,7 @@ bool ExynosCamera::putVideoBuf(ExynosBuffer *buf)
             v4l2_buf.length++;
     }
 
-    if (exynos_v4l2_qbuf(m_camera_info[m_camera_default].video.fd, &v4l2_buf) < 0) {
+    if (exynos_v4l2_qbuf(m_camera_info[m_cameraMode].video.fd, &v4l2_buf) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_qbuf() fail", __func__);
         return false;
     }
@@ -6251,160 +5648,134 @@ bool ExynosCamera::putVideoBuf(ExynosBuffer *buf)
 
 bool ExynosCamera::startPicture(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (m_camera_info[m_camera_default].picture.flagStart == false) {
-        m_camera_info[m_camera_default].picture.width   = m_curCameraInfo[m_camera_default]->pictureW;
-        m_camera_info[m_camera_default].picture.height  = m_curCameraInfo[m_camera_default]->pictureH;
-        m_camera_info[m_camera_default].picture.format  = m_curCameraInfo[SENSOR_BACK]->pictureColorFormat;
-        m_camera_info[m_camera_default].picture.planes  = NUM_CAPTURE_PLANE;
-        m_camera_info[m_camera_default].picture.buffers = NUM_PICTURE_BUFFERS;
-        m_camera_info[m_camera_default].picture.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[m_camera_default].picture.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[m_camera_default].picture.ionClient = m_ionCameraClient;
+    if (m_camera_info[m_cameraMode].picture.flagStart == false) {
+        m_camera_info[m_cameraMode].picture.width   = m_curCameraInfo[m_cameraMode]->pictureW;
+        m_camera_info[m_cameraMode].picture.height  = m_curCameraInfo[m_cameraMode]->pictureH;
+        m_camera_info[m_cameraMode].picture.format  = m_curCameraInfo[CAMERA_MODE_BACK]->pictureColorFormat;
+        m_camera_info[m_cameraMode].picture.planes  = NUM_CAPTURE_PLANE;
+        m_camera_info[m_cameraMode].picture.buffers = NUM_PICTURE_BUFFERS;
+        m_camera_info[m_cameraMode].picture.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[m_cameraMode].picture.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[m_cameraMode].picture.ionClient = m_ionCameraClient;
 
         // for frame sync
         for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-            if (m_camera_info[m_camera_default].picture.buffer[i].virt.p != NULL ||
-                m_camera_info[m_camera_default].picture.buffer[i].phys.p != 0) {
-                m_camera_info[m_camera_default].picture.buffer[i].size.extS[m_camera_info[m_camera_default].picture.planes - 1]
+            if (m_camera_info[m_cameraMode].picture.buffer[i].virt.p != NULL ||
+                m_camera_info[m_cameraMode].picture.buffer[i].phys.p != 0) {
+                m_camera_info[m_cameraMode].picture.buffer[i].size.extS[m_camera_info[m_cameraMode].picture.planes - 1]
                     = ALIGN(META_DATA_SIZE, PAGE_SIZE);
 
                 if (allocMemSinglePlane(m_ionCameraClient,
-                                        &m_camera_info[m_camera_default].picture.buffer[i],
-                                        m_camera_info[m_camera_default].picture.planes - 1,
+                                        &m_camera_info[m_cameraMode].picture.buffer[i],
+                                        m_camera_info[m_cameraMode].picture.planes - 1,
                                         true) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingle() fail", __func__);
                     goto err;
                 } else {
-                    memset(m_camera_info[m_camera_default].picture.buffer[i].virt.extP[m_camera_info[m_camera_default].picture.planes - 1],
-                            0, m_camera_info[m_camera_default].picture.buffer[i].size.extS[m_camera_info[m_camera_default].picture.planes - 1]);
+                    memset(m_camera_info[m_cameraMode].picture.buffer[i].virt.extP[m_camera_info[m_cameraMode].picture.planes - 1],
+                            0, m_camera_info[m_cameraMode].picture.buffer[i].size.extS[m_camera_info[m_cameraMode].picture.planes - 1]);
                 }
             }
         }
-        if (startPictureOn() == false) {
-            CLOGE("ERR(%s):startPictureOn() fail", __func__);
+        if (m_startPicture() == false) {
+            CLOGE("ERR(%s):m_startPicture() fail", __func__);
             goto err;
         }
+
+        m_camera_info[m_cameraMode].picture.flagStart = true;
     }
 
     return true;
 
 err:
-    if (stopPicture() == false)
+    if (this->stopPicture() == false)
         CLOGE("ERR(%s):stopPicture() fail", __func__);
 
     return false;
 }
 
-bool ExynosCamera::startPictureOn(void)
+bool ExynosCamera::m_startPicture(void)
 {
-    if (m_flagCreate == false) {
-        CLOGE("ERR(%s):Not yet Created", __func__);
+    CLOGD("DEBUG(%s):in", __func__);
+
+    int sensorId = m_getSensorId(m_cameraMode);
+    sensorId = (0 << REPROCESSING_SHFIT) | ((FIMC_IS_VIDEO_SCC_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) | (sensorId << 0);
+
+    if (cam_int_s_input(&(m_camera_info[m_cameraMode].picture), sensorId) < 0) {
+        CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    if (cam_int_s_fmt(&(m_camera_info[m_cameraMode].picture)) < 0) {
+       CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
+        return false;
+    }
 
-    if (m_camera_info[m_camera_default].picture.flagStart == false) {
-        int sensorId = m_getSensorId(m_cameraId);
-        sensorId = (0 << REPROCESSING_SHFIT) | ((FIMC_IS_VIDEO_SCC_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) | (sensorId << 0);
+    if (cam_int_reqbufs(&(m_camera_info[m_cameraMode].picture)) < 0) {
+        CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
+        return false;
+    }
 
-        if (cam_int_s_input(&(m_camera_info[m_camera_default].picture), sensorId) < 0) {
-            CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
-            return false;
-        }
-
-        if (cam_int_s_fmt(&(m_camera_info[m_camera_default].picture)) < 0) {
-           CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
-            return false;
-        }
-
-        if (cam_int_reqbufs(&(m_camera_info[m_camera_default].picture)) < 0) {
-            CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
-            return false;
-        }
-
-        for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-            if (m_camera_info[m_camera_default].picture.buffer[i].virt.p != NULL ||
-                m_camera_info[m_camera_default].picture.buffer[i].phys.p != 0) {
-                if (cam_int_qbuf(&m_camera_info[m_camera_default].picture, i) < 0) {
-                    CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
-                    return false;
-                }
+    for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
+        if (m_camera_info[m_cameraMode].picture.buffer[i].virt.p != NULL ||
+            m_camera_info[m_cameraMode].picture.buffer[i].phys.p != 0) {
+            if (cam_int_qbuf(&m_camera_info[m_cameraMode].picture, i) < 0) {
+                CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
+                return false;
             }
         }
+    }
 
 #ifdef FRONT_NO_ZSL
 #else
-        pictureOn();
+    pictureOn();
 #endif
 
-        if (cam_int_streamon(&(m_camera_info[m_camera_default].picture)) < 0) {
-            CLOGE("ERR(%s):cam_int_streamon() fail", __func__);
-            return false;
-        }
-
-        m_tryPictureStop = false;
-        m_camera_info[m_camera_default].picture.flagStart = true;
+    if (cam_int_streamon(&(m_camera_info[m_cameraMode].picture)) < 0) {
+        CLOGE("ERR(%s):cam_int_streamon() fail", __func__);
+        return false;
     }
 
     return true;
 }
 
-bool ExynosCamera::stopPictureOff(void)
+bool ExynosCamera::m_stopPicture(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     bool ret = true;
 
     int index;
     camera2_shot_ext * shot_ext;
 
-    if (m_flagCreate == false) {
-        CLOGW("WARN(%s):Not yet Created", __func__);
-        return false;
-    }
-
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (m_camera_info[m_camera_default].picture.flagStart == true) {
-        m_tryPictureStop = true;
-
-        // skip stopPicture
-        if ((m_camera_info[m_camera_default].picture.fd == m_camera_info[m_camera_default].preview.fd && m_tryPreviewStop == false)
-            || (m_camera_info[m_camera_default].picture.fd == m_camera_info[m_camera_default].video.fd && m_tryVideoStop == false)) {
-            CLOGD("DEBUG(%s):stopPicture is skipped...", __func__);
-            goto done;
-        }
-
 #ifdef THREAD_PROFILE
-        timeUs = 0;
-        gettimeofday(&mTimeStart, NULL);
+    timeUs = 0;
+    gettimeofday(&mTimeStart, NULL);
 #endif
-        if (cam_int_streamoff(&m_camera_info[m_camera_default].picture) < 0) {
-            CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
+    if (cam_int_streamoff(&m_camera_info[m_cameraMode].picture) < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
+        ret = false;
+    }
+#ifdef THREAD_PROFILE
+    gettimeofday(&mTimeStop, NULL);
+    timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
+    CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
+#endif
+    m_camera_info[m_cameraMode].dummy_shot.request_scc = 0;
+
+    if (0 < m_camera_info[m_cameraMode].picture.buffers) {
+        if (cam_int_clrbufs(&m_camera_info[m_cameraMode].picture) < 0) {
+            CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
             ret = false;
         }
-#ifdef THREAD_PROFILE
-        gettimeofday(&mTimeStop, NULL);
-        timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
-#endif
-        m_camera_info[m_camera_default].dummy_shot.request_scc = 0;
-
-        if (0 < m_camera_info[m_camera_default].picture.buffers) {
-            if (cam_int_clrbufs(&m_camera_info[m_camera_default].picture) < 0) {
-                CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
-                ret = false;
-            }
-            m_camera_info[m_camera_default].picture.buffers = 0;
-        }
-        m_tryPictureStop = true;
-        m_camera_info[m_camera_default].picture.flagStart = false;
+        m_camera_info[m_cameraMode].picture.buffers = 0;
     }
 
 done:
@@ -6420,17 +5791,22 @@ bool ExynosCamera::stopPicture(void)
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (stopPictureOff() == false) {
-        CLOGE("ERR(%s):stopPictureOff() fail", __func__);
-        ret = false;
-    }
+    if (m_camera_info[m_cameraMode].picture.flagStart == true) {
 
-    // for frame sync
-    for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-        freeMemSinglePlane(&m_camera_info[m_camera_default].picture.buffer[i],
-                m_camera_info[m_camera_default].picture.planes - 1);
+        if (m_stopPicture() == false) {
+            CLOGE("ERR(%s):m_stopPicture() fail", __func__);
+            ret = false;
+        }
+
+        // for frame sync
+        for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
+            freeMemSinglePlane(&m_camera_info[m_cameraMode].picture.buffer[i],
+                    m_camera_info[m_cameraMode].picture.planes - 1);
+        }
+
+        m_camera_info[m_cameraMode].picture.flagStart = false;
     }
 
     return ret;
@@ -6438,14 +5814,14 @@ bool ExynosCamera::stopPicture(void)
 
 void ExynosCamera::pictureOn(void)
 {
-    m_camera_info[m_camera_default].dummy_shot.request_scc = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_scc = 1;
 
     return;
 }
 
 bool ExynosCamera::flagStartPicture(void)
 {
-    return m_camera_info[m_camera_default].picture.flagStart;
+    return m_camera_info[m_cameraMode].picture.flagStart;
 }
 
 int ExynosCamera::getPictureMaxBuf(void)
@@ -6465,7 +5841,8 @@ bool ExynosCamera::setPictureBuf(ExynosBuffer *buf)
         return false;
     }
 
-    m_camera_info[m_camera_default].picture.buffer[buf->reserved.p] = *buf;
+    m_camera_info[m_cameraMode].picture.buffer[buf->reserved.p] = *buf;
+
     return true;
 }
 
@@ -6478,22 +5855,22 @@ bool ExynosCamera::getPictureBuf(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[m_camera_default].picture.flagStart == false) {
+    if (m_camera_info[m_cameraMode].picture.flagStart == false) {
         CLOGE("ERR(%s):Not yet picture started fail", __func__);
         return false;
     }
 
-    index = cam_int_dqbuf(&(m_camera_info[m_camera_default].picture));
+    index = cam_int_dqbuf(&(m_camera_info[m_cameraMode].picture));
     if (index < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on picture fail", __func__);
         return false;
     }
 
-    *buf = m_camera_info[m_camera_default].picture.buffer[index];
+    *buf = m_camera_info[m_cameraMode].picture.buffer[index];
     buf->reserved.p = index;
 
-    struct camera2_stream *shot_ext = (struct camera2_stream *)buf->virt.extP[NUM_CAPTURE_PLANE - 1];
-    unsigned int currentCount = shot_ext->rcount;
+    struct camera2_stream *metadata = (struct camera2_stream *)buf->virt.extP[NUM_CAPTURE_PLANE - 1];
+    unsigned int currentCount = metadata->rcount;
 
     return true;
 }
@@ -6505,13 +5882,13 @@ bool ExynosCamera::putPictureBuf(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[m_camera_default].picture.flagStart == false) {
+    if (m_camera_info[m_cameraMode].picture.flagStart == false) {
         CLOGE("ERR(%s):Not yet picture started fail", __func__);
         return false;
     }
 
-    if (cam_int_qbuf(&(m_camera_info[m_camera_default].picture), buf->reserved.p) < 0) {
-        CLOGE("ERR(%s):cam_int_qbuf(%d) failed", __func__, buf->reserved.p);
+    if (cam_int_qbuf(&(m_camera_info[m_cameraMode].picture), buf->reserved.p) < 0) {
+        CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, buf->reserved.p);
         return false;
     }
 
@@ -6522,7 +5899,7 @@ bool ExynosCamera::yuv2Jpeg(ExynosBuffer *yuvBuf,
                             ExynosBuffer *jpegBuf,
                             ExynosRect *rect)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
     unsigned char *addr;
 
@@ -6556,15 +5933,15 @@ bool ExynosCamera::yuv2Jpeg(ExynosBuffer *yuvBuf,
         goto jpeg_encode_done;
     }
 
-    if (m_curCameraInfo[m_camera_default]->thumbnailW != 0 && m_curCameraInfo[m_camera_default]->thumbnailH != 0) {
+    if (m_curCameraInfo[m_cameraMode]->thumbnailW != 0 && m_curCameraInfo[m_cameraMode]->thumbnailH != 0) {
         int thumbW = 0, thumbH = 0;
         mExifInfo.enableThumb = true;
         if (rect->w < 320 || rect->h < 240) {
             thumbW = 160;
             thumbH = 120;
         } else {
-            thumbW = m_curCameraInfo[m_camera_default]->thumbnailW;
-            thumbH = m_curCameraInfo[m_camera_default]->thumbnailH;
+            thumbW = m_curCameraInfo[m_cameraMode]->thumbnailW;
+            thumbH = m_curCameraInfo[m_cameraMode]->thumbnailH;
         }
         if (jpegEnc.setThumbnailSize(thumbW, thumbH)) {
             CLOGE("ERR(%s):jpegEnc.setThumbnailSize(%d, %d) fail", __func__, thumbW, thumbH);
@@ -6608,7 +5985,7 @@ bool ExynosCamera::yuv2Jpeg(ExynosBuffer *yuvBuf,
 jpeg_encode_done:
 
     if (ret == false) {
-        CLOGD("[%s] (%d) [yuvBuf->fd.extFd %d][yuvSize %u]", __func__, __LINE__,
+        CLOGD("DEBUG(%s):(%d) [yuvBuf->fd.extFd %d][yuvSize %u]", __func__, __LINE__,
             yuvBuf->fd.extFd, yuvSize);
         CLOGD("[jpegBuf->fd.extFd[0] %d][jpegBuf->size.extS[0] + jpegBuf->size.extS[1] + jpegBuf->size.extS[2] %d]",
             jpegBuf->fd.extFd[0], jpegBuf->size.extS[0] + jpegBuf->size.extS[1] + jpegBuf->size.extS[2]);
@@ -6624,7 +6001,7 @@ jpeg_encode_done:
 
 bool ExynosCamera::autoFocus(void)
 {
-    CLOGD("[%s] (%d) focusMode : %d", __func__, __LINE__, m_curCameraInfo[m_camera_default]->focusMode);
+    CLOGD("DEBUG(%s):(%d) focusMode : %d", __func__, __LINE__, m_curCameraInfo[m_cameraMode]->focusMode);
 
     bool ret = true;
     int currentAutofocusState = ExynosCameraActivityAutofocus::AUTOFOCUS_STATE_NONE;
@@ -6632,7 +6009,7 @@ bool ExynosCamera::autoFocus(void)
     int oldMgrAutofocusMode = ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_BASE;
     bool flagAutoFocusTringger = false;
 
-    if (m_camera_info[m_camera_default].preview.fd < 0) {
+    if (m_camera_info[m_cameraMode].preview.fd < 0) {
         CLOGE("ERR(%s):Camera was closed", __func__);
         ret = false;
         goto done;
@@ -6653,7 +6030,7 @@ bool ExynosCamera::autoFocus(void)
 
     oldMgrAutofocusMode = m_autofocusMgr->getAutofocusMode();
 
-    switch (m_curCameraInfo[m_camera_default]->focusMode) {
+    switch (m_curCameraInfo[m_cameraMode]->focusMode) {
     case FOCUS_MODE_AUTO:
         if (m_touchAFMode == true)
             newMgrAutofocusMode = ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_TOUCH;
@@ -6685,7 +6062,7 @@ bool ExynosCamera::autoFocus(void)
         newMgrAutofocusMode = ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_EDOF;
         break;
     default:
-        CLOGE("ERR(%s):Unsupported focusMode(%d)", __func__, m_curCameraInfo[m_camera_default]->focusMode);
+        CLOGE("ERR(%s):Unsupported focusMode(%d)", __func__, m_curCameraInfo[m_cameraMode]->focusMode);
         return false;
         break;
     }
@@ -6704,8 +6081,6 @@ bool ExynosCamera::autoFocus(void)
      * auto focus api can be triggered,
      * and then, af will be lock. (af lock)
      */
-    m_autofocusMgr->setAutofocusMode(newMgrAutofocusMode);
-
     switch (newMgrAutofocusMode) {
     case ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_FIXED:
     case ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_EDOF:
@@ -6820,12 +6195,12 @@ int ExynosCamera::getCAFResult(void)
      static int  oldRet = 2;
      static bool flagCAFScannigStarted = false;
 
-     switch (m_camera_info[m_camera_default].is3aa_dm.shot.dm.aa.afMode) {
+     switch (m_camera_info[m_cameraMode].is3aa_dm.shot.dm.aa.afMode) {
      case AA_AFMODE_CONTINUOUS_VIDEO:
      case AA_AFMODE_CONTINUOUS_PICTURE:
      /* case AA_AFMODE_CONTINUOUS_VIDEO_FACE: */
      case AA_AFMODE_CONTINUOUS_PICTURE_FACE:
-         switch(m_camera_info[m_camera_default].is3aa_dm.shot.dm.aa.afState) {
+         switch(m_camera_info[m_cameraMode].is3aa_dm.shot.dm.aa.afState) {
          case AA_AFSTATE_INACTIVE:
             ret = 2;
             break;
@@ -6849,7 +6224,7 @@ int ExynosCamera::getCAFResult(void)
             break;
          }
 
-         if (m_camera_info[m_camera_default].is3aa_dm.shot.dm.aa.afState == 3)
+         if (m_camera_info[m_cameraMode].is3aa_dm.shot.dm.aa.afState == 3)
              flagCAFScannigStarted = true;
          else
              flagCAFScannigStarted = false;
@@ -6868,9 +6243,9 @@ int ExynosCamera::getCAFResult(void)
 
 bool ExynosCamera::cancelAutoFocus(void)
 {
-    CLOGD("[%s] (%d) focusMode : %d", __func__, __LINE__, m_curCameraInfo[m_camera_default]->focusMode);
+    CLOGD("DEBUG(%s):(%d) focusMode : %d", __func__, __LINE__, m_curCameraInfo[m_cameraMode]->focusMode);
 
-    if (m_camera_info[m_camera_default].preview.fd < 0) {
+    if (m_camera_info[m_cameraMode].preview.fd < 0) {
         CLOGE("ERR(%s):Camera was closed", __func__);
         //return false;
         // revise for factory mode
@@ -6927,10 +6302,25 @@ bool ExynosCamera::startFaceDetection(void)
     }
 
     /* FD-AE is always on */
-    /* m_startFaceDetection((enum CAMERA_SENSOR)m_camera_default, true); */
+    /* m_startFaceDetection((enum CAMERA_MODE)m_cameraMode, true); */
 
-    if (m_autofocusMgr->setFaceDetection(true) == false)
+    if (m_autofocusMgr->setFaceDetection(true) == false) {
         CLOGE("ERR(%s):setFaceDetection(%d)", __func__, true);
+    } else {
+        /* restart CAF when FD mode changed */
+        switch (m_autofocusMgr->getAutofocusMode()) {
+        case ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_CONTINUOUS_PICTURE:
+        case ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_CONTINUOUS_PICTURE_MACRO:
+            if (m_autofocusMgr->flagAutofocusStart() == true &&
+                m_autofocusMgr->flagLockAutofocus() == false) {
+                m_autofocusMgr->stopAutofocus();
+                m_autofocusMgr->startAutofocus();
+            }
+            break;
+        default:
+            break;
+        }
+    }
 
     m_flagStartFaceDetection = true;
 
@@ -6944,11 +6334,26 @@ bool ExynosCamera::stopFaceDetection(void)
         return true;
     }
 
-    if (m_autofocusMgr->setFaceDetection(false) == false)
+    if (m_autofocusMgr->setFaceDetection(false) == false) {
         CLOGE("ERR(%s):setFaceDetection(%d)", __func__, false);
+    } else {
+        /* restart CAF when FD mode changed */
+        switch (m_autofocusMgr->getAutofocusMode()) {
+        case ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_CONTINUOUS_PICTURE:
+        case ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_CONTINUOUS_PICTURE_MACRO:
+            if (m_autofocusMgr->flagAutofocusStart() == true &&
+                m_autofocusMgr->flagLockAutofocus() == false) {
+                m_autofocusMgr->stopAutofocus();
+                m_autofocusMgr->startAutofocus();
+            }
+            break;
+        default:
+            break;
+        }
+    }
 
     /* FD-AE is always on */
-    /* m_startFaceDetection((enum CAMERA_SENSOR)m_camera_default, false); */
+    /* m_startFaceDetection((enum CAMERA_MODE)m_cameraMode, false); */
 
     m_flagStartFaceDetection = false;
 
@@ -6962,8 +6367,8 @@ bool ExynosCamera::flagStartFaceDetection(void)
 
 bool ExynosCamera::startSmoothZoom(int value)
 {
-    if (m_defaultCameraInfo[m_camera_default]->hwZoomSupported == false) {
-        CLOGE("ERR(%s):m_defaultCameraInfo[m_camera_default]->hwZoomSupported == false", __func__);
+    if (m_defaultCameraInfo[m_cameraMode]->hwZoomSupported == false) {
+        CLOGE("ERR(%s):m_defaultCameraInfo[m_cameraMode]->hwZoomSupported == false", __func__);
         return false;
     }
 
@@ -6978,22 +6383,22 @@ bool ExynosCamera::stopSmoothZoom(void)
 
 int ExynosCamera::getAntibanding(void)
 {
-    return m_curCameraInfo[m_camera_default]->antiBanding;
+    return m_curCameraInfo[m_cameraMode]->antiBanding;
 }
 
 bool ExynosCamera::getAutoExposureLock(void)
 {
-    return m_curCameraInfo[m_camera_default]->autoExposureLock;
+    return m_curCameraInfo[m_cameraMode]->autoExposureLock;
 }
 
 bool ExynosCamera::getAutoWhiteBalanceLock(void)
 {
-    return m_curCameraInfo[m_camera_default]->autoWhiteBalanceLock;
+    return m_curCameraInfo[m_cameraMode]->autoWhiteBalanceLock;
 }
 
 int ExynosCamera::getColorEffect(void)
 {
-    return m_curCameraInfo[m_camera_default]->effect;
+    return m_curCameraInfo[m_cameraMode]->effect;
 }
 
 int ExynosCamera::getDetectedFacesAreas(int num,
@@ -7004,7 +6409,7 @@ int ExynosCamera::getDetectedFacesAreas(int num,
                                         ExynosRect *rightEye,
                                         ExynosRect *mouth)
 {
-    if (m_defaultCameraInfo[m_camera_default]->maxNumDetectedFaces == 0) {
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumDetectedFaces == 0) {
         CLOGE("ERR(%s):maxNumDetectedFaces == 0 fail", __func__);
         return -1;
     }
@@ -7014,8 +6419,8 @@ int ExynosCamera::getDetectedFacesAreas(int num,
         return 0;
     }
 
-    if (m_defaultCameraInfo[m_camera_default]->maxNumDetectedFaces < num)
-        num = m_defaultCameraInfo[m_camera_default]->maxNumDetectedFaces;
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumDetectedFaces < num)
+        num = m_defaultCameraInfo[m_cameraMode]->maxNumDetectedFaces;
 
     // width   : 0 ~ previewW
     // height  : 0 ~ previewH
@@ -7030,20 +6435,20 @@ int ExynosCamera::getDetectedFacesAreas(int num,
     for (int i = 0; i < num; i++) {
 
         m_secRect22SecRect(&face2[i], &face[i]);
-        face[i].fullW = m_curCameraInfo[m_camera_default]->previewW;
-        face[i].fullH = m_curCameraInfo[m_camera_default]->previewH;
+        face[i].fullW = m_curCameraInfo[m_cameraMode]->previewW;
+        face[i].fullH = m_curCameraInfo[m_cameraMode]->previewH;
 
         m_secRect22SecRect(&leftEye2[i], &leftEye[i]);
-        leftEye[i].fullW = m_curCameraInfo[m_camera_default]->previewW;
-        leftEye[i].fullH = m_curCameraInfo[m_camera_default]->previewH;
+        leftEye[i].fullW = m_curCameraInfo[m_cameraMode]->previewW;
+        leftEye[i].fullH = m_curCameraInfo[m_cameraMode]->previewH;
 
         m_secRect22SecRect(&rightEye2[i], &rightEye[i]);
-        rightEye[i].fullW = m_curCameraInfo[m_camera_default]->previewW;
-        rightEye[i].fullH = m_curCameraInfo[m_camera_default]->previewH;
+        rightEye[i].fullW = m_curCameraInfo[m_cameraMode]->previewW;
+        rightEye[i].fullH = m_curCameraInfo[m_cameraMode]->previewH;
 
         m_secRect22SecRect(&mouth2[i], &mouth[i]);
-        mouth[i].fullW = m_curCameraInfo[m_camera_default]->previewW;
-        mouth[i].fullH = m_curCameraInfo[m_camera_default]->previewH;
+        mouth[i].fullW = m_curCameraInfo[m_cameraMode]->previewW;
+        mouth[i].fullH = m_curCameraInfo[m_cameraMode]->previewH;
     }
 
     delete [] face2;
@@ -7062,7 +6467,7 @@ int ExynosCamera::getDetectedFacesAreas(int num,
                                      ExynosRect2 *rightEye,
                                      ExynosRect2 *mouth)
 {
-    if (m_defaultCameraInfo[m_camera_default]->maxNumDetectedFaces == 0) {
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumDetectedFaces == 0) {
         CLOGE("ERR(%s):maxNumDetectedFaces == 0 fail", __func__);
         return -1;
     }
@@ -7072,11 +6477,11 @@ int ExynosCamera::getDetectedFacesAreas(int num,
         return 0;
     }
 
-    if (m_defaultCameraInfo[m_camera_default]->maxNumDetectedFaces < num)
-        num = m_defaultCameraInfo[m_camera_default]->maxNumDetectedFaces;
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumDetectedFaces < num)
+        num = m_defaultCameraInfo[m_cameraMode]->maxNumDetectedFaces;
 
     int faces = 0;
-    struct camera2_dm *dm = &m_camera_info[m_camera_default].isp_dm.shot.dm;
+    struct camera2_dm *dm = &m_camera_info[m_cameraMode].isp_dm.shot.dm;
 
     switch (dm->stats.faceDetectMode) {
     case FACEDETECT_MODE_SIMPLE:
@@ -7138,7 +6543,7 @@ int ExynosCamera::getDetectedFacesAreas(int num,
 
 int ExynosCamera::getExposureCompensation(void)
 {
-    return m_curCameraInfo[m_camera_default]->exposure;
+    return m_curCameraInfo[m_cameraMode]->exposure;
 }
 
 float ExynosCamera::getExposureCompensationStep(void)
@@ -7154,13 +6559,13 @@ float ExynosCamera::getExposureCompensationStep(void)
 
 int ExynosCamera::getFlashMode(void)
 {
-    return m_curCameraInfo[m_camera_default]->flashMode;
+    return m_curCameraInfo[m_cameraMode]->flashMode;
 }
 
 bool ExynosCamera::getFocalLength(int *num, int *den)
 {
-    *num = m_defaultCameraInfo[m_camera_default]->focalLengthNum;
-    *den = m_defaultCameraInfo[m_camera_default]->focalLengthDen;
+    *num = m_defaultCameraInfo[m_cameraMode]->focalLengthNum;
+    *den = m_defaultCameraInfo[m_cameraMode]->focalLengthDen;
     return true;
 }
 
@@ -7179,7 +6584,7 @@ bool ExynosCamera::getFocusDistances(int *num, int *den)
 
 int ExynosCamera::getFocusMode(void)
 {
-    return m_curCameraInfo[m_camera_default]->focusMode;
+    return m_curCameraInfo[m_cameraMode]->focusMode;
 }
 
 float ExynosCamera::getHorizontalViewAngle(void)
@@ -7200,34 +6605,34 @@ int ExynosCamera::getJpegThumbnailQuality(void)
 
 bool ExynosCamera::getJpegThumbnailSize(int *w, int  *h)
 {
-    *w  = m_curCameraInfo[m_camera_default]->thumbnailW;
-    *h  = m_curCameraInfo[m_camera_default]->thumbnailH;
+    *w  = m_curCameraInfo[m_cameraMode]->thumbnailW;
+    *h  = m_curCameraInfo[m_cameraMode]->thumbnailH;
     return true;
 }
 
 int ExynosCamera::getMaxExposureCompensation(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->maxExposure;
+    return m_defaultCameraInfo[m_cameraMode]->maxExposure;
 }
 
 int ExynosCamera::getMaxNumDetectedFaces(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->maxNumDetectedFaces;
+    return m_defaultCameraInfo[m_cameraMode]->maxNumDetectedFaces;
 }
 
 int ExynosCamera::getMaxNumFocusAreas(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->maxNumFocusAreas;
+    return m_defaultCameraInfo[m_cameraMode]->maxNumFocusAreas;
 }
 
 int ExynosCamera::getMaxNumMeteringAreas(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->maxNumMeteringAreas;
+    return m_defaultCameraInfo[m_cameraMode]->maxNumMeteringAreas;
 }
 
 int ExynosCamera::getMaxZoom(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->maxZoom;
+    return m_defaultCameraInfo[m_cameraMode]->maxZoom;
 }
 
 int ExynosCamera::getMeteringAreas(ExynosRect *rects)
@@ -7238,49 +6643,49 @@ int ExynosCamera::getMeteringAreas(ExynosRect *rects)
 
 int ExynosCamera::getMinExposureCompensation(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->minExposure;
+    return m_defaultCameraInfo[m_cameraMode]->minExposure;
 }
 
 bool ExynosCamera::getIspSize(int *w, int *h)
 {
-    if (m_cameraId == CAMERA_ID_BACK) {
-        *w = m_curCameraInfo[SENSOR_FAKE]->ispW;
-        *h = m_curCameraInfo[SENSOR_FAKE]->ispH;
-    } else if (m_cameraId == CAMERA_ID_FRONT) {
-        *w = m_curCameraInfo[m_camera_default]->ispW;
-        *h = m_curCameraInfo[m_camera_default]->ispH;
+    if (m_cameraMode == CAMERA_MODE_BACK) {
+        *w = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispW;
+        *h = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispH;
+    } else if (m_cameraMode == CAMERA_MODE_FRONT) {
+        *w = m_curCameraInfo[m_cameraMode]->ispW;
+        *h = m_curCameraInfo[m_cameraMode]->ispH;
     }
     return true;
 }
 
 int ExynosCamera::getPictureFormat(void)
 {
-    return m_curCameraInfo[m_camera_default]->pictureColorFormat;
+    return m_curCameraInfo[m_cameraMode]->pictureColorFormat;
 }
 
 bool ExynosCamera::getPictureSize(int *w, int *h)
 {
-    *w = m_curCameraInfo[m_camera_default]->pictureW;
-    *h = m_curCameraInfo[m_camera_default]->pictureH;
+    *w = m_curCameraInfo[m_cameraMode]->pictureW;
+    *h = m_curCameraInfo[m_cameraMode]->pictureH;
     return true;
 }
 
 int ExynosCamera::getPreviewFormat(void)
 {
-    return m_curCameraInfo[m_camera_default]->previewColorFormat;
+    return m_curCameraInfo[m_cameraMode]->previewColorFormat;
 }
 
 bool ExynosCamera::getPreviewFpsRange(int *min, int *max)
 {
-    *min = m_curCameraInfo[m_camera_default]->fpsRange[0];
-    *max = m_curCameraInfo[m_camera_default]->fpsRange[1];
+    *min = m_curCameraInfo[m_cameraMode]->fpsRange[0];
+    *max = m_curCameraInfo[m_cameraMode]->fpsRange[1];
     return true;
 }
 
 bool ExynosCamera::getPreviewSize(int *w, int *h)
 {
-    *w = m_curCameraInfo[m_camera_default]->previewW;
-    *h = m_curCameraInfo[m_camera_default]->previewH;
+    *w = m_curCameraInfo[m_cameraMode]->previewW;
+    *h = m_curCameraInfo[m_cameraMode]->previewH;
     return true;
 }
 
@@ -7304,72 +6709,72 @@ void ExynosCamera::setVdisMode(bool vdisMode)
 #endif
 int ExynosCamera::getSceneMode(void)
 {
-    return m_curCameraInfo[m_camera_default]->sceneMode;
+    return m_curCameraInfo[m_cameraMode]->sceneMode;
 }
 
 int ExynosCamera::getSupportedAntibanding(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->antiBandingList;
+    return m_defaultCameraInfo[m_cameraMode]->antiBandingList;
 }
 
 int ExynosCamera::getSupportedColorEffects(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->effectList;
+    return m_defaultCameraInfo[m_cameraMode]->effectList;
 }
 
 int ExynosCamera::getSupportedFlashModes(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->flashModeList;
+    return m_defaultCameraInfo[m_cameraMode]->flashModeList;
 }
 
 int ExynosCamera::getSupportedFocusModes(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->focusModeList;
+    return m_defaultCameraInfo[m_cameraMode]->focusModeList;
 }
 
 bool ExynosCamera::getSupportedJpegThumbnailSizes(int *w, int *h)
 {
-    *w = m_defaultCameraInfo[m_camera_default]->thumbnailW;
-    *h = m_defaultCameraInfo[m_camera_default]->thumbnailH;
+    *w = m_defaultCameraInfo[m_cameraMode]->thumbnailW;
+    *h = m_defaultCameraInfo[m_cameraMode]->thumbnailH;
     return true;
 }
 
 bool ExynosCamera::getSupportedPictureSizes(int *w, int *h)
 {
-    *w = m_defaultCameraInfo[m_camera_default]->pictureW;
-    *h = m_defaultCameraInfo[m_camera_default]->pictureH;
+    *w = m_defaultCameraInfo[m_cameraMode]->pictureW;
+    *h = m_defaultCameraInfo[m_cameraMode]->pictureH;
     return true;
 }
 
 bool ExynosCamera::getSupportedPreviewFpsRange(int *min, int *max)
 {
-    *min = m_defaultCameraInfo[m_camera_default]->fpsRange[0];
-    *max = m_defaultCameraInfo[m_camera_default]->fpsRange[1];
+    *min = m_defaultCameraInfo[m_cameraMode]->fpsRange[0];
+    *max = m_defaultCameraInfo[m_cameraMode]->fpsRange[1];
     return true;
 }
 
 bool ExynosCamera::getSupportedPreviewSizes(int *w, int *h)
 {
-    *w = m_defaultCameraInfo[m_camera_default]->previewW;
-    *h = m_defaultCameraInfo[m_camera_default]->previewH;
+    *w = m_defaultCameraInfo[m_cameraMode]->previewW;
+    *h = m_defaultCameraInfo[m_cameraMode]->previewH;
     return true;
 }
 
 int ExynosCamera::getSupportedSceneModes(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->sceneModeList;
+    return m_defaultCameraInfo[m_cameraMode]->sceneModeList;
 }
 
 bool ExynosCamera::getSupportedVideoSizes(int *w, int *h)
 {
-    *w = m_defaultCameraInfo[m_camera_default]->videoW;
-    *h = m_defaultCameraInfo[m_camera_default]->videoH;
+    *w = m_defaultCameraInfo[m_cameraMode]->videoW;
+    *h = m_defaultCameraInfo[m_cameraMode]->videoH;
     return true;
 }
 
 int ExynosCamera::getSupportedWhiteBalance(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->whiteBalanceList;
+    return m_defaultCameraInfo[m_cameraMode]->whiteBalanceList;
 }
 
 float ExynosCamera::getVerticalViewAngle(void)
@@ -7380,17 +6785,17 @@ float ExynosCamera::getVerticalViewAngle(void)
 
 bool ExynosCamera::getVideoStabilization(void)
 {
-    return m_curCameraInfo[m_camera_default]->videoStabilization;
+    return m_curCameraInfo[m_cameraMode]->videoStabilization;
 }
 
 int ExynosCamera::getWhiteBalance(void)
 {
-    return m_curCameraInfo[m_camera_default]->whiteBalance;
+    return m_curCameraInfo[m_cameraMode]->whiteBalance;
 }
 
 int ExynosCamera::getZoom(void)
 {
-    return m_curCameraInfo[m_camera_default]->zoom;
+    return m_curCameraInfo[m_cameraMode]->zoom;
 }
 
 int ExynosCamera::getMaxZoomRatio(void)
@@ -7400,17 +6805,17 @@ int ExynosCamera::getMaxZoomRatio(void)
 
 bool ExynosCamera::isAutoExposureLockSupported(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->autoExposureLockSupported;
+    return m_defaultCameraInfo[m_cameraMode]->autoExposureLockSupported;
 }
 
 bool ExynosCamera::isAutoWhiteBalanceLockSupported(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->autoWhiteBalanceLockSupported;
+    return m_defaultCameraInfo[m_cameraMode]->autoWhiteBalanceLockSupported;
 }
 
 bool ExynosCamera::isSmoothZoomSupported(void)
 {
-    if (m_defaultCameraInfo[m_camera_default]->hwZoomSupported == true)
+    if (m_defaultCameraInfo[m_cameraMode]->hwZoomSupported == true)
         return true;
     else
         return false;
@@ -7423,7 +6828,7 @@ bool ExynosCamera::isVideoSnapshotSupported(void)
 
 bool ExynosCamera::isVideoStabilizationSupported(void)
 {
-    return m_defaultCameraInfo[m_camera_default]->supportVideoStabilization;
+    return m_defaultCameraInfo[m_cameraMode]->supportVideoStabilization;
 }
 
 bool ExynosCamera::isZoomSupported(void)
@@ -7437,14 +6842,13 @@ bool ExynosCamera::setAntibanding(int value)
 
     switch (value) {
     case ANTIBANDING_AUTO:
-        mode = AA_AE_ANTIBANDING_AUTO_50HZ;  // for china.
-         //mode = AA_AE_ANTIBANDING_AUTO_60HZ; // for korea.
-       break;
+        mode = AA_AE_ANTIBANDING_AUTO;
+        break;
     case ANTIBANDING_50HZ:
-        mode = AA_AE_ANTIBANDING_50HZ;
+        mode = AA_AE_ANTIBANDING_AUTO_50HZ;
         break;
     case ANTIBANDING_60HZ:
-        mode = AA_AE_ANTIBANDING_60HZ;
+        mode = AA_AE_ANTIBANDING_AUTO_60HZ;
         break;
     case ANTIBANDING_OFF:
         mode = AA_AE_ANTIBANDING_OFF;
@@ -7455,10 +6859,10 @@ bool ExynosCamera::setAntibanding(int value)
         break;
     }
 
-    m_curCameraInfo[SENSOR_BACK]->antiBanding = value;
-    m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeAntibandingMode = mode;
-    m_curCameraInfo[SENSOR_FRONT]->antiBanding = value;
-    m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeAntibandingMode = mode;
+    m_curCameraInfo[CAMERA_MODE_BACK]->antiBanding = value;
+    m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeAntibandingMode = mode;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->antiBanding = value;
+    m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeAntibandingMode = mode;
 
     return true;
 }
@@ -7468,10 +6872,10 @@ bool ExynosCamera::setAutoExposureLock(bool toggle)
     enum aa_aemode aeMode;
     int preMetering;
 
-    aeMode = m_camera_info[m_camera_default].dummy_shot.shot.ctl.aa.aeMode;
-    preMetering = m_curCameraInfo[m_camera_default]->metering;
+    aeMode = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.aa.aeMode;
+    preMetering = m_curCameraInfo[m_cameraMode]->metering;
 
-    if (m_curCameraInfo[m_camera_default]->autoExposureLock == toggle)
+    if (m_curCameraInfo[m_cameraMode]->autoExposureLock == toggle)
         return true;
 
     if (toggle == true)
@@ -7497,10 +6901,10 @@ bool ExynosCamera::setAutoExposureLock(bool toggle)
         }
     }
 
-    m_curCameraInfo[SENSOR_BACK]->autoExposureLock = toggle;
-    m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode = aeMode;
-    m_curCameraInfo[SENSOR_FRONT]->autoExposureLock = toggle;
-    m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode = aeMode;
+    m_curCameraInfo[CAMERA_MODE_BACK]->autoExposureLock = toggle;
+    m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode = aeMode;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->autoExposureLock = toggle;
+    m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode = aeMode;
 
     return true;
 }
@@ -7509,22 +6913,22 @@ bool ExynosCamera::setAutoWhiteBalanceLock(bool toggle)
 {
     enum aa_awbmode awbMode;
 
-    if (m_curCameraInfo[m_camera_default]->autoWhiteBalanceLock == toggle)
+    if (m_curCameraInfo[m_cameraMode]->autoWhiteBalanceLock == toggle)
         return true;
 
     if (toggle == true) {
         awbMode = AA_AWBMODE_LOCKED;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.awbMode = awbMode;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.awbMode = awbMode;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.awbMode = awbMode;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.awbMode = awbMode;
     } else {
-        if (this->setWhiteBalance(m_curCameraInfo[m_camera_default]->whiteBalance) == false) {
-            CLOGE("ERR(%s):setWhiteBalance(%d) fail", __func__, m_curCameraInfo[SENSOR_BACK]->whiteBalance);
+        if (this->setWhiteBalance(m_curCameraInfo[m_cameraMode]->whiteBalance) == false) {
+            CLOGE("ERR(%s):setWhiteBalance(%d) fail", __func__, m_curCameraInfo[CAMERA_MODE_BACK]->whiteBalance);
             return false;
         }
     }
 
-    m_curCameraInfo[SENSOR_BACK]->autoWhiteBalanceLock = toggle;
-    m_curCameraInfo[SENSOR_FRONT]->autoWhiteBalanceLock = toggle;
+    m_curCameraInfo[CAMERA_MODE_BACK]->autoWhiteBalanceLock = toggle;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->autoWhiteBalanceLock = toggle;
 
     return true;
 }
@@ -7577,23 +6981,23 @@ bool ExynosCamera::setColorEffect(int value)
         break;
     }
 
-    m_curCameraInfo[SENSOR_BACK]->effect = value;
-    m_curCameraInfo[SENSOR_FRONT]->effect = value;
+    m_curCameraInfo[CAMERA_MODE_BACK]->effect = value;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->effect = value;
 
-    m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.mode = mode;
-    m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.mode = mode;
+    m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.mode = mode;
+    m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.mode = mode;
 
     return true;
 }
 
 bool ExynosCamera::setExposureCompensation(int value)
 {
-    m_curCameraInfo[m_camera_default]->exposure = value;
-    m_curCameraInfo[SENSOR_FRONT]->exposure = value;
+    m_curCameraInfo[m_cameraMode]->exposure = value;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->exposure = value;
 
     /* F/W's middle value is 5, and step is -4, -3, -2, -1, 0, 1, 2, 3, 4 */
-    m_camera_info[m_camera_default].dummy_shot.shot.ctl.aa.aeExpCompensation = 5 + value;
-    m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeExpCompensation = 5 + value;
+    m_camera_info[m_cameraMode].dummy_shot.shot.ctl.aa.aeExpCompensation = 5 + value;
+    m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeExpCompensation = 5 + value;
 
     return true;
 }
@@ -7604,7 +7008,7 @@ bool ExynosCamera::setFlashMode(int value)
     enum aa_ae_flashmode aeflashMode;
     enum aa_aemode aeMode;
     int flashPreMode;
-    aeMode = m_camera_info[m_camera_default].dummy_shot.shot.ctl.aa.aeMode;
+    aeMode = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.aa.aeMode;
 
     switch (value) {
     case FLASH_MODE_OFF:
@@ -7642,25 +7046,25 @@ bool ExynosCamera::setFlashMode(int value)
         break;
     }
 
-    if (m_curCameraInfo[m_camera_default]->autoExposureLock == true)
+    if (m_curCameraInfo[m_cameraMode]->autoExposureLock == true)
         aeMode = ::AA_AEMODE_LOCKED;
 
-    flashPreMode = m_curCameraInfo[m_camera_default]->flashPreMode;
+    flashPreMode = m_curCameraInfo[m_cameraMode]->flashPreMode;
     if (flashPreMode != value) {
         if (flashPreMode != FLASH_MODE_TORCH && m_flashMgr->getFlashStatus() != AA_FLASHMODE_OFF) {
             m_flashMgr->setFlashStep(ExynosCameraActivityFlash::FLASH_STEP_CANCEL);
             m_flashMgr->setFlashTrigerPath(ExynosCameraActivityFlash::FLASH_TRIGGER_OFF);
         }
-        m_curCameraInfo[m_camera_default]->flashMode = value;
+        m_curCameraInfo[m_cameraMode]->flashMode = value;
     }
-    m_curCameraInfo[m_camera_default]->flashPreMode = value;
+    m_curCameraInfo[m_cameraMode]->flashPreMode = value;
 
     return true;
 }
 
 bool ExynosCamera::setFocusAreas(int num, ExynosRect* rects, int *weights)
 {
-    if (m_defaultCameraInfo[m_camera_default]->maxNumFocusAreas == 0) {
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumFocusAreas == 0) {
         CLOGV("DEBUG(%s):maxNumFocusAreas is 0. so, ignored", __func__);
         return true;
     }
@@ -7680,16 +7084,16 @@ bool ExynosCamera::setFocusAreas(int num, ExynosRect* rects, int *weights)
 
 bool ExynosCamera::setFocusAreas(int num, ExynosRect2* rect2s, int *weights)
 {
-    if (m_defaultCameraInfo[m_camera_default]->maxNumFocusAreas == 0) {
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumFocusAreas == 0) {
         CLOGV("DEBUG(%s):maxNumFocusAreas is 0. so, ignored", __func__);
         return true;
     }
 
     int number = num;
-    struct camera2_shot *shot = &m_camera_info[m_camera_default].dummy_shot.shot;
+    struct camera2_shot *shot = &m_camera_info[m_cameraMode].dummy_shot.shot;
 
-    if (m_defaultCameraInfo[m_camera_default]->maxNumFocusAreas < num)
-        num = m_defaultCameraInfo[m_camera_default]->maxNumFocusAreas;
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumFocusAreas < num)
+        num = m_defaultCameraInfo[m_cameraMode]->maxNumFocusAreas;
 
     if (m_flagCreate == true) {
         if ((num == 0) ||
@@ -7712,8 +7116,8 @@ bool ExynosCamera::setFocusAreas(int num, ExynosRect2* rect2s, int *weights)
             /* for (int i = 0; i < num; i++) { */
                 /*
                 newRect2 = m_AndroidArea2HWArea(&rect2s[i],
-                                                m_curCameraInfo[m_camera_default]->pictureW,
-                                                m_curCameraInfo[m_camera_default]->pictureH);
+                                                m_curCameraInfo[m_cameraMode]->pictureW,
+                                                m_curCameraInfo[m_cameraMode]->pictureH);
                 */
                 newRect2 = m_AndroidArea2HWArea(&rect2s[i]);
 
@@ -7751,7 +7155,7 @@ bool ExynosCamera::setFocusMode(int value)
     int newMgrAutofocusMode = 0;
     int oldMgrAutofocusMode = m_autofocusMgr->getAutofocusMode();
 
-    CLOGD("[%s] (%d) value : %d / oldMgrAutofocusMode : %d", __func__, __LINE__, value, oldMgrAutofocusMode);
+    CLOGD("DEBUG(%s):(%d) value : %d / oldMgrAutofocusMode : %d", __func__, __LINE__, value, oldMgrAutofocusMode);
 
     switch (value) {
     case FOCUS_MODE_INFINITY:
@@ -7777,7 +7181,7 @@ bool ExynosCamera::setFocusMode(int value)
     }
 
     if (oldMgrAutofocusMode != newMgrAutofocusMode) {
-        if(m_autofocusMgr->flagLockAutofocus() == true)
+        if (m_autofocusMgr->flagLockAutofocus() == true)
             m_autofocusMgr->unlockAutofocus();
     }
 
@@ -7794,6 +7198,8 @@ bool ExynosCamera::setFocusMode(int value)
             if (m_autofocusMgr->flagAutofocusStart() == false &&
                 m_autofocusMgr->flagLockAutofocus() == false)
                 flagRestartAutofocus = true;
+            else
+                flagRestartAutofocus = false;
         } else {
             flagRestartAutofocus = true;
         }
@@ -7802,7 +7208,8 @@ bool ExynosCamera::setFocusMode(int value)
             m_autofocusMgr->flagAutofocusStart() == true)
             m_autofocusMgr->stopAutofocus();
 
-        m_autofocusMgr->setAutofocusMode(newMgrAutofocusMode);
+        if (oldMgrAutofocusMode != newMgrAutofocusMode)
+            m_autofocusMgr->setAutofocusMode(newMgrAutofocusMode);
 
         if (flagRestartAutofocus == true)
             m_autofocusMgr->startAutofocus();
@@ -7824,7 +7231,7 @@ bool ExynosCamera::setFocusMode(int value)
         }
     }
 
-    m_curCameraInfo[m_camera_default]->focusMode = value;
+    m_curCameraInfo[m_cameraMode]->focusMode = value;
 
     return true;
 }
@@ -7834,10 +7241,10 @@ bool ExynosCamera::setGpsAltitude(const char *gpsAltitude)
     double conveted_altitude = 0;
 
     if (gpsAltitude == NULL)
-        m_curCameraInfo[m_camera_default]->gpsAltitude = 0;
+        m_curCameraInfo[m_cameraMode]->gpsAltitude = 0;
     else {
         conveted_altitude = atof(gpsAltitude);
-        m_curCameraInfo[m_camera_default]->gpsAltitude = conveted_altitude;
+        m_curCameraInfo[m_cameraMode]->gpsAltitude = conveted_altitude;
     }
 
     return true;
@@ -7848,10 +7255,10 @@ bool ExynosCamera::setGpsLatitude(const char *gpsLatitude)
     double conveted_latitude = 0;
 
     if (gpsLatitude == NULL)
-        m_curCameraInfo[m_camera_default]->gpsLatitude = 0;
+        m_curCameraInfo[m_cameraMode]->gpsLatitude = 0;
     else {
         conveted_latitude = atof(gpsLatitude);
-        m_curCameraInfo[m_camera_default]->gpsLatitude = conveted_latitude;
+        m_curCameraInfo[m_cameraMode]->gpsLatitude = conveted_latitude;
     }
 
     return true;
@@ -7862,10 +7269,10 @@ bool ExynosCamera::setGpsLongitude(const char *gpsLongitude)
     double conveted_longitude = 0;
 
     if (gpsLongitude == NULL)
-        m_curCameraInfo[m_camera_default]->gpsLongitude = 0;
+        m_curCameraInfo[m_cameraMode]->gpsLongitude = 0;
     else {
         conveted_longitude = atof(gpsLongitude);
-        m_curCameraInfo[m_camera_default]->gpsLongitude = conveted_longitude;
+        m_curCameraInfo[m_cameraMode]->gpsLongitude = conveted_longitude;
     }
 
     return true;
@@ -7889,9 +7296,9 @@ bool ExynosCamera::setGpsProcessingMethod(const char *gpsProcessingMethod)
 bool ExynosCamera::setGpsTimeStamp(const char *gpsTimestamp)
 {
     if (gpsTimestamp == NULL)
-        m_curCameraInfo[m_camera_default]->gpsTimestamp = 0;
+        m_curCameraInfo[m_cameraMode]->gpsTimestamp = 0;
     else
-        m_curCameraInfo[m_camera_default]->gpsTimestamp = atol(gpsTimestamp);
+        m_curCameraInfo[m_cameraMode]->gpsTimestamp = atol(gpsTimestamp);
 
     return true;
 }
@@ -7922,14 +7329,14 @@ bool ExynosCamera::setJpegThumbnailQuality(int quality)
 
 bool ExynosCamera::setJpegThumbnailSize(int w, int h)
 {
-    m_curCameraInfo[m_camera_default]->thumbnailW = w;
-    m_curCameraInfo[m_camera_default]->thumbnailH = h;
+    m_curCameraInfo[m_cameraMode]->thumbnailW = w;
+    m_curCameraInfo[m_cameraMode]->thumbnailH = h;
     return true;
 }
 
 bool ExynosCamera::cancelMeteringAreas()
 {
-    if (m_curCameraInfo[m_camera_default]->metering == METERING_MODE_SPOT) {
+    if (m_curCameraInfo[m_cameraMode]->metering == METERING_MODE_SPOT) {
         if (setMeteringMode(m_oldMeteringMode) == false) {
             CLOGE("ERR(%s):setMeteringMode(%d) fail", __func__, m_oldMeteringMode);
             return false;
@@ -7941,7 +7348,7 @@ bool ExynosCamera::cancelMeteringAreas()
 
 bool ExynosCamera::setMeteringAreas(int num, ExynosRect *rects, int *weights)
 {
-    if (m_defaultCameraInfo[m_camera_default]->maxNumMeteringAreas == 0) {
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumMeteringAreas == 0) {
         CLOGV("DEBUG(%s):maxNumMeteringAreas is 0. so, ignored", __func__);
         return true;
     }
@@ -7962,21 +7369,21 @@ bool ExynosCamera::setMeteringAreas(int num, ExynosRect *rects, int *weights)
 
 bool ExynosCamera::setMeteringAreas(int num, ExynosRect2 *rect2s, int *weights)
 {
-    if (m_defaultCameraInfo[m_camera_default]->maxNumMeteringAreas == 0) {
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumMeteringAreas == 0) {
         CLOGV("DEBUG(%s):maxNumMeteringAreas is 0. so, ignored", __func__);
         return true;
     }
 
-    if (m_curCameraInfo[m_camera_default]->autoExposureLock == true) {
+    if (m_curCameraInfo[m_cameraMode]->autoExposureLock == true) {
         CLOGD("DEBUG(%s):autoExposureLock == true", __func__);
         return true;
     }
 
-    if (m_defaultCameraInfo[m_camera_default]->maxNumMeteringAreas < num)
-        num = m_defaultCameraInfo[m_camera_default]->maxNumMeteringAreas;
+    if (m_defaultCameraInfo[m_cameraMode]->maxNumMeteringAreas < num)
+        num = m_defaultCameraInfo[m_cameraMode]->maxNumMeteringAreas;
 
     if (m_flagCreate == true) {
-        struct camera2_shot *shot = &m_camera_info[SENSOR_BACK].dummy_shot.shot;
+        struct camera2_shot *shot = &m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot;
 
         if (    num == 1
             && rect2s[0].x1 == 0
@@ -8000,8 +7407,8 @@ bool ExynosCamera::setMeteringAreas(int num, ExynosRect2 *rect2s, int *weights)
             /* for (int i = 0; i < num; i++) { */
                 /*
                 newRect2 = m_AndroidArea2HWArea(&rect2s[i],
-                                                m_curCameraInfo[m_camera_default]->pictureW,
-                                                m_curCameraInfo[m_camera_default]->pictureH);
+                                                m_curCameraInfo[m_cameraMode]->pictureW,
+                                                m_curCameraInfo[m_cameraMode]->pictureH);
                 */
                 newRect2 = m_AndroidArea2HWArea(&rect2s[i]);
 
@@ -8020,10 +7427,10 @@ bool ExynosCamera::setMeteringAreas(int num, ExynosRect2 *rect2s, int *weights)
 
 bool ExynosCamera::setPictureFormat(int colorFormat)
 {
-    m_curCameraInfo[m_camera_default]->pictureColorFormat = colorFormat;
+    m_curCameraInfo[m_cameraMode]->pictureColorFormat = colorFormat;
 
 #if defined(CLOG_NDEBUG) && CLOG_NDEBUG == 0
-    m_printFormat(m_curCameraInfo[m_camera_default]->pictureColorFormat, "PictureFormat");
+    m_printFormat(m_curCameraInfo[m_cameraMode]->pictureColorFormat, "PictureFormat");
 #endif
     return true;
 }
@@ -8033,19 +7440,19 @@ bool ExynosCamera::setPictureSize(int w, int h)
     int pictureW, pictureH;
     int newX, newY, newW, newH;
 
-    if (m_curCameraInfo[m_camera_default]->fpsRange[0] <= 30000 &&
-        m_curCameraInfo[m_camera_default]->fpsRange[1] <= 30000) {
+    if (m_curCameraInfo[m_cameraMode]->fpsRange[0] <= 30000 &&
+        m_curCameraInfo[m_cameraMode]->fpsRange[1] <= 30000) {
         // HACK : Camera cannot support zoom. So, we must make max size picture w, h
-        pictureW = m_defaultCameraInfo[m_camera_default]->pictureW;
-        pictureH = m_defaultCameraInfo[m_camera_default]->pictureH;
+        pictureW = m_defaultCameraInfo[m_cameraMode]->pictureW;
+        pictureH = m_defaultCameraInfo[m_cameraMode]->pictureH;
 
         /* sensor full size */
-        m_curCameraInfo[m_camera_default]->pictureW = pictureW;
-        m_curCameraInfo[m_camera_default]->pictureH = pictureH;
-        m_curCameraInfo[SENSOR_FAKE]->pictureW = pictureW;
-        m_curCameraInfo[SENSOR_FAKE]->pictureH = pictureH;
-        m_curCameraInfo[SENSOR_FAKE]->ispW = pictureW;
-        m_curCameraInfo[SENSOR_FAKE]->ispH = pictureH;
+        m_curCameraInfo[m_cameraMode]->pictureW = pictureW;
+        m_curCameraInfo[m_cameraMode]->pictureH = pictureH;
+        m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureW = pictureW;
+        m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureH = pictureH;
+        m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispW = pictureW;
+        m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispH = pictureH;
     }
 
     return true;
@@ -8053,7 +7460,7 @@ bool ExynosCamera::setPictureSize(int w, int h)
 
 bool ExynosCamera::setPreviewFormat(int colorFormat)
 {
-    m_curCameraInfo[m_camera_default]->previewColorFormat = colorFormat;
+    m_curCameraInfo[m_cameraMode]->previewColorFormat = colorFormat;
 
     /* TODO: Impl all format */
     switch (colorFormat) {
@@ -8063,21 +7470,21 @@ bool ExynosCamera::setPreviewFormat(int colorFormat)
     case V4L2_PIX_FMT_NV12M :
     case V4L2_PIX_FMT_NV21M :
     case V4L2_PIX_FMT_NV12MT_16X16 :
-        m_curCameraInfo[m_camera_default]->previewBufPlane = 3;
+        m_curCameraInfo[m_cameraMode]->previewBufPlane = 3;
         break;
     case V4L2_PIX_FMT_YUV420 :
     case V4L2_PIX_FMT_YVU420 :
     case V4L2_PIX_FMT_YUV420M :
     case V4L2_PIX_FMT_YVU420M :
-        m_curCameraInfo[m_camera_default]->previewBufPlane = 4;
+        m_curCameraInfo[m_cameraMode]->previewBufPlane = 4;
         break;
     default:
-        CLOGE("ERR(%s): Unknown color format(%x)", __FUNCTION__, colorFormat);
+        CLOGE("ERR(%s):Unknown color format(%x)", __func__, colorFormat);
         break;
     }
 
 #if defined(CLOG_NDEBUG) && CLOG_NDEBUG == 0
-    m_printFormat(m_curCameraInfo[m_camera_default]->previewColorFormat, "PreviewtFormat");
+    m_printFormat(m_curCameraInfo[m_cameraMode]->previewColorFormat, "PreviewtFormat");
 #endif
 
     return true;
@@ -8085,8 +7492,15 @@ bool ExynosCamera::setPreviewFormat(int colorFormat)
 
 bool ExynosCamera::setPreviewFpsRange(int min, int max)
 {
-    int minFps = (min == 0) ? 0 : (min / 1000);
-    int maxFps = (max == 0) ? 0 : (max / 1000);
+    int minFps = 0;
+    int maxFps = 0;
+
+    if (min == 0 || max == 0) {
+        CLOGE("ERR(%s):Invalid fps value(%d, %d)", __func__, min, max);
+        return false;
+    }
+    minFps = min / 1000;
+    maxFps = max / 1000;
 
     if (minFps < FRAME_RATE_AUTO || FRAME_RATE_MAX < maxFps)
         CLOGE("ERR(%s):Invalid fps range(%d, %d)", __func__, min, max);
@@ -8095,16 +7509,16 @@ bool ExynosCamera::setPreviewFpsRange(int min, int max)
         CLOGE("ERR(%s):Invalid fps range(%d, %d)", __func__, min, max);
 
     if (m_flagCreate == true) {
-        m_curCameraInfo[m_camera_default]->fpsRange[0] = min;
-        m_curCameraInfo[m_camera_default]->fpsRange[1] = max;
+        m_curCameraInfo[m_cameraMode]->fpsRange[0] = min;
+        m_curCameraInfo[m_cameraMode]->fpsRange[1] = max;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = minFps;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = maxFps;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / maxFps;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = minFps;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = maxFps;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / maxFps;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = minFps;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = maxFps;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / maxFps;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = minFps;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = maxFps;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / maxFps;
     }
 
     return true;
@@ -8115,11 +7529,11 @@ bool ExynosCamera::setPreviewSize(int w, int h)
     int ispW, ispH;
     int newX = 0, newY = 0, newW = 0, newH = 0;
 
-    m_curCameraInfo[m_camera_default]->previewW = w;
-    m_curCameraInfo[m_camera_default]->previewH = h;
+    m_curCameraInfo[m_cameraMode]->previewW = w;
+    m_curCameraInfo[m_cameraMode]->previewH = h;
 
-    ispW = m_defaultCameraInfo[m_camera_default]->ispW;
-    ispH = m_defaultCameraInfo[m_camera_default]->ispH;
+    ispW = m_defaultCameraInfo[m_cameraMode]->ispW;
+    ispH = m_defaultCameraInfo[m_cameraMode]->ispH;
 
     if (getCropRectAlign(ispW,  ispH,
                          w,     h,
@@ -8133,8 +7547,8 @@ bool ExynosCamera::setPreviewSize(int w, int h)
     }
 
     /* BDS out size for preview instance */
-    m_curCameraInfo[m_camera_default]->ispW = newW;
-    m_curCameraInfo[m_camera_default]->ispH = newH;
+    m_curCameraInfo[m_cameraMode]->ispW = newW;
+    m_curCameraInfo[m_cameraMode]->ispH = newH;
 
     return true;
 }
@@ -8185,7 +7599,7 @@ bool ExynosCamera::setDeviceOrientation(int orientation)
 
     CLOGD("(%s): orientation(%d), fdOrientation(%d)", __func__, orientation, fdOrientation);
 
-    m_camera_info[m_camera_default].dummy_shot.shot.uctl.scalerUd.orientation = fdOrientation;
+    m_camera_info[m_cameraMode].dummy_shot.shot.uctl.scalerUd.orientation = fdOrientation;
 
     return true;
 }
@@ -8202,14 +7616,14 @@ bool ExynosCamera::setRotation(int rotation)
          CLOGE("ERR(%s):Invalid rotation (%d)", __func__, rotation);
          return false;
      }
-     m_curCameraInfo[m_camera_default]->rotation = rotation;
+     m_curCameraInfo[m_cameraMode]->rotation = rotation;
 
      return true;
 }
 
 int ExynosCamera::getRotation(void)
 {
-    return m_curCameraInfo[m_camera_default]->rotation;
+    return m_curCameraInfo[m_cameraMode]->rotation;
 }
 
 bool ExynosCamera::setSceneMode(int value)
@@ -8222,31 +7636,31 @@ bool ExynosCamera::setSceneMode(int value)
         mode = AA_CONTROL_AUTO;
         sceneMode = AA_SCENE_MODE_FACE_PRIORITY;
 
-        if (m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.sceneMode = AA_SCENE_MODE_UNSUPPORTED;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoValue = 0;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_OFF;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_OFF;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.sceneMode = AA_SCENE_MODE_UNSUPPORTED;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoValue = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_OFF;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_OFF;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default.
+        /* m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default. */
 
-        if (m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.sceneMode = AA_SCENE_MODE_UNSUPPORTED;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoValue = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_OFF;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_OFF;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.sceneMode = AA_SCENE_MODE_UNSUPPORTED;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoValue = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_OFF;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_OFF;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default.
+        /* m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default. */
 
         break;
     case SCENE_MODE_PORTRAIT:
@@ -8261,49 +7675,49 @@ bool ExynosCamera::setSceneMode(int value)
         mode = AA_CONTROL_USE_SCENE_MODE;
         sceneMode = AA_SCENE_MODE_NIGHT;
         /* AE_LOCK is prohibited */
-        if (m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF
-         || m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_LOCKED)
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF
+         || m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_LOCKED)
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoValue = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoValue = 0;
 
-        if (30000 < m_curCameraInfo[m_camera_default]->fpsRange[1]) {
-            int fps = m_curCameraInfo[m_camera_default]->fpsRange[1] / 1000;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = fps / 4;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = fps;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / fps;
+        if (30000 < m_curCameraInfo[m_cameraMode]->fpsRange[1]) {
+            int fps = m_curCameraInfo[m_cameraMode]->fpsRange[1] / 1000;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = fps / 4;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = fps;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / fps;
         } else {
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 8;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 8;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
         }
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default.
+        /* m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default. */
 
         /* AE_LOCK is prohibited */
-        if (m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF
-         || m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_LOCKED)
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoValue = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 8;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
+        if (m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF
+         || m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_LOCKED)
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoValue = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 8;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default.
+        /* m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default. */
 
         /* TODO: FLASH */
         /* TODO: METERING */
@@ -8320,47 +7734,47 @@ bool ExynosCamera::setSceneMode(int value)
         mode = AA_CONTROL_USE_SCENE_MODE;
         sceneMode = AA_SCENE_MODE_SUNSET;
 
-        if (m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_DAYLIGHT;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoValue = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_DAYLIGHT;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoValue = 0;
 
-        if (30000 < m_curCameraInfo[m_camera_default]->fpsRange[1]) {
-            int fps = m_curCameraInfo[m_camera_default]->fpsRange[1] / 1000;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = fps / 2;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = fps;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / fps;
+        if (30000 < m_curCameraInfo[m_cameraMode]->fpsRange[1]) {
+            int fps = m_curCameraInfo[m_cameraMode]->fpsRange[1] / 1000;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = fps / 2;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = fps;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / fps;
         } else {
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 15;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 15;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
         }
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default.
+        /* m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default. */
 
-        if (m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_DAYLIGHT;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoValue = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 15;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_DAYLIGHT;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoValue = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 15;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default.
+        /* m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default. */
 
         /* TODO: FLASH */
         /* TODO: METERING */
@@ -8377,47 +7791,47 @@ bool ExynosCamera::setSceneMode(int value)
         mode = AA_CONTROL_USE_SCENE_MODE;
         sceneMode = AA_SCENE_MODE_PARTY;
 
-        if (m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_MANUAL;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoValue = 200;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_MANUAL;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoValue = 200;
 
-        if (30000 < m_curCameraInfo[m_camera_default]->fpsRange[1]) {
-            int fps = m_curCameraInfo[m_camera_default]->fpsRange[1] / 1000;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = fps / 2;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = fps;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / fps;
+        if (30000 < m_curCameraInfo[m_cameraMode]->fpsRange[1]) {
+            int fps = m_curCameraInfo[m_cameraMode]->fpsRange[1] / 1000;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = fps / 2;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = fps;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / fps;
         } else {
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 15;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 15;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
         }
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.saturation = 4; // "4" is default + 1.
+        /* m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.saturation = 4; // "4" is default + 1. */
 
-        if (m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_MANUAL;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoValue = 200;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 15;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_MANUAL;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoValue = 200;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 15;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.saturation = 4; // "4" is default + 1.
+        /* m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.saturation = 4; // "4" is default + 1. */
 
         /* TODO: FLASH */
         /* TODO: METERING */
@@ -8434,47 +7848,47 @@ bool ExynosCamera::setSceneMode(int value)
         mode = AA_CONTROL_USE_SCENE_MODE;
         sceneMode = AA_SCENE_MODE_ACTION;
 
-        if (m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.isoValue = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.isoValue = 0;
 
-        if (30000 < m_curCameraInfo[m_camera_default]->fpsRange[1]) {
-            int fps = m_curCameraInfo[m_camera_default]->fpsRange[1] / 1000;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = fps;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = fps;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / fps;
+        if (30000 < m_curCameraInfo[m_cameraMode]->fpsRange[1]) {
+            int fps = m_curCameraInfo[m_cameraMode]->fpsRange[1] / 1000;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = fps;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = fps;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / fps;
         } else {
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 30;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
         }
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default.
+        /* m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default. */
 
-        if (m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
+        if (m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode == AA_AEMODE_OFF)
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeMode = AA_AEMODE_CENTER;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.isoValue = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 30;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.awbMode = AA_AWBMODE_WB_AUTO;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoMode = AA_ISOMODE_AUTO;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.isoValue = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] = 30;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] = 30;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.sensor.frameDuration = (1000 * 1000 * 1000) / 30;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.noise.strength = 0;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_FAST;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.strength = 0;
 
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default.
+        /* m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.saturation = 3; // "3" is default. */
 
         /* TODO: FLASH */
         /* TODO: METERING */
@@ -8493,24 +7907,24 @@ bool ExynosCamera::setSceneMode(int value)
         break;
     }
 
-    m_curCameraInfo[SENSOR_BACK]->sceneMode = value;
-    m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.mode = mode;
-    m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.sceneMode = sceneMode;
+    m_curCameraInfo[CAMERA_MODE_BACK]->sceneMode = value;
+    m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.mode = mode;
+    m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.sceneMode = sceneMode;
 
     /* adjust fpsRange from the aa target range */
-    m_curCameraInfo[SENSOR_BACK]->fpsRange[0]
-        = m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] * 1000;
-    m_curCameraInfo[SENSOR_BACK]->fpsRange[1]
-        = m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] * 1000;
+    m_curCameraInfo[CAMERA_MODE_BACK]->fpsRange[0]
+        = m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] * 1000;
+    m_curCameraInfo[CAMERA_MODE_BACK]->fpsRange[1]
+        = m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] * 1000;
 
-    m_curCameraInfo[SENSOR_FRONT]->sceneMode = value;
-    m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.mode = mode;
-    m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.sceneMode = sceneMode;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->sceneMode = value;
+    m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.mode = mode;
+    m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.sceneMode = sceneMode;
 
-    m_curCameraInfo[SENSOR_FRONT]->fpsRange[0]
-        = m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] * 1000;
-    m_curCameraInfo[SENSOR_FRONT]->fpsRange[1]
-        = m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] * 1000;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->fpsRange[0]
+        = m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[0] * 1000;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->fpsRange[1]
+        = m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1] * 1000;
 
     return true;
 }
@@ -8519,82 +7933,82 @@ bool ExynosCamera::startVdisCapture()
 {
     int sensorId;
 
-    if (m_camera_info[m_camera_default].vdisc.flagStart == false) {
+    if (m_camera_info[m_cameraMode].vdisc.flagStart == false) {
         CLOGE("startVdisCapture:: w(%d) h(%d)", m_VDisSrcW, m_VDisSrcH);
 
-        m_camera_info[m_camera_default].vdisc.width  = m_VDisSrcW;
-        m_camera_info[m_camera_default].vdisc.height = m_VDisSrcH;
-        m_camera_info[m_camera_default].vdisc.format = V4L2_PIX_FMT_YUYV;
-        m_camera_info[m_camera_default].vdisc.planes = 2;
-        m_camera_info[m_camera_default].vdisc.memory = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[m_camera_default].vdisc.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[m_camera_default].vdisc.ionClient = m_ionCameraClient;
-        m_camera_info[m_camera_default].vdisc.buffers = m_VDisSrcBufNum;
+        m_camera_info[m_cameraMode].vdisc.width  = m_VDisSrcW;
+        m_camera_info[m_cameraMode].vdisc.height = m_VDisSrcH;
+        m_camera_info[m_cameraMode].vdisc.format = V4L2_PIX_FMT_YUYV;
+        m_camera_info[m_cameraMode].vdisc.planes = 2;
+        m_camera_info[m_cameraMode].vdisc.memory = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[m_cameraMode].vdisc.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[m_cameraMode].vdisc.ionClient = m_ionCameraClient;
+        m_camera_info[m_cameraMode].vdisc.buffers = m_VDisSrcBufNum;
 
         for (int i = 0; i < m_VDisSrcBufNum; i++) {
             if (m_isHWVDis == true) {
-                m_camera_info[m_camera_default].vdisc.buffer[i].size.extS[0] = ALIGN(m_camera_info[m_camera_default].vdisc.width*
-                    m_camera_info[m_camera_default].vdisc.height*2, PAGE_SIZE);
+                m_camera_info[m_cameraMode].vdisc.buffer[i].size.extS[0] = ALIGN(m_camera_info[m_cameraMode].vdisc.width *
+                    m_camera_info[m_cameraMode].vdisc.height * 2, PAGE_SIZE);
 
                 if (allocMemSinglePlane(m_ionCameraClient,
-                    &m_camera_info[m_camera_default].vdisc.buffer[i], 0, false) == false) {
+                    &m_camera_info[m_cameraMode].vdisc.buffer[i], 0, false) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingleCache() fail", __func__);
                     return false;
                 }
 
-                m_camera_info[m_camera_default].vdisc.buffer[i].size.extS[1]
+                m_camera_info[m_cameraMode].vdisc.buffer[i].size.extS[1]
                     = ALIGN(META_DATA_SIZE, PAGE_SIZE);
 
                 if (allocMemSinglePlane(m_ionCameraClient,
-                    &m_camera_info[m_camera_default].vdisc.buffer[i], 1, true) == false) {
+                    &m_camera_info[m_cameraMode].vdisc.buffer[i], 1, true) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingleCache() fail", __func__);
                     return false;
                 }
             } else {
-                m_camera_info[m_camera_default].vdisc.buffer[i].size.extS[0] = ALIGN(m_camera_info[m_camera_default].vdisc.width*
-                    m_camera_info[m_camera_default].vdisc.height*2, PAGE_SIZE);
+                m_camera_info[m_cameraMode].vdisc.buffer[i].size.extS[0] = ALIGN(m_camera_info[m_cameraMode].vdisc.width *
+                    m_camera_info[m_cameraMode].vdisc.height * 2, PAGE_SIZE);
 
                 if (allocMemSinglePlaneCache(m_ionCameraClient,
-                    &m_camera_info[m_camera_default].vdisc.buffer[i], 0, true) == false) {
+                    &m_camera_info[m_cameraMode].vdisc.buffer[i], 0, true) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingleCache() fail", __func__);
                     return false;
                 }
 
-                m_camera_info[m_camera_default].vdisc.buffer[i].size.extS[1]
+                m_camera_info[m_cameraMode].vdisc.buffer[i].size.extS[1]
                     = ALIGN(META_DATA_SIZE, PAGE_SIZE);
 
                 if (allocMemSinglePlane(m_ionCameraClient,
-                    &m_camera_info[m_camera_default].vdisc.buffer[i], 1, true) == false) {
+                    &m_camera_info[m_cameraMode].vdisc.buffer[i], 1, true) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingleCache() fail", __func__);
                     return false;
                 }
             }
         }
 
-        sensorId = m_getSensorId(m_cameraId);
+        sensorId = m_getSensorId(m_cameraMode);
 
-        if (cam_int_s_input(&(m_camera_info[m_camera_default].vdisc), sensorId) < 0) {
+        if (cam_int_s_input(&(m_camera_info[m_cameraMode].vdisc), sensorId) < 0) {
             CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
             return false;
         }
 
-        if (cam_int_s_fmt(&m_camera_info[m_camera_default].vdisc) < 0) {
+        if (cam_int_s_fmt(&m_camera_info[m_cameraMode].vdisc) < 0) {
             CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
             return false;
         }
 
-        if (cam_int_reqbufs(&m_camera_info[m_camera_default].vdisc) < 0) {
+        if (cam_int_reqbufs(&m_camera_info[m_cameraMode].vdisc) < 0) {
             CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
             return false;
         }
 
         for (int i = 0; i < m_VDisSrcBufNum; i++) {
-            if (cam_int_qbuf(&m_camera_info[m_camera_default].vdisc, i) < 0) {
+            if (cam_int_qbuf(&m_camera_info[m_cameraMode].vdisc, i) < 0) {
                 CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
                 return false;
             }
         }
-        m_camera_info[m_camera_default].vdisc.flagStart = true;
+        m_camera_info[m_cameraMode].vdisc.flagStart = true;
     }
     return true;
 }
@@ -8603,84 +8017,84 @@ bool ExynosCamera::startVdisOutput()
 {
     int sensorId;
 
-    if (m_camera_info[m_camera_default].vdiso.flagStart == false) {
-        m_camera_info[m_camera_default].dummy_shot.request_scp = 1;
-        m_camera_info[m_camera_default].dummy_shot.request_dis = 1;
+    if (m_camera_info[m_cameraMode].vdiso.flagStart == false) {
+        m_camera_info[m_cameraMode].dummy_shot.request_scp = 1;
+        m_camera_info[m_cameraMode].dummy_shot.request_dis = 1;
 
         if (m_isHWVDis) {
             CLOGE("startVdisOutput:: w(%d) h(%d)", m_VDisSrcW, m_VDisSrcH);
-            m_camera_info[m_camera_default].vdiso.width  = m_VDisSrcW;
-            m_camera_info[m_camera_default].vdiso.height = m_VDisSrcH;
+            m_camera_info[m_cameraMode].vdiso.width  = m_VDisSrcW;
+            m_camera_info[m_cameraMode].vdiso.height = m_VDisSrcH;
         } else {
             CLOGE("startVdisOutput:: w(%d) h(%d)", m_VDisDstW, m_VDisDstH);
-            m_camera_info[m_camera_default].vdiso.width  = m_VDisDstW;
-            m_camera_info[m_camera_default].vdiso.height = m_VDisDstH;
+            m_camera_info[m_cameraMode].vdiso.width  = m_VDisDstW;
+            m_camera_info[m_cameraMode].vdiso.height = m_VDisDstH;
         }
-        m_camera_info[m_camera_default].vdiso.format = V4L2_PIX_FMT_YUYV;
-        m_camera_info[m_camera_default].vdiso.planes = 2;
-        m_camera_info[m_camera_default].vdiso.memory = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[m_camera_default].vdiso.type   = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-        m_camera_info[m_camera_default].vdiso.ionClient = m_ionCameraClient;
-        m_camera_info[m_camera_default].vdiso.buffers = m_VDisDstBufNum;
+        m_camera_info[m_cameraMode].vdiso.format = V4L2_PIX_FMT_YUYV;
+        m_camera_info[m_cameraMode].vdiso.planes = 2;
+        m_camera_info[m_cameraMode].vdiso.memory = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[m_cameraMode].vdiso.type   = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+        m_camera_info[m_cameraMode].vdiso.ionClient = m_ionCameraClient;
+        m_camera_info[m_cameraMode].vdiso.buffers = m_VDisDstBufNum;
 
-        sensorId = m_getSensorId(m_cameraId);
+        sensorId = m_getSensorId(m_cameraMode);
 
-        if (cam_int_s_input(&(m_camera_info[m_camera_default].vdiso), sensorId) < 0) {
+        if (cam_int_s_input(&(m_camera_info[m_cameraMode].vdiso), sensorId) < 0) {
             CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
             return false;
         }
 
-        if (cam_int_s_fmt(&m_camera_info[m_camera_default].vdiso) < 0) {
+        if (cam_int_s_fmt(&m_camera_info[m_cameraMode].vdiso) < 0) {
             CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
             return false;
         }
 
-        if (cam_int_reqbufs(&m_camera_info[m_camera_default].vdiso) < 0) {
+        if (cam_int_reqbufs(&m_camera_info[m_cameraMode].vdiso) < 0) {
             CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
             return false;
         }
 
         for (int i = 0; i < m_VDisSrcBufNum; i++) {
             if (m_isHWVDis == true) {
-                m_camera_info[m_camera_default].vdiso.buffer[i].size.extS[0] = ALIGN(m_camera_info[m_camera_default].vdiso.width *
-                    m_camera_info[m_camera_default].vdiso.height * 2, PAGE_SIZE);
+                m_camera_info[m_cameraMode].vdiso.buffer[i].size.extS[0] = ALIGN(m_camera_info[m_cameraMode].vdiso.width *
+                    m_camera_info[m_cameraMode].vdiso.height * 2, PAGE_SIZE);
 
                 if (allocMemSinglePlane(m_ionCameraClient,
-                    &m_camera_info[m_camera_default].vdiso.buffer[i], 0, false) == false) {
+                    &m_camera_info[m_cameraMode].vdiso.buffer[i], 0, false) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingleCache() fail", __func__);
                     return false;
                 }
 
-                m_camera_info[m_camera_default].vdiso.buffer[i].size.extS[1]
+                m_camera_info[m_cameraMode].vdiso.buffer[i].size.extS[1]
                     = ALIGN(META_DATA_SIZE, PAGE_SIZE);
 
                 if (allocMemSinglePlane(m_ionCameraClient,
-                    &m_camera_info[m_camera_default].vdiso.buffer[i], 1, true) == false) {
+                    &m_camera_info[m_cameraMode].vdiso.buffer[i], 1, true) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingleCache() fail", __func__);
                     return false;
                 }
             } else {
-                m_camera_info[m_camera_default].vdiso.buffer[i].size.extS[0] = ALIGN(m_camera_info[m_camera_default].vdiso.width *
-                    m_camera_info[m_camera_default].vdiso.height * 2, PAGE_SIZE);
+                m_camera_info[m_cameraMode].vdiso.buffer[i].size.extS[0] = ALIGN(m_camera_info[m_cameraMode].vdiso.width *
+                    m_camera_info[m_cameraMode].vdiso.height * 2, PAGE_SIZE);
 
                 if (allocMemSinglePlaneCache(m_ionCameraClient,
-                    &m_camera_info[m_camera_default].vdiso.buffer[i], 0, true) == false) {
+                    &m_camera_info[m_cameraMode].vdiso.buffer[i], 0, true) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingleCache() fail", __func__);
                     return false;
                 }
 
-                m_camera_info[m_camera_default].vdiso.buffer[i].size.extS[1]
+                m_camera_info[m_cameraMode].vdiso.buffer[i].size.extS[1]
                     = ALIGN(META_DATA_SIZE, PAGE_SIZE);
 
                 if (allocMemSinglePlane(m_ionCameraClient,
-                    &m_camera_info[m_camera_default].vdiso.buffer[i], 1, true) == false) {
+                    &m_camera_info[m_cameraMode].vdiso.buffer[i], 1, true) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingleCache() fail", __func__);
                     return false;
                 }
             }
         }
 
-        m_camera_info[m_camera_default].vdiso.flagStart = true;
+        m_camera_info[m_cameraMode].vdiso.flagStart = true;
 
     }
 
@@ -8692,22 +8106,22 @@ bool ExynosCamera::stopVdisCapture()
     ExynosBuffer srcBuf;
     int rcount, fcount;
 
-    if (m_camera_info[m_camera_default].vdisc.flagStart == true) {
+    if (m_camera_info[m_cameraMode].vdisc.flagStart == true) {
         CLOGE("DEBUG(%s)", __func__);
-        m_camera_info[m_camera_default].vdisc.flagStart = false;
+        m_camera_info[m_cameraMode].vdisc.flagStart = false;
 
-        m_camera_info[m_camera_default].dummy_shot.request_dis = 0;
-        cam_int_streamoff(&m_camera_info[m_camera_default].vdisc);
+        m_camera_info[m_cameraMode].dummy_shot.request_dis = 0;
+        cam_int_streamoff(&m_camera_info[m_cameraMode].vdisc);
 
-        m_camera_info[m_camera_default].vdisc.buffers = 0;
-        if (cam_int_reqbufs(&m_camera_info[m_camera_default].vdisc) < 0) {
+        m_camera_info[m_cameraMode].vdisc.buffers = 0;
+        if (cam_int_reqbufs(&m_camera_info[m_cameraMode].vdisc) < 0) {
             CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
             return false;
         }
         for (int i = 0; i < m_VDisSrcBufNum; i++) {
-            freeMemSinglePlane(&m_camera_info[m_camera_default].vdisc.buffer[i],
-                                          m_camera_info[m_camera_default].vdisc.planes - 1);
-            freeMemSinglePlane(&m_camera_info[m_camera_default].vdisc.buffer[i], 0);
+            freeMemSinglePlane(&m_camera_info[m_cameraMode].vdisc.buffer[i],
+                                          m_camera_info[m_cameraMode].vdisc.planes - 1);
+            freeMemSinglePlane(&m_camera_info[m_cameraMode].vdisc.buffer[i], 0);
         }
     }
 
@@ -8719,21 +8133,21 @@ bool ExynosCamera::stopVdisOutput()
     ExynosBuffer dstBuf;
     int rcount, fcount;
 
-    if (m_camera_info[m_camera_default].vdiso.flagStart == true) {
+    if (m_camera_info[m_cameraMode].vdiso.flagStart == true) {
         CLOGE("DEBUG(%s)", __func__);
-        m_camera_info[m_camera_default].vdiso.flagStart = false;
-        cam_int_streamoff(&m_camera_info[m_camera_default].vdiso);
+        m_camera_info[m_cameraMode].vdiso.flagStart = false;
+        cam_int_streamoff(&m_camera_info[m_cameraMode].vdiso);
 
-        m_camera_info[m_camera_default].vdiso.buffers = 0;
-        if (cam_int_reqbufs(&m_camera_info[m_camera_default].vdiso) < 0) {
+        m_camera_info[m_cameraMode].vdiso.buffers = 0;
+        if (cam_int_reqbufs(&m_camera_info[m_cameraMode].vdiso) < 0) {
             CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
             return false;
         }
 
         for (int i = 0; i < m_VDisDstBufNum; i++) {
-            freeMemSinglePlane(&m_camera_info[m_camera_default].vdiso.buffer[i],
-                                          m_camera_info[m_camera_default].vdiso.planes - 1);
-            freeMemSinglePlane(&m_camera_info[m_camera_default].vdiso.buffer[i], 0);
+            freeMemSinglePlane(&m_camera_info[m_cameraMode].vdiso.buffer[i],
+                                          m_camera_info[m_cameraMode].vdiso.planes - 1);
+            freeMemSinglePlane(&m_camera_info[m_cameraMode].vdiso.buffer[i], 0);
         }
     }
 
@@ -8742,35 +8156,32 @@ bool ExynosCamera::stopVdisOutput()
 
 bool ExynosCamera::flagStartVdisCapture(void)
 {
-CLOGE("(%s) (%d) (%d)", __func__, __LINE__, m_camera_info[m_camera_default].vdisc.flagStart);
-    return m_camera_info[m_camera_default].vdisc.flagStart;
+CLOGE("(%s) (%d) (%d)", __func__, __LINE__, m_camera_info[m_cameraMode].vdisc.flagStart);
+    return m_camera_info[m_cameraMode].vdisc.flagStart;
 }
 
 bool ExynosCamera::flagStartVdisOutput(void)
 {
-CLOGE("(%s) (%d) (%d)", __func__, __LINE__, m_camera_info[m_camera_default].vdiso.flagStart);
-    return m_camera_info[m_camera_default].vdiso.flagStart;
+CLOGE("(%s) (%d) (%d)", __func__, __LINE__, m_camera_info[m_cameraMode].vdiso.flagStart);
+    return m_camera_info[m_cameraMode].vdiso.flagStart;
 }
 #endif
+
 bool ExynosCamera::setVideoStabilization(bool toggle)
 {
-    m_curCameraInfo[m_camera_default]->videoStabilization = toggle;
+    m_curCameraInfo[m_cameraMode]->videoStabilization = toggle;
 
     if (m_flagCreate == true) {
-        if (m_curCameraInfo[m_camera_default]->applyVideoStabilization != toggle) {
+        if (m_curCameraInfo[m_cameraMode]->applyVideoStabilization != toggle) {
 #ifdef USE_DIS
             int dis = (toggle == true) ? 1 : 0;
             int dnr = (toggle == true) ? 1 : 0;
 
-            m_camera_info[m_camera_default].dummy_shot.shot.ctl.aa.videoStabilizationMode = dis;
-            m_camera_info[m_camera_default].dummy_shot.dis_bypass = !dis;
-            m_camera_info[m_camera_default].dummy_shot.dnr_bypass = !dnr;
-            if (this->multi_instance == 2) {
-                m_camera_info[SENSOR_FRONT].dummy_shot.dis_bypass = !dis;
-                m_camera_info[SENSOR_FRONT].dummy_shot.dnr_bypass = !dnr;
-            }
+            m_camera_info[m_cameraMode].dummy_shot.shot.ctl.aa.videoStabilizationMode = dis;
+            m_camera_info[m_cameraMode].dummy_shot.dis_bypass = !dis;
+            m_camera_info[m_cameraMode].dummy_shot.dnr_bypass = !dnr;
 #endif
-            m_curCameraInfo[m_camera_default]->applyVideoStabilization = toggle;
+            m_curCameraInfo[m_cameraMode]->applyVideoStabilization = toggle;
         }
 
         /*HACK: ODC is enabled only when DIS is enabled because
@@ -8817,14 +8228,14 @@ bool ExynosCamera::setWhiteBalance(int value)
         break;
     }
 
-    m_curCameraInfo[SENSOR_BACK]->whiteBalance = value;
-    m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.awbMode = awbMode;
+    m_curCameraInfo[CAMERA_MODE_BACK]->whiteBalance = value;
+    m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.awbMode = awbMode;
     if (m_flashMgr->getNeedFlash() == true) {
         m_flashMgr->setFlashWhiteBalance(awbMode);
     }
 
-    m_curCameraInfo[SENSOR_FRONT]->whiteBalance = value;
-    m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.awbMode = awbMode;
+    m_curCameraInfo[CAMERA_MODE_FRONT]->whiteBalance = value;
+    m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.awbMode = awbMode;
 
     return true;
 }
@@ -8836,22 +8247,22 @@ bool ExynosCamera::setZoom(int value)
         return false;
     }
 
-    if (m_curCameraInfo[m_camera_default]->zoom != value) {
-        m_curCameraInfo[m_camera_default]->zoom = value;
+    if (m_curCameraInfo[m_cameraMode]->zoom != value) {
+        m_curCameraInfo[m_cameraMode]->zoom = value;
         int srcW, srcH, dstW, dstH;
-        srcW = m_curCameraInfo[m_camera_default]->pictureW;
-        srcH = m_curCameraInfo[m_camera_default]->pictureH;
-        dstW = m_curCameraInfo[m_camera_default]->ispW;
-        dstH = m_curCameraInfo[m_camera_default]->ispH;
+        srcW = m_curCameraInfo[m_cameraMode]->pictureW;
+        srcH = m_curCameraInfo[m_cameraMode]->pictureH;
+        dstW = m_curCameraInfo[m_cameraMode]->ispW;
+        dstH = m_curCameraInfo[m_cameraMode]->ispH;
 #ifdef SCALABLE_SENSOR
         if (getScalableSensorStart() == true) {
             getScalableSensorSizeOnPreview(&srcW, &srcH);
             CLOGD("DEBUG(%s):runtime zoom setting(%d/%d/%d/%d/%d)", __func__, value, srcW, srcH, dstW, dstH);
         }
 #endif
-        if (m_setZoom(m_curCameraInfo[m_camera_default]->zoom,
+        if (m_setZoom(m_curCameraInfo[m_cameraMode]->zoom,
                       srcW, srcH, dstW, dstH,
-                      (void *)&m_camera_info[m_camera_default].dummy_shot) == false) {
+                      (void *)&m_camera_info[m_cameraMode].dummy_shot) == false) {
             CLOGE("ERR(%s):m_setZoom() fail", __func__);
             return false;
         }
@@ -8860,7 +8271,7 @@ bool ExynosCamera::setZoom(int value)
     return true;
 }
 
-bool ExynosCamera::m_setSetfile(int cameraSensorId)
+bool ExynosCamera::m_setSetfile(int cameraMode)
 {
     const int wideYUVRange = 0;
     const int narrowYUVRange = 1;
@@ -8868,38 +8279,40 @@ bool ExynosCamera::m_setSetfile(int cameraSensorId)
     int flagYUVRange = wideYUVRange;
 
     if (m_recordingHint == true) {
-        m_camera_info[cameraSensorId].dummy_shot.setfile = ISS_SUB_SCENARIO_VIDEO;
-        if (cameraSensorId != SENSOR_FAKE)
+        m_camera_info[cameraMode].dummy_shot.setfile = ISS_SUB_SCENARIO_VIDEO;
+        if (cameraMode != CAMERA_MODE_REPROCESSING)
             flagYUVRange = narrowYUVRange;
     } else {
-        if (cameraSensorId == SENSOR_FRONT && 0 < m_curCameraInfo[cameraSensorId]->vtMode) {
-            switch (m_curCameraInfo[cameraSensorId]->vtMode) {
+        if (cameraMode == CAMERA_MODE_FRONT && 0 < m_curCameraInfo[cameraMode]->vtMode) {
+            switch (m_curCameraInfo[cameraMode]->vtMode) {
             case 1:
-                m_camera_info[cameraSensorId].dummy_shot.setfile = ISS_SUB_SCENARIO_FRONT_VT1;
+                m_camera_info[cameraMode].dummy_shot.setfile = ISS_SUB_SCENARIO_FRONT_VT1;
                 break;
             case 2:
             default:
-                m_camera_info[cameraSensorId].dummy_shot.setfile = ISS_SUB_SCENARIO_FRONT_VT2;
+                m_camera_info[cameraMode].dummy_shot.setfile = ISS_SUB_SCENARIO_FRONT_VT2;
                 break;
             }
         } else {
-            m_camera_info[cameraSensorId].dummy_shot.setfile = ISS_SUB_SCENARIO_STILL;
+            if (cameraMode == CAMERA_MODE_REPROCESSING)
+                m_camera_info[cameraMode].dummy_shot.setfile = ISS_SUB_SCENARIO_STILL_CAPTURE;
+            else
+                m_camera_info[cameraMode].dummy_shot.setfile = ISS_SUB_SCENARIO_STILL_PREVIEW;
         }
     }
 
-    m_camera_info[cameraSensorId].dummy_shot.setfile &= (0x0000ffff);
-    m_camera_info[cameraSensorId].dummy_shot.setfile |= (flagYUVRange << 16);
+    m_camera_info[cameraMode].dummy_shot.setfile &= (0x0000ffff);
+    m_camera_info[cameraMode].dummy_shot.setfile |= (flagYUVRange << 16);
 
-    CLOGD("[%s] (%d) sensorId(%d) setfile index(%d) YUV range(%d)",
+    CLOGD("DEBUG(%s):(%d) cameraMode(%d) setfile index(%d) YUV range(%d)",
         __func__,
         __LINE__,
-        cameraSensorId,
-        m_camera_info[cameraSensorId].dummy_shot.setfile & 0x0000ffff,
+        cameraMode,
+        m_camera_info[cameraMode].dummy_shot.setfile & 0x0000ffff,
         flagYUVRange);
 
     return true;
 }
-
 
 bool ExynosCamera::m_setZoom(int zoom, int srcW, int srcH, int dstW, int dstH, void *ptr)
 {
@@ -8907,7 +8320,7 @@ bool ExynosCamera::m_setZoom(int zoom, int srcW, int srcH, int dstW, int dstH, v
 
     int real_zoom = 0;
 
-    if (m_defaultCameraInfo[m_camera_default]->hwZoomSupported == true)
+    if (m_defaultCameraInfo[m_cameraMode]->hwZoomSupported == true)
         real_zoom = 0; // just adjust ratio, not digital zoom.
     else
         real_zoom = zoom; // adjust ratio, digital zoom
@@ -8932,7 +8345,7 @@ bool ExynosCamera::m_setZoom(int zoom, int srcW, int srcH, int dstW, int dstH, v
     newY = ALIGN(newY, 2);
 
     CLOGW("(%s): size(%d, %d, %d, %d), level(%d)",
-        __FUNCTION__, newX, newY, newW, newH, real_zoom);
+        __func__, newX, newY, newW, newH, real_zoom);
 
     struct camera2_shot_ext *shot_ext = (struct camera2_shot_ext *)ptr;
 
@@ -8976,18 +8389,17 @@ void ExynosCamera::m_setExifFixedAttribute(void)
     //3 Exif Version
     memcpy(mExifInfo.exif_version, EXIF_DEF_EXIF_VERSION, sizeof(mExifInfo.exif_version));
     //3 Aperture
-    mExifInfo.aperture.num = m_curCameraInfo[m_camera_default]->apertureNum;
-    mExifInfo.aperture.den = m_curCameraInfo[m_camera_default]->apertureDen;
+    mExifInfo.aperture.num = m_curCameraInfo[m_cameraMode]->apertureNum;
+    mExifInfo.aperture.den = m_curCameraInfo[m_cameraMode]->apertureDen;
     //3 F Number
-    mExifInfo.fnumber.num = m_curCameraInfo[m_camera_default]->fNumberNum;
-    mExifInfo.fnumber.den = m_curCameraInfo[m_camera_default]->fNumberDen;
-    //uint32_t av = APEX_FNUM_TO_APERTURE((double)mExifInfo.fnumber.num/mExifInfo.fnumber.den);
+    mExifInfo.fnumber.num = m_curCameraInfo[m_cameraMode]->fNumberNum;
+    mExifInfo.fnumber.den = m_curCameraInfo[m_cameraMode]->fNumberDen;
     //3 Maximum lens aperture
-    mExifInfo.max_aperture.num = m_defaultCameraInfo[m_camera_default]->apertureNum;
-    mExifInfo.max_aperture.den = m_defaultCameraInfo[m_camera_default]->apertureDen;
+    mExifInfo.max_aperture.num = m_defaultCameraInfo[m_cameraMode]->apertureNum;
+    mExifInfo.max_aperture.den = m_defaultCameraInfo[m_cameraMode]->apertureDen;
     //3 Lens Focal Length
-    mExifInfo.focal_length.num = m_curCameraInfo[m_camera_default]->focalLengthNum;
-    mExifInfo.focal_length.den = m_curCameraInfo[m_camera_default]->focalLengthDen;
+    mExifInfo.focal_length.num = m_curCameraInfo[m_cameraMode]->focalLengthNum;
+    mExifInfo.focal_length.den = m_curCameraInfo[m_cameraMode]->focalLengthDen;
     //3 Maker note
     if (mExifInfo.maker_note)
         delete mExifInfo.maker_note;
@@ -9019,7 +8431,11 @@ void ExynosCamera::m_setExifFixedAttribute(void)
 
 void ExynosCamera::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosRect *rect)
 {
-    camera2_dm *dm = &(m_camera_info[m_camera_default].is3aa_dm.shot.dm);
+    camera2_dm *dm = &(m_camera_info[m_cameraMode].is3aa_dm.shot.dm);
+    camera2_udm *udm = &(m_camera_info[m_cameraMode].is3aa_dm.shot.udm);
+
+    if (m_cameraMode == CAMERA_MODE_BACK)
+        udm = &(m_camera_info[CAMERA_MODE_REPROCESSING].is3aa_dm.shot.udm);
 
     // 2 0th IFD TIFF Tags
     // 3 Width
@@ -9028,7 +8444,7 @@ void ExynosCamera::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosR
     exifInfo->height = rect->h;
 
     // 3 Orientation
-    switch (m_curCameraInfo[m_camera_default]->rotation) {
+    switch (m_curCameraInfo[m_cameraMode]->rotation) {
     case 90:
         exifInfo->orientation = EXIF_ORIENTATION_90;
         break;
@@ -9046,14 +8462,7 @@ void ExynosCamera::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosR
 
     //3 Maker note
     /* back-up udm info for exif's maker note */
-    if (m_cameraId == CAMERA_ID_FRONT) {
-        if (m_udmArr[0] != NULL)
-            memcpy(&m_udm, m_udmArr[0], sizeof(struct camera2_udm));
-        else
-            CLOGE("ERR(%s):m_udmArr[%d] is NULL", __func__, 0);
-    }
-
-    memcpy((void *)exifInfo->maker_note, (void *)&m_udm, exifInfo->maker_note_size);
+    memcpy((void *)exifInfo->maker_note, (void *)udm, exifInfo->maker_note_size);
 
     // 3 Date time
     time_t rawtime;
@@ -9064,45 +8473,100 @@ void ExynosCamera::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosR
 
     strftime((char *)exifInfo->date_time, 20, "%Y:%m:%d %H:%M:%S", timeinfo);
 
-    // 3 Exposure Time
-    int shutterSpeed = (dm->sensor.exposureTime / 1000);
-        shutterSpeed = m_udm.internal.vendorSpecific2[101];
+    // 2 0th IFD Exif Private Tags
+    bool flagSLSIAlgorithm = true;
+    /*
+     * CML's Algorithm internal.vendorSpecific2
+     * vendorSpecific2[100]       : 0:slsi
+     * vendorSpecific2[101]       : cml exposure
+     * vendorSpecific2[102]       : cml iso(gain)
+     * vendorSpecific2[103] / 256 : cml Bv
+     */
 
-    if (shutterSpeed <= 0) {
-        CLOGW("[WARN] %s : exposureTime is invalid value (%lld) - need to check",
-            __FUNCTION__, dm->sensor.exposureTime);
-        shutterSpeed = 30000;
-    }
-    exifInfo->exposure_time.num = 1;
-    // x us -> 1/x s */
-    exifInfo->exposure_time.den = (uint32_t)((double)1000000 / shutterSpeed);
+    if (udm->internal.vendorSpecific2[100] == 1)
+        flagSLSIAlgorithm = false;
 
     //3 ISO Speed Rating
     exifInfo->iso_speed_rating = dm->aa.isoValue;
-        exifInfo->iso_speed_rating = m_udm.internal.vendorSpecific2[102];
+    /* if (flagSLSIAlgorithm == false) */
+        exifInfo->iso_speed_rating = udm->internal.vendorSpecific2[102];
 
-    uint32_t av, tv, bv, sv, ev;
-    av = APEX_FNUM_TO_APERTURE((double)exifInfo->fnumber.num / exifInfo->fnumber.den);
-    tv = APEX_EXPOSURE_TO_SHUTTER((double)exifInfo->exposure_time.num / exifInfo->exposure_time.den);
-    sv = APEX_ISO_TO_FILMSENSITIVITY(exifInfo->iso_speed_rating);
-    bv = av + tv - sv;
-    if (m_udm.internal.vendorSpecific2[100] == 1)
-        bv = m_udm.internal.vendorSpecific2[103] / 256;
-    ev = av + tv;
-    CLOGD("Shutter speed=%d us, iso=%d", shutterSpeed, exifInfo->iso_speed_rating);
-    CLOGD("AV=%d, TV=%d, SV=%d", av, tv, sv);
+    if (udm->ae.vendorSpecific[0] == 0xAEAEAEAE) {
+        /* value by meta data */
+        // 3 Exposure Time
+        exifInfo->exposure_time.num = 1;
+        exifInfo->exposure_time.den = (uint32_t)udm->ae.vendorSpecific[64];
 
-    // 3 Shutter Speed
-    exifInfo->shutter_speed.num = tv * EXIF_DEF_APEX_DEN;
-    exifInfo->shutter_speed.den = EXIF_DEF_APEX_DEN;
-    // 3 Brightness
-    exifInfo->brightness.num = bv*EXIF_DEF_APEX_DEN;
-    exifInfo->brightness.den = EXIF_DEF_APEX_DEN;
+        // 3 Shutter Speed
+        exifInfo->shutter_speed.num = (uint32_t)(ROUND_OFF_HALF(((double)(udm->ae.vendorSpecific[69] / 256.f) * EXIF_DEF_APEX_DEN), 0));
+        exifInfo->shutter_speed.den = EXIF_DEF_APEX_DEN;
+
+        // 3 Brightness
+        int temp = udm->ae.vendorSpecific[68];
+        if ((int)udm->ae.vendorSpecific[68] < 0)
+            temp = -temp;
+
+        exifInfo->brightness.num = (int32_t)(ROUND_OFF_HALF(((double)(temp / 256.f) * EXIF_DEF_APEX_DEN), 0));
+        if ((int)udm->ae.vendorSpecific[68] < 0)
+            exifInfo->brightness.num = -exifInfo->brightness.num;
+
+        exifInfo->brightness.den = EXIF_DEF_APEX_DEN;
+
+        CLOGD("[%s] (%d) udm->ae.vendorSpecific[69](%d) udm->ae.vendorSpecific[68](%d)",
+            __func__,
+            __LINE__,
+            udm->ae.vendorSpecific[69],
+            udm->ae.vendorSpecific[68]);
+    } else {
+        /* calculated by exposure time */
+        // 3 Exposure Time
+        int shutterSpeed = (dm->sensor.exposureTime / 1000);
+        /* if (flagSLSIAlgorithm == false) */
+            shutterSpeed = udm->internal.vendorSpecific2[101];
+
+        if (shutterSpeed <= 0) {
+            CLOGW("[WARN] %s : exposureTime is invalid value (%lld) - need to check",
+                __FUNCTION__, dm->sensor.exposureTime);
+            shutterSpeed = 30000;
+        }
+
+        exifInfo->exposure_time.num = 1;
+        exifInfo->exposure_time.den = (uint32_t)((double)1000000 / shutterSpeed);
+
+        uint32_t av, tv, bv, sv, ev;
+        av = APEX_FNUM_TO_APERTURE((double)exifInfo->fnumber.num / exifInfo->fnumber.den);
+        tv = APEX_EXPOSURE_TO_SHUTTER((double)exifInfo->exposure_time.num / exifInfo->exposure_time.den);
+        sv = APEX_ISO_TO_FILMSENSITIVITY(exifInfo->iso_speed_rating);
+        bv = av + tv - sv;
+        if (flagSLSIAlgorithm == false)
+            bv = udm->internal.vendorSpecific2[103] / 256;
+        ev = av + tv;
+
+        // 3 Shutter Speed
+        exifInfo->shutter_speed.num = tv * EXIF_DEF_APEX_DEN;
+        exifInfo->shutter_speed.den = EXIF_DEF_APEX_DEN;
+        // 3 Brightness
+        exifInfo->brightness.num = bv*EXIF_DEF_APEX_DEN;
+        exifInfo->brightness.den = EXIF_DEF_APEX_DEN;
+
+        CLOGD("[%s] (%d) shutterSpeed(%d) av(%d) tv(%d) sv(%d)",
+            __func__,
+            __LINE__,
+            shutterSpeed, av, tv, sv);
+    }
+
+    CLOGD("[%s] (%d) exposure_time(%d/%d) shutter_speed(%d/%d) brightness(%d/%d)",
+        __func__,
+        __LINE__,
+        exifInfo->exposure_time.num, exifInfo->exposure_time.den,
+        exifInfo->shutter_speed.num, exifInfo->shutter_speed.den,
+        exifInfo->brightness.   num, exifInfo->brightness.   den);
+
     // 3 Exposure Bias
     exifInfo->exposure_bias.num = (int32_t)getExposureCompensation() * 5;
-    exifInfo->exposure_bias.den = EXIF_DEF_APEX_DEN;
+    exifInfo->exposure_bias.den = 10;
     // 3 Metering Mode
-    switch (m_curCameraInfo[m_camera_default]->metering) {
+    switch (m_curCameraInfo[m_cameraMode]->metering) {
     case METERING_MODE_CENTER:
         exifInfo->metering_mode = EXIF_METERING_CENTER;
         break;
@@ -9123,22 +8587,22 @@ void ExynosCamera::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosR
     if (m_flashMgr->getNeedFlash() == true)
         flash = 1;
 
-    if (m_curCameraInfo[m_camera_default]->flashMode == FLASH_MODE_OFF || flash == 0)
+    if (m_curCameraInfo[m_cameraMode]->flashMode == FLASH_MODE_OFF || flash == 0)
         exifInfo->flash = 0;
     else
         exifInfo->flash = flash;
 
     // 3 White Balance
-    if (m_curCameraInfo[m_camera_default]->whiteBalance == WHITE_BALANCE_AUTO)
+    if (m_curCameraInfo[m_cameraMode]->whiteBalance == WHITE_BALANCE_AUTO)
         exifInfo->white_balance = EXIF_WB_AUTO;
     else
         exifInfo->white_balance = EXIF_WB_MANUAL;
 
     // 3 Focal Length in 35mm length
-    exifInfo->focal_length_in_35mm_length = m_curCameraInfo[m_camera_default]->focalLengthIn35mmLength;
+    exifInfo->focal_length_in_35mm_length = m_curCameraInfo[m_cameraMode]->focalLengthIn35mmLength;
 
     // 3 Scene Capture Type
-    switch (m_curCameraInfo[m_camera_default]->sceneMode) {
+    switch (m_curCameraInfo[m_cameraMode]->sceneMode) {
     case SCENE_MODE_PORTRAIT:
         exifInfo->scene_capture_type = EXIF_SCENE_PORTRAIT;
         break;
@@ -9168,49 +8632,37 @@ void ExynosCamera::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosR
     ctrl.id = V4L2_CID_CAM_SENSOR_FW_VER;
     ctrl.string = uniqueIdBuf;
 
-    if (m_cameraId == CAMERA_ID_BACK){
-#ifdef USE_TF4_SENSOR
-#ifdef USE_S5K3H7_CAMERA
-	    memcpy(m_imageUniqueIdBuf, "SLSI_S5K3H7", sizeof(mExifInfo.unique_id));
-#elif defined(USE_S5K3H7_CAMERA)
-	    memcpy(m_imageUniqueIdBuf, "SLSI_S5K3L2", sizeof(mExifInfo.unique_id));
-#endif
-#else
-        if (exynos_v4l2_g_ext_ctrl(m_camera_info[m_camera_default].isp.fd, &ctrls) < 0) {
+    if (m_cameraMode == CAMERA_MODE_BACK){
+        if (exynos_v4l2_g_ext_ctrl(m_camera_info[m_cameraMode].isp.fd, &ctrls) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_g_ctrl(V4L2_CID_CAM_SENSOR_FW_VER) fail", __func__);
             memset((void *)mExifInfo.unique_id, 0, sizeof(mExifInfo.unique_id));
         } else {
             memcpy(mExifInfo.unique_id, uniqueIdBuf, sizeof(mExifInfo.unique_id));
         }
-#endif		
-    } else if(m_cameraId == CAMERA_ID_FRONT) {
-#ifdef USE_S5K3H7_CAMERA
-	memcpy(mExifInfo.unique_id, "SLSI_S5K3H7", sizeof(mExifInfo.unique_id));
-#else
-	memcpy(mExifInfo.unique_id, "SLSI_S5K6B2", sizeof(mExifInfo.unique_id));
-#endif
+    } else if (m_cameraMode == CAMERA_MODE_FRONT) {
+        memcpy(mExifInfo.unique_id, "SLSI_S5K6B2", sizeof(mExifInfo.unique_id));
     }
 
     // 2 0th IFD GPS Info Tags
-    if (m_curCameraInfo[m_camera_default]->gpsLatitude != 0 && m_curCameraInfo[m_camera_default]->gpsLongitude != 0) {
-        if (m_curCameraInfo[m_camera_default]->gpsLatitude > 0)
-            strncpy((char *)exifInfo->gps_latitude_ref, "N", 1);
+    if (m_curCameraInfo[m_cameraMode]->gpsLatitude != 0 && m_curCameraInfo[m_cameraMode]->gpsLongitude != 0) {
+        if (m_curCameraInfo[m_cameraMode]->gpsLatitude > 0)
+            strncpy((char *)exifInfo->gps_latitude_ref, "N", 2);
         else
-            strncpy((char *)exifInfo->gps_latitude_ref, "S", 1);
+            strncpy((char *)exifInfo->gps_latitude_ref, "S", 2);
 
-        if (m_curCameraInfo[m_camera_default]->gpsLongitude > 0)
-            strncpy((char *)exifInfo->gps_longitude_ref, "E", 1);
+        if (m_curCameraInfo[m_cameraMode]->gpsLongitude > 0)
+            strncpy((char *)exifInfo->gps_longitude_ref, "E", 2);
         else
-            strncpy((char *)exifInfo->gps_longitude_ref, "W", 1);
+            strncpy((char *)exifInfo->gps_longitude_ref, "W", 2);
 
-        if (m_curCameraInfo[m_camera_default]->gpsAltitude > 0)
+        if (m_curCameraInfo[m_cameraMode]->gpsAltitude > 0)
             exifInfo->gps_altitude_ref = 0;
         else
             exifInfo->gps_altitude_ref = 1;
 
-        double latitude = fabs(m_curCameraInfo[m_camera_default]->gpsLatitude);
-        double longitude = fabs(m_curCameraInfo[m_camera_default]->gpsLongitude);
-        double altitude = fabs(m_curCameraInfo[m_camera_default]->gpsAltitude);
+        double latitude = fabs(m_curCameraInfo[m_cameraMode]->gpsLatitude);
+        double longitude = fabs(m_curCameraInfo[m_cameraMode]->gpsLongitude);
+        double altitude = fabs(m_curCameraInfo[m_cameraMode]->gpsAltitude);
 
         exifInfo->gps_latitude[0].num = (uint32_t)latitude;
         exifInfo->gps_latitude[0].den = 1;
@@ -9232,7 +8684,7 @@ void ExynosCamera::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosR
         exifInfo->gps_altitude.den = 1;
 
         struct tm tm_data;
-        gmtime_r(&m_curCameraInfo[m_camera_default]->gpsTimestamp, &tm_data);
+        gmtime_r(&m_curCameraInfo[m_cameraMode]->gpsTimestamp, &tm_data);
         exifInfo->gps_timestamp[0].num = tm_data.tm_hour;
         exifInfo->gps_timestamp[0].den = 1;
         exifInfo->gps_timestamp[1].num = tm_data.tm_min;
@@ -9253,12 +8705,12 @@ void ExynosCamera::m_setExifChangedAttribute(exif_attribute_t *exifInfo, ExynosR
             exifInfo->widthThumb = 160;
             exifInfo->heightThumb = 120;
         } else {
-            exifInfo->widthThumb = m_curCameraInfo[m_camera_default]->thumbnailW;
-            exifInfo->heightThumb = m_curCameraInfo[m_camera_default]->thumbnailH;
+            exifInfo->widthThumb = m_curCameraInfo[m_cameraMode]->thumbnailW;
+            exifInfo->heightThumb = m_curCameraInfo[m_cameraMode]->thumbnailH;
         }
     } else {
-        exifInfo->widthThumb = m_curCameraInfo[m_camera_default]->thumbnailW;
-        exifInfo->heightThumb = m_curCameraInfo[m_camera_default]->thumbnailH;
+        exifInfo->widthThumb = m_curCameraInfo[m_cameraMode]->thumbnailW;
+        exifInfo->heightThumb = m_curCameraInfo[m_cameraMode]->thumbnailH;
     }
 }
 
@@ -9329,27 +8781,27 @@ void ExynosCamera::m_printFormat(int colorFormat, const char *arg)
 
 bool ExynosCamera::setAngle(int angle)
 {
-    if (m_curCameraInfo[m_camera_default]->angle != angle) {
+    if (m_curCameraInfo[m_cameraMode]->angle != angle) {
         switch (angle) {
         case -360:
         case    0:
         case  360:
-            m_curCameraInfo[m_camera_default]->angle = 0;
+            m_curCameraInfo[m_cameraMode]->angle = 0;
             break;
 
         case -270:
         case   90:
-            m_curCameraInfo[m_camera_default]->angle = 90;
+            m_curCameraInfo[m_cameraMode]->angle = 90;
             break;
 
         case -180:
         case  180:
-            m_curCameraInfo[m_camera_default]->angle = 180;
+            m_curCameraInfo[m_cameraMode]->angle = 180;
             break;
 
         case  -90:
         case  270:
-            m_curCameraInfo[m_camera_default]->angle = 270;
+            m_curCameraInfo[m_cameraMode]->angle = 270;
             break;
 
         default:
@@ -9358,7 +8810,7 @@ bool ExynosCamera::setAngle(int angle)
         }
 
         if (m_flagCreate == true) {
-            if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_ROTATION, angle) < 0) {
+            if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_ROTATION, angle) < 0) {
                 CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
                 return false;
             }
@@ -9370,14 +8822,14 @@ bool ExynosCamera::setAngle(int angle)
 
 int ExynosCamera::getAngle(void)
 {
-    return m_curCameraInfo[m_camera_default]->angle;
+    return m_curCameraInfo[m_cameraMode]->angle;
 }
 
 bool ExynosCamera::setISO(int iso)
 {
-    struct camera2_shot *shot = &m_camera_info[SENSOR_BACK].dummy_shot.shot;
+    struct camera2_shot *shot = &m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot;
 
-    struct camera2_shot *shot2 = &m_camera_info[SENSOR_FRONT].dummy_shot.shot;
+    struct camera2_shot *shot2 = &m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot;
 
     if (m_flagCreate == true) {
         if (iso <= 0) {
@@ -9398,7 +8850,7 @@ bool ExynosCamera::setISO(int iso)
             shot2->ctl.aa.isoValue = iso;
             shot2->ctl.sensor.sensitivity = 0;
          }
-        m_curCameraInfo[m_camera_default]->iso = iso;
+        m_curCameraInfo[m_cameraMode]->iso = iso;
     }
 
     return true;
@@ -9406,7 +8858,7 @@ bool ExynosCamera::setISO(int iso)
 
 int ExynosCamera::getISO(void)
 {
-    return m_curCameraInfo[m_camera_default]->iso;
+    return m_curCameraInfo[m_cameraMode]->iso;
 }
 
 bool ExynosCamera::setContrast(int value)
@@ -9470,14 +8922,14 @@ bool ExynosCamera::setContrast(int value)
         }
     }
 
-    if (m_curCameraInfo[m_camera_default]->contrast != value) {
-        m_curCameraInfo[m_camera_default]->contrast = value;
+    if (m_curCameraInfo[m_cameraMode]->contrast != value) {
+        m_curCameraInfo[m_cameraMode]->contrast = value;
         if (m_flagCreate == true) {
             if (m_internalISP == true) {
-                m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.contrast = internalValue;
-                m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.contrast = internalValue;
+                m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.contrast = internalValue;
+                m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.contrast = internalValue;
             } else {
-                if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_CONTRAST, internalValue) < 0) {
+                if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_CONTRAST, internalValue) < 0) {
                     CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
                     return false;
                 }
@@ -9490,7 +8942,7 @@ bool ExynosCamera::setContrast(int value)
 
 int ExynosCamera::getContrast(void)
 {
-    return m_curCameraInfo[m_camera_default]->contrast;
+    return m_curCameraInfo[m_cameraMode]->contrast;
 }
 
 bool ExynosCamera::setSaturation(int saturation)
@@ -9501,13 +8953,13 @@ bool ExynosCamera::setSaturation(int saturation)
         return false;
     }
 
-    if (m_curCameraInfo[m_camera_default]->saturation != saturation) {
-        m_curCameraInfo[m_camera_default]->saturation = saturation;
+    if (m_curCameraInfo[m_cameraMode]->saturation != saturation) {
+        m_curCameraInfo[m_cameraMode]->saturation = saturation;
         if (m_internalISP == true) {
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.saturation = internalValue + 1;
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.saturation = internalValue + 1;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.saturation = internalValue + 1;
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.saturation = internalValue + 1;
         } else {
-            if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_SATURATION, internalValue) < 0) {
+            if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_SATURATION, internalValue) < 0) {
                 CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
                 return false;
             }
@@ -9519,7 +8971,7 @@ bool ExynosCamera::setSaturation(int saturation)
 
 int ExynosCamera::getSaturation(void)
 {
-    return m_curCameraInfo[m_camera_default]->saturation;
+    return m_curCameraInfo[m_cameraMode]->saturation;
 }
 
 bool ExynosCamera::setSharpness(int sharpness)
@@ -9530,21 +8982,21 @@ bool ExynosCamera::setSharpness(int sharpness)
         return false;
     }
 
-    if (m_curCameraInfo[m_camera_default]->sharpness != sharpness) {
-        m_curCameraInfo[m_camera_default]->sharpness = sharpness;
+    if (m_curCameraInfo[m_cameraMode]->sharpness != sharpness) {
+        m_curCameraInfo[m_cameraMode]->sharpness = sharpness;
 
         if (m_internalISP == true) {
             if (sharpness == 0) {
-                m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_OFF;
-                m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_OFF;
+                m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_OFF;
+                m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_OFF;
             } else {
-                m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.strength = internalValue + 1;
-                m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_HIGH_QUALITY;
-                m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.strength = internalValue + 1;
-                m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_HIGH_QUALITY;
+                m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.strength = internalValue + 1;
+                m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_HIGH_QUALITY;
+                m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.strength = internalValue + 1;
+                m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.edge.mode = PROCESSING_MODE_HIGH_QUALITY;
             }
         } else {
-            if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_SHARPNESS, internalValue) < 0) {
+            if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_SHARPNESS, internalValue) < 0) {
                 CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
                 return false;
             }
@@ -9556,7 +9008,7 @@ bool ExynosCamera::setSharpness(int sharpness)
 
 int ExynosCamera::getSharpness(void)
 {
-    return m_curCameraInfo[m_camera_default]->sharpness;
+    return m_curCameraInfo[m_cameraMode]->sharpness;
 }
 
 bool ExynosCamera::setHue(int hue)
@@ -9574,10 +9026,10 @@ bool ExynosCamera::setHue(int hue)
         return true;
     }
 
-    if (m_curCameraInfo[m_camera_default]->hue != hue) {
-        m_curCameraInfo[m_camera_default]->hue = hue;
-        m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.hue = internalValue + 1;
-        m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.hue = internalValue + 1;
+    if (m_curCameraInfo[m_cameraMode]->hue != hue) {
+        m_curCameraInfo[m_cameraMode]->hue = hue;
+        m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.hue = internalValue + 1;
+        m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.hue = internalValue + 1;
     }
 
     return true;
@@ -9585,7 +9037,7 @@ bool ExynosCamera::setHue(int hue)
 
 int ExynosCamera::getHue(void)
 {
-    return m_curCameraInfo[m_camera_default]->hue;
+    return m_curCameraInfo[m_cameraMode]->hue;
 }
 
 bool ExynosCamera::setAntiShake(bool toggle)
@@ -9597,17 +9049,17 @@ bool ExynosCamera::setAntiShake(bool toggle)
 
     if (m_internalISP == true) {
         if (toggle == true) {
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.mode = AA_CONTROL_USE_SCENE_MODE;
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.aa.sceneMode = AA_SCENE_MODE_ANTISHAKE;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.mode = AA_CONTROL_USE_SCENE_MODE;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.aa.sceneMode = AA_SCENE_MODE_ANTISHAKE;
 
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.mode = AA_CONTROL_USE_SCENE_MODE;
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.aa.sceneMode = AA_SCENE_MODE_ANTISHAKE;
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.mode = AA_CONTROL_USE_SCENE_MODE;
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.aa.sceneMode = AA_SCENE_MODE_ANTISHAKE;
         }
-        m_curCameraInfo[SENSOR_BACK]->antiShake = toggle;
+        m_curCameraInfo[CAMERA_MODE_BACK]->antiShake = toggle;
 
-        m_curCameraInfo[SENSOR_FRONT]->antiShake = toggle;
+        m_curCameraInfo[CAMERA_MODE_FRONT]->antiShake = toggle;
     } else {
-        if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_ANTI_SHAKE, internalValue) < 0) {
+        if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_ANTI_SHAKE, internalValue) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
             return false;
         }
@@ -9618,24 +9070,24 @@ bool ExynosCamera::setAntiShake(bool toggle)
 
 bool ExynosCamera::getAntiShake(void)
 {
-    return m_curCameraInfo[m_camera_default]->antiShake;
+    return m_curCameraInfo[m_cameraMode]->antiShake;
 }
 
 bool ExynosCamera::setMeteringMode(int value)
 {
-    struct camera2_shot *shot = &m_camera_info[m_camera_default].dummy_shot.shot;
+    struct camera2_shot *shot = &m_camera_info[m_cameraMode].dummy_shot.shot;
     enum aa_aemode aeMode;
 
     if (m_oldMeteringMode != value) {
-        CLOGD("[%s] (%d) old mode(%d) / new mode (%d) aeLock(%d)",
+        CLOGD("DEBUG(%s):(%d) old mode(%d) / new mode (%d) aeLock(%d)",
         __func__,
         __LINE__,
-        m_curCameraInfo[m_camera_default]->metering,
+        m_curCameraInfo[m_cameraMode]->metering,
         value,
-        m_curCameraInfo[m_camera_default]->autoExposureLock);
+        m_curCameraInfo[m_cameraMode]->autoExposureLock);
     }
 
-    if (m_curCameraInfo[m_camera_default]->autoExposureLock == true) {
+    if (m_curCameraInfo[m_cameraMode]->autoExposureLock == true) {
         CLOGD("DEBUG(%s):autoExposureLock == true", __func__);
         return true;
     }
@@ -9646,8 +9098,8 @@ bool ExynosCamera::setMeteringMode(int value)
         aeMode = AA_AEMODE_AVERAGE;
         shot->ctl.aa.aeRegions[0] = 0;
         shot->ctl.aa.aeRegions[1] = 0;
-        shot->ctl.aa.aeRegions[2] = m_curCameraInfo[m_camera_default]->pictureW;
-        shot->ctl.aa.aeRegions[3] = m_curCameraInfo[m_camera_default]->pictureH;
+        shot->ctl.aa.aeRegions[2] = m_curCameraInfo[m_cameraMode]->pictureW;
+        shot->ctl.aa.aeRegions[3] = m_curCameraInfo[m_cameraMode]->pictureH;
         shot->ctl.aa.aeRegions[4] = 1000;
         break;
     case METERING_MODE_CENTER:
@@ -9662,17 +9114,17 @@ bool ExynosCamera::setMeteringMode(int value)
         aeMode = AA_AEMODE_MATRIX;
         shot->ctl.aa.aeRegions[0] = 0;
         shot->ctl.aa.aeRegions[1] = 0;
-        shot->ctl.aa.aeRegions[2] = m_curCameraInfo[m_camera_default]->pictureW;
-        shot->ctl.aa.aeRegions[3] = m_curCameraInfo[m_camera_default]->pictureH;
+        shot->ctl.aa.aeRegions[2] = m_curCameraInfo[m_cameraMode]->pictureW;
+        shot->ctl.aa.aeRegions[3] = m_curCameraInfo[m_cameraMode]->pictureH;
         shot->ctl.aa.aeRegions[4] = 1000;
         break;
     case METERING_MODE_SPOT:
         /* In spot mode, default region setting is 100x100 rectangle on center */
         aeMode = AA_AEMODE_SPOT;
-        shot->ctl.aa.aeRegions[0] = m_curCameraInfo[m_camera_default]->pictureW / 2 - 50;
-        shot->ctl.aa.aeRegions[1] = m_curCameraInfo[m_camera_default]->pictureH / 2 - 50;
-        shot->ctl.aa.aeRegions[2] = m_curCameraInfo[m_camera_default]->pictureW / 2 + 50;
-        shot->ctl.aa.aeRegions[3] = m_curCameraInfo[m_camera_default]->pictureH / 2 + 50;
+        shot->ctl.aa.aeRegions[0] = m_curCameraInfo[m_cameraMode]->pictureW / 2 - 50;
+        shot->ctl.aa.aeRegions[1] = m_curCameraInfo[m_cameraMode]->pictureH / 2 - 50;
+        shot->ctl.aa.aeRegions[2] = m_curCameraInfo[m_cameraMode]->pictureW / 2 + 50;
+        shot->ctl.aa.aeRegions[3] = m_curCameraInfo[m_cameraMode]->pictureH / 2 + 50;
         shot->ctl.aa.aeRegions[4] = 50;
         break;
     default:
@@ -9681,8 +9133,8 @@ bool ExynosCamera::setMeteringMode(int value)
         break;
     }
 
-    m_curCameraInfo[m_camera_default]->metering = value;
-    m_oldMeteringMode = m_curCameraInfo[m_camera_default]->metering;
+    m_curCameraInfo[m_cameraMode]->metering = value;
+    m_oldMeteringMode = m_curCameraInfo[m_cameraMode]->metering;
     shot->ctl.aa.aeMode = aeMode;
 
     m_flashMgr->setFlashExposure(aeMode);
@@ -9702,7 +9154,7 @@ bool ExynosCamera::setMeteringMode(int value)
 
 int ExynosCamera::getMeteringMode(void)
 {
-    return m_curCameraInfo[m_camera_default]->metering;
+    return m_curCameraInfo[m_cameraMode]->metering;
 }
 
 bool ExynosCamera::setBrightness(int brightness)
@@ -9723,13 +9175,13 @@ bool ExynosCamera::setBrightness(int brightness)
         }
     }
 
-    if (m_curCameraInfo[m_camera_default]->brightness != brightness) {
-        m_curCameraInfo[m_camera_default]->brightness = brightness;
+    if (m_curCameraInfo[m_cameraMode]->brightness != brightness) {
+        m_curCameraInfo[m_cameraMode]->brightness = brightness;
         if (m_internalISP == true) {
-            m_camera_info[SENSOR_BACK].dummy_shot.shot.ctl.color.brightness = internalValue + 1;
-            m_camera_info[SENSOR_FRONT].dummy_shot.shot.ctl.color.brightness = internalValue + 1;
+            m_camera_info[CAMERA_MODE_BACK].dummy_shot.shot.ctl.color.brightness = internalValue + 1;
+            m_camera_info[CAMERA_MODE_FRONT].dummy_shot.shot.ctl.color.brightness = internalValue + 1;
         } else {
-            if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_BRIGHTNESS, internalValue) < 0) {
+            if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_BRIGHTNESS, internalValue) < 0) {
                 CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
                 return false;
             }
@@ -9741,27 +9193,27 @@ bool ExynosCamera::setBrightness(int brightness)
 
 int ExynosCamera::getBrightness(void)
 {
-    return m_curCameraInfo[m_camera_default]->brightness;
+    return m_curCameraInfo[m_cameraMode]->brightness;
 }
 
 bool ExynosCamera::setObjectTracking(bool toggle)
 {
-    m_curCameraInfo[m_camera_default]->objectTracking = toggle;
+    m_curCameraInfo[m_cameraMode]->objectTracking = toggle;
     return true;
 }
 
 bool ExynosCamera::getObjectTracking(void)
 {
-    return m_curCameraInfo[m_camera_default]->objectTracking;
+    return m_curCameraInfo[m_cameraMode]->objectTracking;
 }
 
 bool ExynosCamera::setObjectTrackingStart(bool toggle)
 {
-    if (m_curCameraInfo[m_camera_default]->objectTrackingStart != toggle) {
-        m_curCameraInfo[m_camera_default]->objectTrackingStart = toggle;
+    if (m_curCameraInfo[m_cameraMode]->objectTrackingStart != toggle) {
+        m_curCameraInfo[m_cameraMode]->objectTrackingStart = toggle;
 
         int startStop = (toggle == true) ? 1 : 0;
-        if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_OBJ_TRACKING_START_STOP, startStop) < 0) {
+        if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_OBJ_TRACKING_START_STOP, startStop) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
             return false;
         }
@@ -9774,7 +9226,7 @@ int ExynosCamera::getObjectTrackingStatus(void)
 {
     int ret = 0;
 
-    if (exynos_v4l2_g_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_OBJ_TRACKING_STATUS, &ret) < 0) {
+    if (exynos_v4l2_g_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_OBJ_TRACKING_STATUS, &ret) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_g_ctrl() fail", __func__);
         return -1;
     }
@@ -9783,15 +9235,15 @@ int ExynosCamera::getObjectTrackingStatus(void)
 
 bool ExynosCamera::setObjectPosition(int x, int y)
 {
-    if (m_curCameraInfo[m_camera_default]->previewW == 640)
+    if (m_curCameraInfo[m_cameraMode]->previewW == 640)
         x = x - 80;
 
-    if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_IS_CAMERA_OBJECT_POSITION_X, x) < 0) {
+    if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_IS_CAMERA_OBJECT_POSITION_X, x) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
         return false;
     }
 
-    if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_IS_CAMERA_OBJECT_POSITION_Y, y) < 0) {
+    if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_IS_CAMERA_OBJECT_POSITION_Y, y) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
         return false;
     }
@@ -9801,11 +9253,11 @@ bool ExynosCamera::setObjectPosition(int x, int y)
 
 bool ExynosCamera::setTouchAFStart(bool toggle)
 {
-    if (m_curCameraInfo[m_camera_default]->touchAfStart != toggle) {
-        m_curCameraInfo[m_camera_default]->touchAfStart = toggle;
+    if (m_curCameraInfo[m_cameraMode]->touchAfStart != toggle) {
+        m_curCameraInfo[m_cameraMode]->touchAfStart = toggle;
         int startStop = (toggle == true) ? 1 : 0;
 
-        if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_TOUCH_AF_START_STOP, startStop) < 0) {
+        if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_TOUCH_AF_START_STOP, startStop) < 0) {
             CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
             return false;
         }
@@ -9816,12 +9268,12 @@ bool ExynosCamera::setTouchAFStart(bool toggle)
 
 bool ExynosCamera::setTopDownMirror(void)
 {
-    if (m_camera_info[m_camera_default].preview.fd < 0) {
+    if (m_camera_info[m_cameraMode].preview.fd < 0) {
         CLOGE("ERR(%s):Camera was closed", __func__);
         return false;
     }
 
-    if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_VFLIP, 1) < 0) {
+    if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_VFLIP, 1) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
         return false;
     }
@@ -9831,12 +9283,12 @@ bool ExynosCamera::setTopDownMirror(void)
 
 bool ExynosCamera::setLRMirror(void)
 {
-    if (m_camera_info[m_camera_default].preview.fd < 0) {
+    if (m_camera_info[m_cameraMode].preview.fd < 0) {
         CLOGE("ERR(%s):Camera was closed", __func__);
         return false;
     }
 
-    if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_HFLIP, 1) < 0) {
+    if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_HFLIP, 1) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
         return false;
     }
@@ -9846,37 +9298,42 @@ bool ExynosCamera::setLRMirror(void)
 
 bool ExynosCamera::setGamma(bool toggle)
 {
-     if (m_curCameraInfo[m_camera_default]->gamma != toggle) {
-         m_curCameraInfo[m_camera_default]->gamma = toggle;
+    if (m_curCameraInfo[m_cameraMode]->gamma != toggle) {
+        m_curCameraInfo[m_cameraMode]->gamma = toggle;
 
-         int gamma = (toggle == true) ? GAMMA_ON : GAMMA_OFF;
+        int gamma = (toggle == true) ? GAMMA_ON : GAMMA_OFF;
 
         if (m_flagCreate == true) {
-             if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_SET_GAMMA, gamma) < 0) {
-                 CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
-                 return false;
-             }
-         }
-     }
+            if (m_internalISP == true) {
+                /* TODO */
+                ;
+            } else {
+                 if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_SET_GAMMA, gamma) < 0) {
+                     CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
+                     return false;
+                 }
+            }
+        }
+    }
 
-     return true;
+    return true;
 }
 
 bool ExynosCamera::getGamma(void)
 {
-    return m_curCameraInfo[m_camera_default]->gamma;
+    return m_curCameraInfo[m_cameraMode]->gamma;
 }
 
 bool ExynosCamera::setODC(bool toggle)
 {
     if (m_flagCreate == true) {
-        if (m_curCameraInfo[m_camera_default]->odc != toggle) {
-            m_curCameraInfo[m_camera_default]->odc = toggle;
+        if (m_curCameraInfo[m_cameraMode]->odc != toggle) {
+            m_curCameraInfo[m_cameraMode]->odc = toggle;
 
 #ifdef USE_ODC
             int odc = (toggle == true) ? CAMERA_ODC_ON : CAMERA_ODC_OFF;
 
-            if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_SET_ODC, odc) < 0) {
+            if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_SET_ODC, odc) < 0) {
                 CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
                 return false;
             }
@@ -9889,30 +9346,35 @@ bool ExynosCamera::setODC(bool toggle)
 
 bool ExynosCamera::getODC(void)
 {
-    return m_curCameraInfo[m_camera_default]->odc;
+    return m_curCameraInfo[m_cameraMode]->odc;
 }
 
 bool ExynosCamera::setSlowAE(bool toggle)
 {
-     if (m_curCameraInfo[m_camera_default]->slowAE != toggle) {
-         m_curCameraInfo[m_camera_default]->slowAE = toggle;
+    if (m_curCameraInfo[m_cameraMode]->slowAE != toggle) {
+        m_curCameraInfo[m_cameraMode]->slowAE = toggle;
 
-         int slow_ae = (toggle == true) ? SLOW_AE_ON : SLOW_AE_OFF;
+        int slow_ae = (toggle == true) ? SLOW_AE_ON : SLOW_AE_OFF;
 
         if (m_flagCreate == true) {
-            if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_SET_SLOW_AE, slow_ae) < 0) {
-                CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
-                return false;
+            if (m_internalISP == true) {
+                /* TODO */
+                ;
+            } else {
+                if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_SET_SLOW_AE, slow_ae) < 0) {
+                    CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
+                    return false;
+                }
             }
-         }
-     }
+        }
+    }
 
-     return true;
+    return true;
 }
 
 bool ExynosCamera::getSlowAE(void)
 {
-    return m_curCameraInfo[m_camera_default]->slowAE;
+    return m_curCameraInfo[m_cameraMode]->slowAE;
 }
 
 void ExynosCamera::setCallbackCSC(bool csc)
@@ -9928,12 +9390,12 @@ bool ExynosCamera::getCallbackCSC(void)
 bool ExynosCamera::set3DNR(bool toggle)
 {
     if (m_flagCreate == true) {
-        if (m_curCameraInfo[m_camera_default]->tdnr != toggle) {
-            m_curCameraInfo[m_camera_default]->tdnr = toggle;
+        if (m_curCameraInfo[m_cameraMode]->tdnr != toggle) {
+            m_curCameraInfo[m_cameraMode]->tdnr = toggle;
 #ifdef USE_3DNR
             int tdnr = (toggle == true) ? CAMERA_3DNR_ON : CAMERA_3DNR_OFF;
 
-            if (exynos_v4l2_s_ctrl(m_camera_info[m_camera_default].preview.fd, V4L2_CID_CAMERA_SET_3DNR, tdnr) < 0) {
+            if (exynos_v4l2_s_ctrl(m_camera_info[m_cameraMode].preview.fd, V4L2_CID_CAMERA_SET_3DNR, tdnr) < 0) {
                 CLOGE("ERR(%s):exynos_v4l2_s_ctrl() fail", __func__);
                 return false;
             }
@@ -9946,12 +9408,12 @@ bool ExynosCamera::set3DNR(bool toggle)
 
 bool ExynosCamera::get3DNR(void)
 {
-    return m_curCameraInfo[m_camera_default]->tdnr;
+    return m_curCameraInfo[m_cameraMode]->tdnr;
 }
 
 int ExynosCamera::getIllumination(void)
 {
-   return (int)(m_camera_info[m_camera_default].is3aa_dm.shot.udm.ae.vendorSpecific[5] / 256);
+   return (int)(m_camera_info[m_cameraMode].is3aa_dm.shot.udm.ae.vendorSpecific[5] / 256);
 }
 
 bool ExynosCamera::setVtMode(int vtMode)
@@ -9959,16 +9421,16 @@ bool ExynosCamera::setVtMode(int vtMode)
     switch (vtMode) {
     // 3G vtmode (176x144, Fixed 7fps)
     case 1:
-        for (int i = 0; i < SENSOR_MAX_NUM; i++)
+        for (int i = 0; i < CAMERA_MODE_MAX; i++)
             m_curCameraInfo[i]->vtMode = 1;
         break;
     // LTE or WIFI vtmode (640x480, Fixed 15fps)
     case 2:
-        for (int i = 0; i < SENSOR_MAX_NUM; i++)
+        for (int i = 0; i < CAMERA_MODE_MAX; i++)
             m_curCameraInfo[i]->vtMode = 2;
         break;
     default:
-        for (int i = 0; i < SENSOR_MAX_NUM; i++)
+        for (int i = 0; i < CAMERA_MODE_MAX; i++)
             m_curCameraInfo[i]->vtMode = 0;
         break;
     }
@@ -9978,7 +9440,7 @@ bool ExynosCamera::setVtMode(int vtMode)
 
 bool ExynosCamera::setIntelligentMode(int intelligentMode)
 {
-    for (int i = 0; i < SENSOR_MAX_NUM; i++)
+    for (int i = 0; i < CAMERA_MODE_MAX; i++)
         m_curCameraInfo[i]->intelligentMode = intelligentMode;
 
     return true;
@@ -9986,29 +9448,28 @@ bool ExynosCamera::setIntelligentMode(int intelligentMode)
 
 int ExynosCamera::getIntelligentMode(void)
 {
-    return m_curCameraInfo[m_camera_default]->intelligentMode;
+    return m_curCameraInfo[m_cameraMode]->intelligentMode;
 }
-
 
 bool ExynosCamera::getFnumber(int *num, int *den)
 {
-    *num = m_curCameraInfo[m_camera_default]->fNumberNum;
-    *den = m_curCameraInfo[m_camera_default]->fNumberDen;
+    *num = m_curCameraInfo[m_cameraMode]->fNumberNum;
+    *den = m_curCameraInfo[m_cameraMode]->fNumberDen;
 
     return true;
 }
 
 bool ExynosCamera::getApertureValue(int *num, int *den)
 {
-    *num = m_curCameraInfo[m_camera_default]->apertureNum;
-    *den = m_curCameraInfo[m_camera_default]->apertureDen;
+    *num = m_curCameraInfo[m_cameraMode]->apertureNum;
+    *den = m_curCameraInfo[m_cameraMode]->apertureDen;
 
     return true;
 }
 
 int ExynosCamera::getFocalLengthIn35mmFilm(void)
 {
-    return m_curCameraInfo[m_camera_default]->focalLengthIn35mmLength;
+    return m_curCameraInfo[m_cameraMode]->focalLengthIn35mmLength;
 }
 
 const char *ExynosCamera::getImageUniqueId(void)
@@ -10018,9 +9479,9 @@ const char *ExynosCamera::getImageUniqueId(void)
 
 bool ExynosCamera::setAutoFocusMacroPosition(int autoFocusMacroPosition)
 {
-    int oldAutoFocusMacroPosition = m_curCameraInfo[m_camera_default]->autoFocusMacroPosition;
+    int oldAutoFocusMacroPosition = m_curCameraInfo[m_cameraMode]->autoFocusMacroPosition;
 
-    m_curCameraInfo[m_camera_default]->autoFocusMacroPosition = autoFocusMacroPosition;
+    m_curCameraInfo[m_cameraMode]->autoFocusMacroPosition = autoFocusMacroPosition;
 
     int macroPosition = ExynosCameraActivityAutofocus::AUTOFOCUS_MACRO_POSITION_BASE;
 
@@ -10038,7 +9499,7 @@ bool ExynosCamera::setAutoFocusMacroPosition(int autoFocusMacroPosition)
     m_autofocusMgr->setMacroPosition(macroPosition);
 
     /* if macro option change, we need to restart CAF */
-    if (oldAutoFocusMacroPosition != m_curCameraInfo[m_camera_default]->autoFocusMacroPosition) {
+    if (oldAutoFocusMacroPosition != m_curCameraInfo[m_cameraMode]->autoFocusMacroPosition) {
         if ((m_autofocusMgr->getAutofocusMode() == ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_CONTINUOUS_PICTURE ||
              m_autofocusMgr->getAutofocusMode() == ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_CONTINUOUS_VIDEO ||
              m_autofocusMgr->getAutofocusMode() == ExynosCameraActivityAutofocus::AUTOFOCUS_MODE_CONTINUOUS_PICTURE_MACRO) &&
@@ -10052,17 +9513,17 @@ bool ExynosCamera::setAutoFocusMacroPosition(int autoFocusMacroPosition)
     return true;
 }
 
-bool ExynosCamera::initSensor()
+bool ExynosCamera::m_initSensor(int cameraMode)
 {
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[m_camera_default].sensor.fd);
+    CLOGD("DEBUG(%s):(%d) fd %d", __func__, __LINE__, m_camera_info[cameraMode].sensor.fd);
 
     //Init Dummy and Initialized camera_shot
-    memset(&m_camera_info[m_camera_default].default_shot, 0x00, sizeof(struct camera2_shot_ext));
-    memset(&m_camera_info[m_camera_default].dummy_shot, 0x00, sizeof(struct camera2_shot_ext));
-    memset(&m_camera_info[m_camera_default].is3aa_dm, 0x00, sizeof(struct camera2_shot_ext));
-    memset(&m_camera_info[m_camera_default].isp_dm, 0x00, sizeof(struct camera2_shot_ext));
+    memset(&m_camera_info[cameraMode].default_shot, 0x00, sizeof(struct camera2_shot_ext));
+    memset(&m_camera_info[cameraMode].dummy_shot, 0x00, sizeof(struct camera2_shot_ext));
+    memset(&m_camera_info[cameraMode].is3aa_dm, 0x00, sizeof(struct camera2_shot_ext));
+    memset(&m_camera_info[cameraMode].isp_dm, 0x00, sizeof(struct camera2_shot_ext));
 
-    struct camera2_shot *shot = &m_camera_info[m_camera_default].default_shot.shot;
+    struct camera2_shot *shot = &m_camera_info[cameraMode].default_shot.shot;
 
     // 1. ctl
     // request
@@ -10072,13 +9533,25 @@ bool ExynosCamera::initSensor()
 
     // lens
     shot->ctl.lens.focusDistance = 0.0f;
-    shot->ctl.lens.aperture = (float)m_curCameraInfo[m_camera_default]->apertureNum / (float)m_curCameraInfo[m_camera_default]->apertureDen;
-    shot->ctl.lens.focalLength = (float)m_curCameraInfo[m_camera_default]->focalLengthNum / (float)m_curCameraInfo[m_camera_default]->focalLengthDen;
+    shot->ctl.lens.aperture = (float)m_curCameraInfo[cameraMode]->apertureNum / (float)m_curCameraInfo[cameraMode]->apertureDen;
+    shot->ctl.lens.focalLength = (float)m_curCameraInfo[cameraMode]->focalLengthNum / (float)m_curCameraInfo[cameraMode]->focalLengthDen;
     shot->ctl.lens.filterDensity = 0.0f;
     shot->ctl.lens.opticalStabilizationMode = ::OPTICAL_STABILIZATION_MODE_OFF;
 
-    int minFps = (m_curCameraInfo[m_camera_default]->fpsRange[0] == 0) ? 0 : (m_curCameraInfo[m_camera_default]->fpsRange[1] / 2) / 1000;
-    int maxFps = (m_curCameraInfo[m_camera_default]->fpsRange[1] == 0) ? 0 : m_curCameraInfo[m_camera_default]->fpsRange[1] / 1000;
+    int minFps = (m_curCameraInfo[cameraMode]->fpsRange[0] == 0) ? 0 : (m_curCameraInfo[cameraMode]->fpsRange[1] / 2) / 1000;
+    int maxFps = (m_curCameraInfo[cameraMode]->fpsRange[1] == 0) ? 0 : m_curCameraInfo[cameraMode]->fpsRange[1] / 1000;
+
+    /* The min fps can not be '0'. Therefore it is set up default value '15'. */
+    if (minFps == 0) {
+        CLOGW("WRN(%s): Invalid min fps value(%d)", __func__, minFps);
+        minFps = 15;
+    }
+
+    /*  The max fps can not be '0'. Therefore it is set up default value '30'. */
+    if (maxFps == 0) {
+        CLOGW("WRN(%s): Invalid max fps value(%d)", __func__, maxFps);
+        maxFps = 30;
+    }
 
     // sensor
     shot->ctl.sensor.exposureTime = 0;
@@ -10123,9 +9596,9 @@ bool ExynosCamera::initSensor()
     };
 
     int tonemapCurveSize = sizeof(tonemapCurve);
-    int sizeOfCurve = sizeof(shot->ctl.tonemap.curveRed);
+    int sizeOfCurve = sizeof(shot->ctl.tonemap.curveRed) / sizeof(shot->ctl.tonemap.curveRed[0]);
 
-    for (int i = 0; i < sizeOfCurve; i += tonemapCurveSize) {
+    for (int i = 0; i < sizeOfCurve; i ++) {
         memcpy(&(shot->ctl.tonemap.curveRed[i]),   tonemapCurve, tonemapCurveSize);
         memcpy(&(shot->ctl.tonemap.curveGreen[i]), tonemapCurve, tonemapCurveSize);
         memcpy(&(shot->ctl.tonemap.curveBlue[i]),  tonemapCurve, tonemapCurveSize);
@@ -10137,16 +9610,16 @@ bool ExynosCamera::initSensor()
 
     // scaler
     if (m_setZoom(0,
-                  m_defaultCameraInfo[m_camera_default]->pictureW, m_defaultCameraInfo[m_camera_default]->pictureH,
-                  m_curCameraInfo[m_camera_default]->previewW,     m_curCameraInfo[m_camera_default]->previewH,
-                  (void *)&m_camera_info[m_camera_default].dummy_shot) == false) {
+                  m_defaultCameraInfo[cameraMode]->pictureW, m_defaultCameraInfo[cameraMode]->pictureH,
+                  m_curCameraInfo[cameraMode]->previewW,     m_curCameraInfo[cameraMode]->previewH,
+                  (void *)&m_camera_info[cameraMode].dummy_shot) == false) {
         CLOGE("ERR(%s):m_setZoom() fail", __func__);
     }
 
     // jpeg
     shot->ctl.jpeg.quality = m_jpegQuality;
-    shot->ctl.jpeg.thumbnailSize[0] = m_curCameraInfo[m_camera_default]->thumbnailW;
-    shot->ctl.jpeg.thumbnailSize[1] = m_curCameraInfo[m_camera_default]->thumbnailH;
+    shot->ctl.jpeg.thumbnailSize[0] = m_curCameraInfo[cameraMode]->thumbnailW;
+    shot->ctl.jpeg.thumbnailSize[1] = m_curCameraInfo[cameraMode]->thumbnailH;
     shot->ctl.jpeg.thumbnailQuality = m_jpegThumbnailQuality;
     shot->ctl.jpeg.gpsCoordinates[0] = 0;
     shot->ctl.jpeg.gpsCoordinates[1] = 0;
@@ -10193,6 +9666,8 @@ bool ExynosCamera::initSensor()
 
     shot->ctl.aa.isoMode = AA_ISOMODE_AUTO;
     shot->ctl.aa.isoValue = 0;
+    shot->ctl.color.saturation = 3; // "3" is default.
+
 
     // 2. dm
 
@@ -10204,142 +9679,163 @@ bool ExynosCamera::initSensor()
     shot->magicNumber = SHOT_MAGIC_NUMBER;
 
     // user request
-    m_camera_info[m_camera_default].default_shot.dis_bypass = 1;
-    m_camera_info[m_camera_default].default_shot.dnr_bypass = 1;
-    m_camera_info[m_camera_default].default_shot.fd_bypass  = 1;
+    m_camera_info[cameraMode].default_shot.dis_bypass = 1;
+    m_camera_info[cameraMode].default_shot.dnr_bypass = 1;
+    m_camera_info[cameraMode].default_shot.fd_bypass  = 1;
 
-    m_camera_info[m_camera_default].default_shot.request_3ax = 1;
-    m_camera_info[m_camera_default].default_shot.request_isp = 1;
-    m_camera_info[m_camera_default].default_shot.request_scc = 0;
-    m_camera_info[m_camera_default].default_shot.request_scp = 1;
-    m_camera_info[m_camera_default].default_shot.request_dis = 0;
+    m_camera_info[cameraMode].default_shot.request_3ax = 1;
+    m_camera_info[cameraMode].default_shot.request_isp = 1;
+    m_camera_info[cameraMode].default_shot.request_scc = 0;
+    m_camera_info[cameraMode].default_shot.request_scp = 1;
+    m_camera_info[cameraMode].default_shot.request_dis = 0;
 
     // default shot
-    memcpy(&m_camera_info[m_camera_default].dummy_shot, &m_camera_info[m_camera_default].default_shot, sizeof(struct camera2_shot_ext));
-    memcpy(&m_camera_info[m_camera_default].is3aa_dm, &m_camera_info[m_camera_default].default_shot, sizeof(struct camera2_shot_ext));
-    memcpy(&m_camera_info[m_camera_default].isp_dm, &m_camera_info[m_camera_default].default_shot, sizeof(struct camera2_shot_ext));
+    memcpy(&m_camera_info[cameraMode].dummy_shot, &m_camera_info[cameraMode].default_shot, sizeof(struct camera2_shot_ext));
+    memcpy(&m_camera_info[cameraMode].is3aa_dm, &m_camera_info[cameraMode].default_shot, sizeof(struct camera2_shot_ext));
+    memcpy(&m_camera_info[cameraMode].isp_dm, &m_camera_info[cameraMode].default_shot, sizeof(struct camera2_shot_ext));
 
     return true;
 }
 
-bool ExynosCamera::deinitSensor(void)
+bool ExynosCamera::m_openSensor(int cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    /* TODO */
+    bool ret = true;
 
-    return true;
-}
-
-bool ExynosCamera::openSensor()
-{
-    char node_name[30];
-    unsigned int o_flags;
-
-    //sensor open
-    memset(&node_name, 0x00, sizeof(node_name));
-
-    if (m_camera_default == SENSOR_FRONT) {
-        if (0 <= m_camera_info[m_camera_default].sensor.fd) {
-            CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[m_camera_default].sensor.fd);
-            return false;
-        }
-
-        snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_SEN1_NUM);
-
-        o_flags = O_RDWR;
-
-        m_camera_info[m_camera_default].sensor.fd = exynos_v4l2_open(node_name, o_flags, 0);
-        if (m_camera_info[m_camera_default].sensor.fd < 0) {
-            CLOGE("ERR(%s): failed to open sensor video node (%s) fd (%d)",
-                __func__, node_name, m_camera_info[m_camera_default].sensor.fd);
-            m_camera_info[m_camera_default].sensor.fd = -1;
-            return false;
-        }
-    } else {
-        if (m_camera_info[m_camera_default].sensor.fd < 0
-                && m_camera_info[SENSOR_FAKE].sensor.fd >= 0)
-            m_camera_info[m_camera_default].sensor.fd = m_camera_info[SENSOR_FAKE].sensor.fd;
-    }
-
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[m_camera_default].sensor.fd);
-
-    return true;
-}
-
-bool ExynosCamera::closeSensor()
-{
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (0 <= m_camera_info[m_camera_default].sensor.fd) {
-        if (exynos_v4l2_close(m_camera_info[m_camera_default].sensor.fd) != 0) {
-            CLOGE("ERR(%s): sensor exynos_v4l2_close failed", __func__);
-            return false;
-        }
-
-        m_camera_info[m_camera_default].sensor.fd = -1;
-
-        /* TODO: currently FAKE sensor fd is same with BACK */
-        if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK)
-            m_camera_info[SENSOR_FAKE].sensor.fd = -1;
-    }
-
-    return true;
-}
-
-bool ExynosCamera::openIsp(void)
-{
-    if (0 <= m_camera_info[m_camera_default].isp.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[m_camera_default].isp.fd);
+    if (0 <= m_camera_info[cameraMode].sensor.fd) {
+        CLOGE("ERR(%s):Already open fd (%d)", __func__, m_camera_info[cameraMode].sensor.fd);
         return false;
     }
 
     char node_name[30];
 
-    /*isp open*/
+    switch (cameraMode) {
+    case CAMERA_MODE_BACK:
+        memset(&node_name, 0x00, sizeof(node_name));
+        snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_SEN0_NUM);
+
+        m_camera_info[cameraMode].sensor.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+        if (m_camera_info[cameraMode].sensor.fd < 0) {
+            CLOGE("ERR(%s):exynos_v4l2_open(%s) fail (%d)", __func__, node_name, m_camera_info[cameraMode].sensor.fd);
+            m_camera_info[cameraMode].sensor.fd = -1;
+            ret = false;
+        }
+
+        break;
+    case CAMERA_MODE_FRONT:
+        memset(&node_name, 0x00, sizeof(node_name));
+        snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_SEN1_NUM);
+
+        m_camera_info[cameraMode].sensor.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+        if (m_camera_info[cameraMode].sensor.fd < 0) {
+            CLOGE("ERR(%s):exynos_v4l2_open(%s) fail (%d)", __func__, node_name, m_camera_info[cameraMode].sensor.fd);
+            m_camera_info[cameraMode].sensor.fd = -1;
+            ret = false;
+        }
+        break;
+    case CAMERA_MODE_REPROCESSING:
+        /* TODO: currently the reprocessing sensor fd is same with non-reprocessing */
+        if (0 <= m_camera_info[m_cameraMode].sensor.fd) {
+            m_camera_info[cameraMode].sensor.fd = m_camera_info[m_cameraMode].sensor.fd;
+            m_camera_info[cameraMode].sensor.flagDup = true;
+        }
+        break;
+
+    default:
+        CLOGE("ERR(%s):invalid cameraMode(%d)", __func__, cameraMode);
+        break;
+    }
+
+    CLOGD("DEBUG(%s):cameraMode(%d) : fd(%d)", __func__, cameraMode, m_camera_info[cameraMode].sensor.fd);
+
+    return ret;
+}
+
+bool ExynosCamera::m_closeSensor(int cameraMode)
+{
+    CLOGD("DEBUG(%s):in", __func__);
+
+    switch (cameraMode) {
+    case CAMERA_MODE_BACK:
+    case CAMERA_MODE_FRONT:
+        if (0 <= m_camera_info[cameraMode].sensor.fd) {
+            if (exynos_v4l2_close(m_camera_info[cameraMode].sensor.fd) != 0) {
+                CLOGE("ERR(%s):exynos_v4l2_close(%d) fail", __func__, m_camera_info[cameraMode].sensor.fd);
+                return false;
+            }
+
+            m_camera_info[cameraMode].sensor.fd = -1;
+        }
+        break;
+
+    case CAMERA_MODE_REPROCESSING:
+        m_camera_info[cameraMode].sensor.fd = -1;
+        break;
+    default:
+        CLOGE("ERR(%s):invalid cameraMode(%d)", __func__, cameraMode);
+        break;
+    }
+
+    CLOGD("DEBUG(%s):cameraMode(%d) : fd(%d)", __func__, cameraMode, m_camera_info[cameraMode].sensor.fd);
+
+    return true;
+}
+
+bool ExynosCamera::m_openIsp(int cameraMode)
+{
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (0 <= m_camera_info[cameraMode].isp.fd) {
+        CLOGE("ERR(%s):Already open fd (%d)", __func__, m_camera_info[cameraMode].isp.fd);
+        return false;
+    }
+
+    char node_name[30];
     memset(&node_name, 0x00, sizeof(node_name));
     snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_ISP_NUM);
 
-    m_camera_info[m_camera_default].isp.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
-
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[m_camera_default].isp.fd);
-
-    if (m_camera_info[m_camera_default].isp.fd < 0) {
-        CLOGE("ERR(%s): failed to open isp video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[m_camera_default].isp.fd);
+    m_camera_info[cameraMode].isp.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+    if (m_camera_info[cameraMode].isp.fd < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_open(%s) fail (%d)", __func__, node_name, m_camera_info[cameraMode].isp.fd);
         return false;
     }
+
+    CLOGD("DEBUG(%s):cameraMode(%d) : fd(%d)", __func__, cameraMode, m_camera_info[cameraMode].isp.fd);
 
     return true;
 }
 
-bool ExynosCamera::closeIsp(void)
+bool ExynosCamera::m_closeIsp(int cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (0 <= m_camera_info[m_camera_default].isp.fd) {
-        if (exynos_v4l2_close(m_camera_info[m_camera_default].isp.fd) != 0) {
-            CLOGE("ERR(%s): isp exynos_v4l2_close failed", __func__);
+    if (0 <= m_camera_info[cameraMode].isp.fd) {
+        if (exynos_v4l2_close(m_camera_info[cameraMode].isp.fd) != 0) {
+            CLOGE("ERR(%s):exynos_v4l2_close(%d) fail", __func__, m_camera_info[cameraMode].isp.fd);
             return false;
         }
 
-        m_camera_info[m_camera_default].isp.fd = -1;
+        m_camera_info[cameraMode].isp.fd = -1;
     }
+
+    CLOGD("DEBUG(%s):cameraMode(%d) : fd(%d)", __func__, cameraMode, m_camera_info[cameraMode].isp.fd);
 
     return true;
 }
-#ifdef USE_VDIS
-bool ExynosCamera::openVdisOut(void)
-{
-    CLOGE("%s", __func__);
 
-    if (0 <=  m_camera_info[m_camera_default].vdisc.fd) {
-        CLOGE("ERR(%s): Already init fd (%d)", __func__, m_camera_info[m_camera_default].vdisc.fd);
+#ifdef USE_VDIS
+bool ExynosCamera::m_openVdisOut(void)
+{
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (0 <=  m_camera_info[m_cameraMode].vdisc.fd) {
+        CLOGE("ERR(%s):Already init fd (%d)", __func__, m_camera_info[m_cameraMode].vdisc.fd);
         return false;
     }
 
-    if (0 <=  m_camera_info[m_camera_default].vdiso.fd) {
-        CLOGE("ERR(%s): Already init fd (%d)", __func__, m_camera_info[m_camera_default].vdiso.fd);
+    if (0 <=  m_camera_info[m_cameraMode].vdiso.fd) {
+        CLOGE("ERR(%s):Already init fd (%d)", __func__, m_camera_info[m_cameraMode].vdiso.fd);
         return false;
     }
 
@@ -10349,11 +9845,11 @@ bool ExynosCamera::openVdisOut(void)
     memset(&node_name, 0x00, sizeof(node_name));
     snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_VDISC_NUM);
 
-    m_camera_info[m_camera_default].vdisc.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
-    if (m_camera_info[m_camera_default].vdisc.fd < 0) {
-        CLOGE("DEBUG(%s): failed to open vdisc video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[m_camera_default].vdisc.fd);
-        m_camera_info[m_camera_default].vdisc.fd = -1;
+    m_camera_info[m_cameraMode].vdisc.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+    if (m_camera_info[m_cameraMode].vdisc.fd < 0) {
+        CLOGE("DEBUG(%s): fail to open vdisc video node (%s) fd (%d)",
+            __func__, node_name, m_camera_info[m_cameraMode].vdisc.fd);
+        m_camera_info[m_cameraMode].vdisc.fd = -1;
         return false;
     } else {
         CLOGE("VDISC node is opened");
@@ -10362,11 +9858,11 @@ bool ExynosCamera::openVdisOut(void)
     memset(&node_name, 0x00, sizeof(node_name));
     snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_VDISO_NUM);
 
-    m_camera_info[m_camera_default].vdiso.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
-    if (m_camera_info[m_camera_default].vdiso.fd < 0) {
-        CLOGE("DEBUG(%s): failed to open vdiso video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[m_camera_default].vdiso.fd);
-        m_camera_info[m_camera_default].vdiso.fd = -1;
+    m_camera_info[m_cameraMode].vdiso.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+    if (m_camera_info[m_cameraMode].vdiso.fd < 0) {
+        CLOGE("DEBUG(%s): fail to open vdiso video node (%s) fd (%d)",
+            __func__, node_name, m_camera_info[m_cameraMode].vdiso.fd);
+        m_camera_info[m_cameraMode].vdiso.fd = -1;
         return false;
     } else
         CLOGE("VDISO node is opened");
@@ -10374,212 +9870,205 @@ bool ExynosCamera::openVdisOut(void)
     return true;
 }
 
-bool ExynosCamera::closeVdisOut(void)
+bool ExynosCamera::m_closeVdisOut(void)
 {
-    if (0 <= m_camera_info[m_camera_default].vdisc.fd) {
-        if (exynos_v4l2_close(m_camera_info[m_camera_default].vdisc.fd) != 0) {
-            CLOGE("ERR(%s): exynos_v4l2_close failed", __func__ );
+    if (0 <= m_camera_info[m_cameraMode].vdisc.fd) {
+        if (exynos_v4l2_close(m_camera_info[m_cameraMode].vdisc.fd) != 0) {
+            CLOGE("ERR(%s):exynos_v4l2_close fail", __func__ );
             return false;
         }
 
-        m_camera_info[m_camera_default].vdisc.fd= -1;
+        m_camera_info[m_cameraMode].vdisc.fd= -1;
     }
 
-    if (0 <= m_camera_info[m_camera_default].vdiso.fd) {
-        if (exynos_v4l2_close(m_camera_info[m_camera_default].vdiso.fd) != 0) {
-            CLOGE("ERR(%s): exynos_v4l2_close failed", __func__ );
+    if (0 <= m_camera_info[m_cameraMode].vdiso.fd) {
+        if (exynos_v4l2_close(m_camera_info[m_cameraMode].vdiso.fd) != 0) {
+            CLOGE("ERR(%s):exynos_v4l2_close fail", __func__ );
             return false;
         }
 
-        m_camera_info[m_camera_default].vdiso.fd= -1;
+        m_camera_info[m_cameraMode].vdiso.fd= -1;
     }
     return true;
 }
 #endif
-bool ExynosCamera::openPreview(void)
+
+bool ExynosCamera::m_openPreview(int cameraMode)
 {
-    if (0 <= m_camera_info[m_camera_default].preview.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[m_camera_default].preview.fd);
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (0 <= m_camera_info[cameraMode].preview.fd) {
+        CLOGE("ERR(%s):Already open fd (%d)", __func__, m_camera_info[cameraMode].preview.fd);
         return false;
     }
 
     char node_name[30];
-
-    //from allocateStream()
     memset(&node_name, 0x00, sizeof(node_name));
     snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_SCP_NUM);
 
-    m_camera_info[m_camera_default].preview.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
-
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[m_camera_default].preview.fd);
-
-    if (m_camera_info[m_camera_default].preview.fd < 0) {
-        CLOGE("DEBUG(%s): failed to open preview video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[m_camera_default].preview.fd);
-        m_camera_info[m_camera_default].preview.fd = -1;
+    m_camera_info[cameraMode].preview.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+    if (m_camera_info[cameraMode].preview.fd < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_open(%s) fail (%d)", __func__, node_name, m_camera_info[cameraMode].preview.fd);
+        m_camera_info[cameraMode].preview.fd = -1;
         return false;
     }
 
+    CLOGD("DEBUG(%s):cameraMode(%d) : fd(%d)", __func__, cameraMode, m_camera_info[cameraMode].preview.fd);
+
     return true;
 }
 
-bool ExynosCamera::closePreview(void)
+bool ExynosCamera::m_closePreview(int cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (0 <= m_camera_info[m_camera_default].preview.fd) {
-        if (exynos_v4l2_close(m_camera_info[m_camera_default].preview.fd) != 0) {
-            CLOGE("ERR(%s): exynos_v4l2_close failed", __func__ );
+    if (0 <= m_camera_info[cameraMode].preview.fd) {
+        if (exynos_v4l2_close(m_camera_info[cameraMode].preview.fd) != 0) {
+            CLOGE("ERR(%s):exynos_v4l2_close(%d) fail", __func__, m_camera_info[cameraMode].preview.fd);
             return false;
         }
 
-        m_camera_info[m_camera_default].preview.fd = -1;
+        m_camera_info[cameraMode].preview.fd = -1;
     }
 
     return true;
 }
 
-bool ExynosCamera::openPicture(void)
+bool ExynosCamera::m_openPicture(int cameraMode)
 {
-    if (0 <= m_camera_info[m_camera_default].picture.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[m_camera_default].picture.fd);
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (0 <= m_camera_info[cameraMode].picture.fd) {
+        CLOGE("ERR(%s):Already open fd (%d)", __func__, m_camera_info[cameraMode].picture.fd);
         return false;
     }
 
     char node_name[30];
-
-    /*picture open*/
     memset(&node_name, 0x00, sizeof(node_name));
     snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_SCC_NUM);
 
-    m_camera_info[m_camera_default].picture.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
-
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[m_camera_default].picture.fd);
-
-    if (m_camera_info[m_camera_default].picture.fd < 0) {
-        CLOGE("ERR(%s): failed to open picture video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[m_camera_default].picture.fd);
-        m_camera_info[m_camera_default].picture.fd = -1;
+    m_camera_info[cameraMode].picture.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+    if (m_camera_info[cameraMode].picture.fd < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_open(%s) fail (%d)", __func__, node_name, m_camera_info[cameraMode].picture.fd);
+        m_camera_info[cameraMode].picture.fd = -1;
         return false;
     }
 
+    CLOGD("DEBUG(%s):cameraMode(%d) : fd(%d)", __func__, cameraMode, m_camera_info[cameraMode].picture.fd);
+
     return true;
 }
 
-bool ExynosCamera::closePicture(void)
+bool ExynosCamera::m_closePicture(int cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (0 <= m_camera_info[m_camera_default].picture.fd) {
-        if (exynos_v4l2_close(m_camera_info[m_camera_default].picture.fd) != 0) {
-            CLOGE("ERR(%s): exynos_v4l2_close failed", __func__);
+    if (0 <= m_camera_info[cameraMode].picture.fd) {
+        if (exynos_v4l2_close(m_camera_info[cameraMode].picture.fd) != 0) {
+            CLOGE("ERR(%s):exynos_v4l2_close(%d) fail", __func__, m_camera_info[cameraMode].picture.fd);
             return false;
         }
 
-        m_camera_info[m_camera_default].picture.fd = -1;
+        m_camera_info[cameraMode].picture.fd = -1;
     }
 
     return true;
 }
 
-bool ExynosCamera::openIs3a0(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::m_openIs3a0(int cameraMode)
 {
-    if (0 <= m_camera_info[sensor_enum].is3a0Output.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[sensor_enum].is3a0Output.fd);
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (0 <= m_camera_info[cameraMode].is3a0Src.fd) {
+        CLOGE("ERR(%s):Already open fd (%d)", __func__, m_camera_info[cameraMode].is3a0Src.fd);
+        return false;
+    }
+
+    if (0 <= m_camera_info[cameraMode].is3a0Dst.fd) {
+        CLOGE("ERR(%s):Already open fd (%d)", __func__, m_camera_info[cameraMode].is3a0Dst.fd);
         return false;
     }
 
     char node_name[30];
-
     memset(&node_name, 0x00, sizeof(node_name));
     snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_3A0_NUM);
 
-    m_camera_info[sensor_enum].is3a0Output.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
-
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[sensor_enum].is3a0Output.fd);
-
-    if (m_camera_info[sensor_enum].is3a0Output.fd < 0) {
-        CLOGE("ERR(%s): failed to open picture video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[sensor_enum].is3a0Output.fd);
-        m_camera_info[sensor_enum].is3a0Output.fd = -1;
+    m_camera_info[cameraMode].is3a0Src.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+    if (m_camera_info[cameraMode].is3a0Src.fd < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_open(%s) fail (%d)", __func__, node_name, m_camera_info[cameraMode].is3a0Src.fd);
+        m_camera_info[cameraMode].is3a0Src.fd = -1;
         return false;
     }
 
-    if (0 <= m_camera_info[sensor_enum].is3a0Capture.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[sensor_enum].is3a0Capture.fd);
-        return false;
-    }
+    m_camera_info[cameraMode].is3a0Dst.fd = m_camera_info[cameraMode].is3a0Src.fd;
 
-    m_camera_info[sensor_enum].is3a0Capture.fd = m_camera_info[sensor_enum].is3a0Output.fd;
+    CLOGD("DEBUG(%s):cameraMode(%d) : fd(%d)", __func__, cameraMode, m_camera_info[cameraMode].is3a0Src.fd);
 
     return true;
 }
 
-bool ExynosCamera::closeIs3a0(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::m_closeIs3a0(int cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (0 <= m_camera_info[sensor_enum].is3a0Output.fd) {
-        if (exynos_v4l2_close(m_camera_info[sensor_enum].is3a0Output.fd) != 0) {
-            CLOGE("ERR(%s): exynos_v4l2_close failed", __func__);
+    if (0 <= m_camera_info[cameraMode].is3a0Src.fd) {
+        if (exynos_v4l2_close(m_camera_info[cameraMode].is3a0Src.fd) != 0) {
+            CLOGE("ERR(%s):exynos_v4l2_close(%d) fail", __func__, m_camera_info[cameraMode].is3a0Src.fd);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a0Output.fd = -1;
+        m_camera_info[cameraMode].is3a0Src.fd = -1;
+        m_camera_info[cameraMode].is3a0Dst.fd = -1;
     }
-
-    m_camera_info[sensor_enum].is3a0Capture.fd = -1;
 
     return true;
 }
 
-bool ExynosCamera::openIs3a1(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::m_openIs3a1(int cameraMode)
 {
-    if (0 <= m_camera_info[sensor_enum].is3a1Output.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[sensor_enum].is3a1Output.fd);
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (0 <= m_camera_info[cameraMode].is3a1Src.fd) {
+        CLOGE("ERR(%s):Already open fd (%d)", __func__, m_camera_info[cameraMode].is3a1Src.fd);
+        return false;
+    }
+
+    if (0 <= m_camera_info[cameraMode].is3a1Dst.fd) {
+        CLOGE("ERR(%s):Already open fd (%d)", __func__, m_camera_info[cameraMode].is3a1Dst.fd);
         return false;
     }
 
     char node_name[30];
-
     memset(&node_name, 0x00, sizeof(node_name));
     snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_3A1_NUM);
 
-    m_camera_info[sensor_enum].is3a1Output.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
-
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[sensor_enum].is3a1Output.fd);
-
-    if (m_camera_info[sensor_enum].is3a1Output.fd < 0) {
-        CLOGE("ERR(%s): failed to open picture video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[sensor_enum].is3a1Output.fd);
-        m_camera_info[sensor_enum].is3a1Output.fd = -1;
+    m_camera_info[cameraMode].is3a1Src.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+    if (m_camera_info[cameraMode].is3a1Src.fd < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_open(%s) fail (%d)", __func__, node_name, m_camera_info[cameraMode].is3a1Src.fd);
+        m_camera_info[cameraMode].is3a1Src.fd = -1;
         return false;
     }
 
-    if (0 <= m_camera_info[sensor_enum].is3a1Capture.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[sensor_enum].is3a1Capture.fd);
-        return false;
-    }
+    m_camera_info[cameraMode].is3a1Dst.fd = m_camera_info[cameraMode].is3a1Src.fd;
 
-    m_camera_info[sensor_enum].is3a1Capture.fd = m_camera_info[sensor_enum].is3a1Output.fd;
+    CLOGD("DEBUG(%s):cameraMode(%d) : fd(%d)", __func__, cameraMode, m_camera_info[cameraMode].is3a1Src.fd);
 
     return true;
 }
 
-bool ExynosCamera::closeIs3a1(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::m_closeIs3a1(int cameraMode)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (0 <= m_camera_info[sensor_enum].is3a1Output.fd) {
-        if (exynos_v4l2_close(m_camera_info[sensor_enum].is3a1Output.fd) != 0) {
-            CLOGE("ERR(%s): exynos_v4l2_close failed", __func__);
+    if (0 <= m_camera_info[cameraMode].is3a1Src.fd) {
+        if (exynos_v4l2_close(m_camera_info[cameraMode].is3a1Src.fd) != 0) {
+            CLOGE("ERR(%s):exynos_v4l2_close(%d) fail", __func__, m_camera_info[cameraMode].is3a1Src.fd);
             return false;
         }
 
-        m_camera_info[sensor_enum].is3a1Output.fd = -1;
+        m_camera_info[cameraMode].is3a1Src.fd = -1;
+        m_camera_info[cameraMode].is3a1Dst.fd = -1;
     }
-
-    m_camera_info[sensor_enum].is3a1Capture.fd = -1;
 
     return true;
 }
@@ -10690,6 +10179,56 @@ bool ExynosCamera::getCropRect(int  src_w,  int   src_h,
     return true;
 }
 
+bool ExynosCamera::getCropRect2(int  src_w,     int   src_h,
+                                int  dst_w,     int   dst_h,
+                                int *new_src_x, int *new_src_y,
+                                int *new_src_w, int *new_src_h,
+                                int           zoom)
+{
+    unsigned int crop_x, crop_y, crop_width, crop_height;
+    unsigned int sensor_width, sensor_height, sensor_ratio;
+    unsigned int chain3_width, chain3_height, chain3_ratio;
+
+    sensor_width = src_w;
+    sensor_height = src_h;
+    chain3_width = dst_w;
+    chain3_height = dst_h;
+    crop_width = sensor_width;
+    crop_height = sensor_height;
+    crop_x = crop_y = 0;
+
+    sensor_ratio = sensor_width * 1000 / sensor_height;
+    chain3_ratio = chain3_width * 1000 / chain3_height;
+
+    if (sensor_ratio == chain3_ratio) {
+        crop_width = sensor_width;
+        crop_height = sensor_height;
+    } else if (sensor_ratio < chain3_ratio) {
+        /* isp dma input limitation
+        height : 2 times */
+        crop_height =
+            (sensor_width * chain3_height) / chain3_width;
+        crop_height = ALIGN(crop_height, 2);
+        crop_y = ((sensor_height - crop_height) >> 1) &
+                0xFFFFFFFE;
+    } else {
+        /* isp dma input limitation
+        width : 4 times */
+        crop_width =
+            (sensor_height * chain3_width) / chain3_height;
+        crop_width = ALIGN(crop_width, 4);
+        crop_x =  ((sensor_width - crop_width) >> 1) &
+            0xFFFFFFFE;
+    }
+
+    *new_src_w = (int)crop_width;
+    *new_src_h = (int)crop_height;
+    *new_src_x = (int)crop_x;
+    *new_src_y = (int)crop_y;
+
+    return true;
+}
+
 bool ExynosCamera::getCropRectAlign(int  src_w,  int   src_h,
                                     int  dst_w,  int   dst_h,
                                     int *crop_x, int *crop_y,
@@ -10779,7 +10318,7 @@ bool ExynosCamera::fileDump(char *filename,
     yuvFd = fopen(filename, "w+");
 
     if (yuvFd == NULL) {
-        CLOGE("ERR(%s): open(%s) fail",
+        CLOGE("ERR(%s):open(%s) fail",
             __func__, filename);
         return false;
     }
@@ -10840,7 +10379,7 @@ void ExynosCamera::m_printSensorQ(void)
    int index;
 
     if (m_sensorQ.size() == 0) {
-        CLOGW("[%s] (%d) no entry", __func__, __LINE__);
+        CLOGW("WARN(%s):(%d) no entry", __func__, __LINE__);
         return;
     }
 
@@ -10858,7 +10397,7 @@ void ExynosCamera::m_releaseSensorQ(void)
     List<int>::iterator r;
 
     Mutex::Autolock lock(m_requestMutex);
-    CLOGV("(%s)m_sensorQ.size : %d", __FUNCTION__, m_sensorQ.size());
+    CLOGV("(%s)m_sensorQ.size : %d", __func__, m_sensorQ.size());
 
     while (m_sensorQ.size() > 0) {
         r = m_sensorQ.begin()++;
@@ -10911,14 +10450,14 @@ void ExynosCamera::m_printBayerQ(void)
    int index;
 
     if (m_captureBayerQ.size() == 0) {
-        CLOGW("[%s] (%d) no entry", __func__, __LINE__);
+        CLOGW("WARN(%s):(%d) no entry", __func__, __LINE__);
         return;
     }
 
-    CLOGD("[%s] (%d) m_captureBayerQ.size() = %d", __func__, __LINE__, m_captureBayerQ.size());
+    CLOGD("DEBUG(%s):(%d) m_captureBayerQ.size() = %d", __func__, __LINE__, m_captureBayerQ.size());
     for (token = m_captureBayerQ.begin(); token != m_captureBayerQ.end(); token++) {
         index = *token;
-        CLOGD("[%s] (%d) index = %d", __func__, __LINE__, index);
+        CLOGD("DEBUG(%s):(%d) index = %d", __func__, __LINE__, index);
     }
 
     return;
@@ -10930,7 +10469,7 @@ void ExynosCamera::m_releaseBayerQ(void)
 
     Mutex::Autolock lock(m_bayerMutex);
 
-    CLOGV("(%s)m_captureBayerQ.size : %d", __FUNCTION__, m_captureBayerQ.size());
+    CLOGV("(%s)m_captureBayerQ.size : %d", __func__, m_captureBayerQ.size());
 
     while (m_captureBayerQ.size() > 0) {
         r = m_captureBayerQ.begin()++;
@@ -10946,59 +10485,16 @@ int ExynosCamera::m_getSensorId(int cameraId)
 
     switch (cameraId) {
     case CAMERA_ID_BACK:
-#ifdef MULTI_INSTANCE_CHECK
-        if (this->multi_instance == 2)
-            sensorId = SENSOR_NAME_IMX135;
-#endif
         sensorId = BACK_CAMERA_SENSOR_NAME;
-#ifndef USE_TF4_SENSOR
+
         if (BACK_CAMERA_SENSOR_NAME != SENSOR_NAME_IMX135)
-            CLOGE("ERR(%s): invalid camera sensor name(%d) failed", __func__, BACK_CAMERA_SENSOR_NAME);
-#endif		
+            CLOGE("ERR(%s):invalid camera sensor name(%d) fail", __func__, BACK_CAMERA_SENSOR_NAME);
         break;
     case CAMERA_ID_FRONT:
         sensorId = FRONT_CAMERA_SENSOR_NAME;
         break;
     default:
-        CLOGE("ERR(%s): invalid cameraId(%d) failed", __func__, cameraId);
-        break;
-    }
-
-    return sensorId;
-}
-
-int ExynosCamera::m_getSensorIdLpzsl(int cameraId)
-{
-    int sensorId = -1;
-
-    switch (cameraId) {
-    case CAMERA_ID_BACK:
-#ifdef MULTI_INSTANCE_CHECK
-        if (this->multi_instance == 2)
-            sensorId = SENSOR_NAME_IMX135;
-#endif
-
-#ifdef USE_TF4_SENSOR
-        sensorId = BACK_CAMERA_SENSOR_NAME;
-#else
-        if (BACK_CAMERA_SENSOR_NAME != SENSOR_NAME_IMX135)
-            CLOGE("ERR(%s): invalid camera sensor name(%d) failed", __func__, BACK_CAMERA_SENSOR_NAME);
-#endif
-        break;
-    case CAMERA_ID_FRONT:
-#ifdef USE_TF4_SENSOR
-        sensorId = FRONT_CAMERA_SENSOR_NAME;
-#else		
-        if (FRONT_CAMERA_SENSOR_NAME == SENSOR_NAME_S5K6A3)
-            sensorId = SENSOR_NAME_FAKE_S5K6A3;
-        else if (FRONT_CAMERA_SENSOR_NAME == SENSOR_NAME_S5K6B2)
-            sensorId = SENSOR_NAME_FAKE_S5K6B2;
-        else
-            CLOGE("ERR(%s): invalid camera sensor name(%d) failed", __func__, FRONT_CAMERA_SENSOR_NAME);
-#endif						
-        break;
-    default:
-        CLOGE("ERR(%s): invalid cameraId(%d) failed", __func__, cameraId);
+        CLOGE("ERR(%s):invalid cameraId(%d) fail", __func__, cameraId);
         break;
     }
 
@@ -11036,10 +10532,10 @@ void ExynosCamera::m_turnOffEffectByFps(camera2_shot_ext *shot_ext, int fps)
 
 ExynosRect2 ExynosCamera::m_AndroidArea2HWArea(ExynosRect2 *rect)
 {
-    int x = m_camera_info[m_camera_default].dummy_shot.shot.ctl.scaler.cropRegion[0];
-    int y = m_camera_info[m_camera_default].dummy_shot.shot.ctl.scaler.cropRegion[1];
-    int w = m_camera_info[m_camera_default].dummy_shot.shot.ctl.scaler.cropRegion[2];
-    int h = m_camera_info[m_camera_default].dummy_shot.shot.ctl.scaler.cropRegion[3];
+    int x = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.scaler.cropRegion[0];
+    int y = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.scaler.cropRegion[1];
+    int w = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.scaler.cropRegion[2];
+    int h = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.scaler.cropRegion[3];
 
     ExynosRect2 newRect2;
 
@@ -11120,16 +10616,16 @@ ExynosRect2 ExynosCamera::m_AndroidArea2HWArea(ExynosRect2 *rect, int w, int h)
     return newRect2;
 }
 
-bool ExynosCamera::m_startFaceDetection(enum CAMERA_SENSOR sensor_enum, bool toggle)
+bool ExynosCamera::m_startFaceDetection(enum CAMERA_MODE cameraMode, bool toggle)
 {
-    CLOGD("[%s] (%d) sensor_enum : %d, toggle : %d", __func__, __LINE__, (int)sensor_enum, toggle);
+    CLOGD("DEBUG(%s):(%d) cameraMode : %d, toggle : %d", __func__, __LINE__, (int)cameraMode, toggle);
 
     if (toggle == true) {
-        m_camera_info[sensor_enum].dummy_shot.shot.ctl.stats.faceDetectMode = FACEDETECT_MODE_FULL;
-        m_camera_info[sensor_enum].dummy_shot.fd_bypass = 0;
+        m_camera_info[cameraMode].dummy_shot.shot.ctl.stats.faceDetectMode = FACEDETECT_MODE_FULL;
+        m_camera_info[cameraMode].dummy_shot.fd_bypass = 0;
     } else {
-        m_camera_info[sensor_enum].dummy_shot.shot.ctl.stats.faceDetectMode = FACEDETECT_MODE_OFF;
-        m_camera_info[sensor_enum].dummy_shot.fd_bypass = 1;
+        m_camera_info[cameraMode].dummy_shot.shot.ctl.stats.faceDetectMode = FACEDETECT_MODE_OFF;
+        m_camera_info[cameraMode].dummy_shot.fd_bypass = 1;
     }
 
     return true;
@@ -11156,26 +10652,14 @@ bool ExynosCamera::m_getImageUniqueId(void)
     if (UNIQUE_ID_BUF_SIZE < copySize)
         copySize = UNIQUE_ID_BUF_SIZE;
 
-    if (m_cameraId == CAMERA_ID_BACK){
-#ifdef USE_TF4_SENSOR
+    if (m_cameraMode == CAMERA_MODE_BACK) {
         if (m_internalISP == true) {
-#ifdef USE_S5K3H7_CAMERA
-	    memcpy(m_imageUniqueIdBuf, "SLSI_S5K3H7", copySize);
-#elif defined(USE_S5K3L2_CAMERA)
-	    memcpy(m_imageUniqueIdBuf, "SLSI_S5K3L2", copySize);
-#endif
-        } else {
-            CLOGE("ERR(%s):external isp not yet support", __func__);
-            return false;
-        }
-#else		
-        if (m_internalISP == true) {
-            if (m_camera_info[m_camera_default].isp.fd < 0) {
-                CLOGW("WARN(%s):m_camera_info[m_camera_default].isp.fd < 0", __func__);
+            if (m_camera_info[m_cameraMode].isp.fd < 0) {
+                CLOGW("WARN(%s):m_camera_info[m_cameraMode].isp.fd < 0", __func__);
                 return false;
             }
 
-            fd = m_camera_info[m_camera_default].isp.fd;
+            fd = m_camera_info[m_cameraMode].isp.fd;
         } else {
             CLOGE("ERR(%s):external isp not yet support", __func__);
             return false;
@@ -11187,13 +10671,8 @@ bool ExynosCamera::m_getImageUniqueId(void)
         } else {
             memcpy(m_imageUniqueIdBuf, uniqueIdBuf, copySize);
         }
-#endif		
-    } else if(m_cameraId == CAMERA_ID_FRONT) {
-#ifdef USE_S5K3H7_CAMERA
-	    memcpy(m_imageUniqueIdBuf, "SLSI_S5K3H7", copySize);
-#else
-	    memcpy(m_imageUniqueIdBuf, "SLSI_S5K6B2", copySize);
-#endif
+    } else if (m_cameraMode == CAMERA_MODE_FRONT) {
+        memcpy(m_imageUniqueIdBuf, "SLSI_S5K6B2", copySize);
     }
 
     return true;
@@ -11203,17 +10682,17 @@ bool ExynosCamera::getFlagFlashOn(void)
 {
     bool ret = false;
 
-    switch(m_camera_info[SENSOR_BACK].is3aa_dm.shot.dm.flash.flashMode) {
+    switch(m_camera_info[CAMERA_MODE_BACK].is3aa_dm.shot.dm.flash.flashMode) {
     case ::CAM2_FLASH_MODE_SINGLE:
     case ::CAM2_FLASH_MODE_TORCH:
-        if (m_camera_info[SENSOR_BACK].is3aa_dm.shot.dm.flash.decision == 1) {
+        if (m_camera_info[CAMERA_MODE_BACK].is3aa_dm.shot.dm.flash.decision == 1) {
             ret = true;
-            CLOGD("DEBUG(%s):frameCount   : %d",   __func__, m_camera_info[SENSOR_BACK].is3aa_dm.shot.dm.request.frameCount);
-            CLOGD("DEBUG(%s):flashMode    : %d",   __func__, m_camera_info[SENSOR_BACK].is3aa_dm.shot.dm.flash.flashMode);
-            CLOGD("DEBUG(%s):firingPower  : %d",   __func__, m_camera_info[SENSOR_BACK].is3aa_dm.shot.dm.flash.firingPower);
-            CLOGD("DEBUG(%s):firingTime   : %lld", __func__, m_camera_info[SENSOR_BACK].is3aa_dm.shot.dm.flash.firingTime);
-            CLOGD("DEBUG(%s):firingStable : %d",   __func__, m_camera_info[SENSOR_BACK].is3aa_dm.shot.dm.flash.firingStable);
-            CLOGD("DEBUG(%s):decision     : %d",   __func__, m_camera_info[SENSOR_BACK].is3aa_dm.shot.dm.flash.decision);
+            CLOGD("DEBUG(%s):frameCount   : %d",   __func__, m_camera_info[CAMERA_MODE_BACK].is3aa_dm.shot.dm.request.frameCount);
+            CLOGD("DEBUG(%s):flashMode    : %d",   __func__, m_camera_info[CAMERA_MODE_BACK].is3aa_dm.shot.dm.flash.flashMode);
+            CLOGD("DEBUG(%s):firingPower  : %d",   __func__, m_camera_info[CAMERA_MODE_BACK].is3aa_dm.shot.dm.flash.firingPower);
+            CLOGD("DEBUG(%s):firingTime   : %lld", __func__, m_camera_info[CAMERA_MODE_BACK].is3aa_dm.shot.dm.flash.firingTime);
+            CLOGD("DEBUG(%s):firingStable : %d",   __func__, m_camera_info[CAMERA_MODE_BACK].is3aa_dm.shot.dm.flash.firingStable);
+            CLOGD("DEBUG(%s):decision     : %d",   __func__, m_camera_info[CAMERA_MODE_BACK].is3aa_dm.shot.dm.flash.decision);
         }
         else
             ret = false;
@@ -11225,443 +10704,157 @@ bool ExynosCamera::getFlagFlashOn(void)
     return ret;
 }
 
-bool ExynosCamera::initSensorLpzsl()
+# define NUM_BAYER_USE_RESERVED 4
+
+bool ExynosCamera::startSensorReprocessing(void)
 {
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[m_camera_default].sensor.fd);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    /* Init Dummy and Initialized camera_shot */
-    memset(&m_camera_info[SENSOR_FAKE].default_shot, 0x00, sizeof(struct camera2_shot_ext));
-    memset(&m_camera_info[SENSOR_FAKE].dummy_shot, 0x00, sizeof(struct camera2_shot_ext));
-    memset(&m_camera_info[SENSOR_FAKE].is3aa_dm, 0x00, sizeof(struct camera2_shot_ext));
-    memset(&m_camera_info[SENSOR_FAKE].isp_dm, 0x00, sizeof(struct camera2_shot_ext));
-
-    struct camera2_shot *shot = &m_camera_info[SENSOR_FAKE].default_shot.shot;
-
-    /* 1. ctl */
-    /* request */
-    shot->ctl.request.id = 0;
-    shot->ctl.request.metadataMode = METADATA_MODE_FULL;
-    shot->ctl.request.frameCount = 0;
-
-    /* lens */
-    shot->ctl.lens.focusDistance = 0.0f;
-    shot->ctl.lens.aperture = (float)m_curCameraInfo[SENSOR_FAKE]->apertureNum / (float)m_curCameraInfo[SENSOR_FAKE]->apertureDen;
-    shot->ctl.lens.focalLength = (float)m_curCameraInfo[SENSOR_FAKE]->focalLengthNum / (float)m_curCameraInfo[SENSOR_FAKE]->focalLengthDen;
-    shot->ctl.lens.filterDensity = 0.0f;
-    shot->ctl.lens.opticalStabilizationMode = ::OPTICAL_STABILIZATION_MODE_OFF;
-
-    int minFps = (m_curCameraInfo[m_camera_default]->fpsRange[0] == 0) ? 0 : (m_curCameraInfo[m_camera_default]->fpsRange[1] / 2) / 1000;
-    int maxFps = (m_curCameraInfo[m_camera_default]->fpsRange[1] == 0) ? 0 : m_curCameraInfo[m_camera_default]->fpsRange[1] / 1000;
-
-    /* sensor */
-    shot->ctl.sensor.exposureTime = 0;
-    shot->ctl.sensor.frameDuration = (1000 * 1000 * 1000) / maxFps;
-    shot->ctl.sensor.sensitivity = 0;
-
-    /* flash */
-    shot->ctl.flash.flashMode = ::CAM2_FLASH_MODE_OFF;
-    shot->ctl.flash.firingPower = 0;
-    shot->ctl.flash.firingTime = 0;
-
-    /* hotpixel */
-    shot->ctl.hotpixel.mode = (enum processing_mode)0;
-
-    /* demosaic */
-    shot->ctl.demosaic.mode = (enum processing_mode)0;
-
-    /* noise */
-    shot->ctl.noise.mode = ::PROCESSING_MODE_OFF;
-    shot->ctl.noise.strength = 5;
-
-    /* shading */
-    shot->ctl.shading.mode = (enum processing_mode)0;
-
-    /* geometric */
-    shot->ctl.geometric.mode = (enum processing_mode)0;
-
-    /* color */
-    shot->ctl.color.mode = ::COLORCORRECTION_MODE_FAST;
-    static const float colorTransform[9] = {
-        1.0f, 0.f, 0.f,
-        0.f, 1.f, 0.f,
-        0.f, 0.f, 1.f
-    };
-    memcpy(shot->ctl.color.transform, colorTransform, sizeof(shot->ctl.color.transform));
-
-    /* tonemap */
-    shot->ctl.tonemap.mode = ::TONEMAP_MODE_FAST;
-    static const float tonemapCurve[4] = {
-        0.f, 0.f,
-        1.f, 1.f
-    };
-
-    int tonemapCurveSize = sizeof(tonemapCurve);
-    int sizeOfCurve = sizeof(shot->ctl.tonemap.curveRed);
-
-    for (int i = 0; i < sizeOfCurve; i += tonemapCurveSize) {
-        memcpy(&(shot->ctl.tonemap.curveRed[i]),   tonemapCurve, tonemapCurveSize);
-        memcpy(&(shot->ctl.tonemap.curveGreen[i]), tonemapCurve, tonemapCurveSize);
-        memcpy(&(shot->ctl.tonemap.curveBlue[i]),  tonemapCurve, tonemapCurveSize);
-    }
-
-    /* edge */
-    shot->ctl.edge.mode = ::PROCESSING_MODE_OFF;
-    shot->ctl.edge.strength = 5;
-
-    /* jpeg */
-    shot->ctl.jpeg.quality = m_jpegQuality;
-    shot->ctl.jpeg.thumbnailSize[0] = m_curCameraInfo[SENSOR_FAKE]->thumbnailW;
-    shot->ctl.jpeg.thumbnailSize[1] = m_curCameraInfo[SENSOR_FAKE]->thumbnailH;
-    shot->ctl.jpeg.thumbnailQuality = m_jpegThumbnailQuality;
-    shot->ctl.jpeg.gpsCoordinates[0] = 0;
-    shot->ctl.jpeg.gpsCoordinates[1] = 0;
-    shot->ctl.jpeg.gpsCoordinates[2] = 0;
-    shot->ctl.jpeg.gpsProcessingMethod = 0;
-    shot->ctl.jpeg.gpsTimestamp = 0L;
-    shot->ctl.jpeg.orientation = 0L;
-
-    /* stats */
-    shot->ctl.stats.faceDetectMode = ::FACEDETECT_MODE_OFF;
-    shot->ctl.stats.histogramMode = ::STATS_MODE_OFF;
-    shot->ctl.stats.sharpnessMapMode = ::STATS_MODE_OFF;
-
-    /* aa */
-    shot->ctl.aa.captureIntent = ::AA_CAPTURE_INTENT_CUSTOM;
-    shot->ctl.aa.mode = ::AA_CONTROL_AUTO;
-
-    shot->ctl.aa.sceneMode = ::AA_SCENE_MODE_FACE_PRIORITY;
-    shot->ctl.aa.videoStabilizationMode = 0;
-
-    /* default metering is center */
-    shot->ctl.aa.aeMode = ::AA_AEMODE_CENTER;
-    shot->ctl.aa.aeRegions[0] = 0;
-    shot->ctl.aa.aeRegions[1] = 0;
-    shot->ctl.aa.aeRegions[2] = 0;
-    shot->ctl.aa.aeRegions[3] = 0;
-    shot->ctl.aa.aeRegions[4] = 1000;
-    shot->ctl.aa.aeExpCompensation = 5;
-
-    shot->ctl.aa.aeTargetFpsRange[0] = minFps;
-    shot->ctl.aa.aeTargetFpsRange[1] = maxFps;
-
-    shot->ctl.aa.aeAntibandingMode = ::AA_AE_ANTIBANDING_AUTO;
-    shot->ctl.aa.aeflashMode = ::AA_FLASHMODE_OFF;
-
-    shot->ctl.aa.awbMode = ::AA_AWBMODE_WB_AUTO;
-    shot->ctl.aa.afMode = ::AA_AFMODE_OFF;
-    shot->ctl.aa.afRegions[0] = 0;
-    shot->ctl.aa.afRegions[1] = 0;
-    shot->ctl.aa.afRegions[2] = 0;
-    shot->ctl.aa.afRegions[3] = 0;
-    shot->ctl.aa.afRegions[4] = 1000;
-    shot->ctl.aa.afTrigger = 0;
-
-    shot->ctl.aa.isoMode = AA_ISOMODE_AUTO;
-    shot->ctl.aa.isoValue = 0;
-
-    /* 2. dm */
-
-    /* 3. utrl */
-
-    /* 4. udm */
-
-    /* 5. magicNumber */
-    shot->magicNumber = SHOT_MAGIC_NUMBER;
-
-    /* user request */
-    m_camera_info[SENSOR_FAKE].default_shot.dis_bypass = 1;
-    m_camera_info[SENSOR_FAKE].default_shot.dnr_bypass = 1;
-    m_camera_info[SENSOR_FAKE].default_shot.fd_bypass  = 1;
-
-    m_camera_info[SENSOR_FAKE].default_shot.request_3ax = 1;
-    m_camera_info[SENSOR_FAKE].default_shot.request_isp = 1;
-    m_camera_info[SENSOR_FAKE].default_shot.request_scp = 0;
-    m_camera_info[SENSOR_FAKE].default_shot.request_scc = 0;
-    m_camera_info[SENSOR_FAKE].default_shot.request_dis = 0;
-
-    memcpy(&m_camera_info[SENSOR_FAKE].dummy_shot, &m_camera_info[SENSOR_FAKE].default_shot, sizeof(struct camera2_shot_ext));
-    memcpy(&m_camera_info[SENSOR_FAKE].is3aa_dm, &m_camera_info[SENSOR_FAKE].default_shot, sizeof(struct camera2_shot_ext));
-    memcpy(&m_camera_info[SENSOR_FAKE].isp_dm, &m_camera_info[SENSOR_FAKE].default_shot, sizeof(struct camera2_shot_ext));
-
-    return true;
-}
-
-bool ExynosCamera::deinitSensorLpzsl(void)
-{
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    /* TODO */
-
-    return true;
-}
-
-bool ExynosCamera::openSensorLpzsl()
-{
-    char node_name[30];
-    unsigned int o_flags;
-
-    if (m_camera_default == SENSOR_BACK) {
-        if (0 <= m_camera_info[SENSOR_FAKE].sensor.fd) {
-            CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[SENSOR_FAKE].sensor.fd);
-            return false;
-        }
-
-        memset(&node_name, 0x00, sizeof(node_name));
-        snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_SEN0_NUM);
-
-#ifdef NON_BLOCK_MODE
-        o_flags = O_RDWR | O_NONBLOCK;
-#else
-        o_flags = O_RDWR;
-#endif
-
-        m_camera_info[SENSOR_FAKE].sensor.fd = exynos_v4l2_open(node_name, o_flags, 0);
-        if (m_camera_info[SENSOR_FAKE].sensor.fd < 0) {
-            CLOGE("ERR(%s): failed to open sensor video node (%s) fd (%d)",
-                __func__, node_name, m_camera_info[SENSOR_FAKE].sensor.fd);
-            m_camera_info[SENSOR_FAKE].sensor.fd = -1;
-            return false;
-        }
-
-        if (m_camera_info[m_camera_default].sensor.fd < 0)
-            m_camera_info[m_camera_default].sensor.fd = m_camera_info[SENSOR_FAKE].sensor.fd;
-    }
-
-    return true;
-}
-
-bool ExynosCamera::closeSensorLpzsl()
-{
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (0 <= m_camera_info[SENSOR_FAKE].sensor.fd) {
-        if (exynos_v4l2_close(m_camera_info[SENSOR_FAKE].sensor.fd) != 0) {
-            CLOGE("ERR(%s): sensor exynos_v4l2_close failed", __func__);
-            return false;
-        }
-
-        m_camera_info[SENSOR_FAKE].sensor.fd = -1;
-
-        /* TODO: currently FAKE sensor fd is same with BACK */
-        if (m_camera_mode == CAMERA_ACTIVATE_MODE_BACK)
-            m_camera_info[m_camera_default].sensor.fd = -1;
-    }
-
-    return true;
-}
-
-bool ExynosCamera::openIspLpzsl(void)
-{
-    if (0 <= m_camera_info[SENSOR_FAKE].isp.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[SENSOR_FAKE].isp.fd);
+    if (m_flagCreate == false) {
+        CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
     }
 
-    char node_name[30];
+    Mutex::Autolock lock(m_sensorLockReprocessing);
 
-    /* isp open */
-    memset(&node_name, 0x00, sizeof(node_name));
-    snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_ISP_NUM);
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[CAMERA_MODE_REPROCESSING].sensor.flagStart,
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.width,
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.height,
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.format);
 
-    m_camera_info[SENSOR_FAKE].isp.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].sensor.flagStart == false) {
 
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[SENSOR_FAKE].isp.fd);
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.width   = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureW + 16;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.height  = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureH + 10;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.format  = V4L2_PIX_FMT_SBGGR12;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.planes  = 2;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffers = NUM_BAYER_BUFFERS;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.ionClient = m_ionCameraClient;
 
-    if (m_camera_info[SENSOR_FAKE].isp.fd < 0) {
-        CLOGE("ERR(%s): failed to open isp video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[SENSOR_FAKE].isp.fd);
-        return false;
-    }
+        ExynosBuffer nullBuf;
+        int planeSize;
 
-    return true;
-}
+        planeSize = getPlaneSizePackedFLiteOutput((m_curCameraInfo[m_cameraMode]->pictureW + 16), (m_curCameraInfo[m_cameraMode]->pictureH + 10));
 
-bool ExynosCamera::closeIspLpzsl(void)
-{
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+        for (int i = 0; i < m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffers; i++) {
+            m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i] = nullBuf;
+            m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i].size.extS[0] = planeSize;
+            m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i].size.extS[1] = META_DATA_SIZE;
 
-    if (0 <= m_camera_info[SENSOR_FAKE].isp.fd) {
-        if (exynos_v4l2_close(m_camera_info[SENSOR_FAKE].isp.fd) != 0) {
-            CLOGE("ERR(%s): isp exynos_v4l2_close failed", __func__);
-            return false;
+            bool allocmem_ret;
+            if (i < NUM_BAYER_USE_RESERVED) {
+                CLOGE("Alloc reserved %d ", i);
+                if (i == 0 || i == 1)
+                    allocmem_ret = allocMemReserved(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.ionClient, &m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i], (1 << 1), ION_HEAP_EXYNOS_CONTIG_MASK, ION_EXYNOS_MFC_OUTPUT_MASK);
+                else if (i == 2 || i==3)
+                    allocmem_ret = allocMemReserved(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.ionClient, &m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i], (1 << 1), ION_HEAP_EXYNOS_CONTIG_MASK, ION_EXYNOS_FIMD_VIDEO_MASK);
+                else
+                    CLOGE("ERR Wrong index [%s] (%d)", __func__, __LINE__);
+            } else {
+                allocmem_ret = allocMem(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.ionClient, &m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i], 1 << 1);
+            }
+
+            if (allocmem_ret == false) {
+                CLOGE("ERR(%s):allocMem() fail", __func__);
+                return false;
+            } else {
+                memset(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i].virt.extP[1],
+                        0, m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i].size.extS[1]);
+            }
         }
 
-        m_camera_info[SENSOR_FAKE].isp.fd = -1;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.flagStart = true;
     }
 
     return true;
 }
 
-bool ExynosCamera::openPreviewLpzsl(void)
+bool ExynosCamera::stopSensorReprocessing(void)
 {
-    if (0 <= m_camera_info[SENSOR_FAKE].preview.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[SENSOR_FAKE].preview.fd);
+    CLOGD("DEBUG(%s):in", __func__);
+
+    if (m_flagCreate == false) {
+        CLOGW("WARN(%s):Not yet Created", __func__);
         return false;
     }
 
-    char node_name[30];
+    Mutex::Autolock lock(m_sensorLockReprocessing);
 
-    /* from allocateStream() */
-    memset(&node_name, 0x00, sizeof(node_name));
-    snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_SCP_NUM);
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].sensor.flagStart == true) {
+        m_isFirtstSensorStartReprocessing = true;
 
-    m_camera_info[SENSOR_FAKE].preview.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
+        for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
+            freeMem(&m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i]);
+            CLOGV("ERR(%s):freeMem sensor (%d)", __func__, m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffers);
+         }
 
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[SENSOR_FAKE].preview.fd);
+        for (int i = 0; i < VIDEO_MAX_FRAME; i++)
+            freeMemSinglePlane(&m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i], m_camera_info[CAMERA_MODE_REPROCESSING].sensor.planes - 1);
 
-    if (m_camera_info[SENSOR_FAKE].preview.fd < 0) {
-        CLOGE("DEBUG(%s): failed to open preview video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[SENSOR_FAKE].preview.fd);
-        m_camera_info[SENSOR_FAKE].preview.fd = -1;
-        return false;
+        m_camera_info[CAMERA_MODE_REPROCESSING].sensor.flagStart = false;
     }
 
     return true;
 }
 
-bool ExynosCamera::closePreviewLpzsl(void)
+bool ExynosCamera::getSensorBufReprocessing(ExynosBuffer *buf)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (0 <= m_camera_info[SENSOR_FAKE].preview.fd) {
-        if (exynos_v4l2_close(m_camera_info[SENSOR_FAKE].preview.fd) != 0) {
-            CLOGE("ERR(%s): exynos_v4l2_close failed", __func__ );
-            return false;
-        }
-
-        m_camera_info[SENSOR_FAKE].preview.fd = -1;
-    }
-
     return true;
 }
 
-bool ExynosCamera::openPictureLpzsl(void)
-{
-    if (0 <= m_camera_info[SENSOR_FAKE].picture.fd) {
-        CLOGE("ERR(%s): Already open fd (%d)", __func__, m_camera_info[SENSOR_FAKE].picture.fd);
-        return false;
-    }
-
-    char node_name[30];
-
-    /* picture open */
-    memset(&node_name, 0x00, sizeof(node_name));
-    snprintf(node_name, sizeof(node_name), "%s%d", NODE_PREFIX, FIMC_IS_VIDEO_SCC_NUM);
-
-    m_camera_info[SENSOR_FAKE].picture.fd = exynos_v4l2_open(node_name, O_RDWR, 0);
-
-    CLOGD("[%s] (%d) fd %d", __func__, __LINE__, m_camera_info[SENSOR_FAKE].picture.fd);
-
-    if (m_camera_info[SENSOR_FAKE].picture.fd < 0) {
-        CLOGE("ERR(%s): failed to open picture video node (%s) fd (%d)",
-            __func__, node_name, m_camera_info[SENSOR_FAKE].picture.fd);
-        m_camera_info[SENSOR_FAKE].picture.fd = -1;
-        return false;
-    }
-
-    return true;
-}
-
-bool ExynosCamera::closePictureLpzsl(void)
-{
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (0 <= m_camera_info[SENSOR_FAKE].picture.fd) {
-        if (exynos_v4l2_close(m_camera_info[SENSOR_FAKE].picture.fd) != 0) {
-            CLOGE("ERR(%s): exynos_v4l2_close failed", __func__);
-            return false;
-        }
-
-        m_camera_info[SENSOR_FAKE].picture.fd = -1;
-    }
-
-    return true;
-}
-
-bool ExynosCamera::startSensorLpzsl(void)
+bool ExynosCamera::putSensorBufReprocessing(ExynosBuffer *buf)
 {
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[SENSOR_FAKE].sensor.flagStart,
-        m_camera_info[SENSOR_FAKE].sensor.width,
-        m_camera_info[SENSOR_FAKE].sensor.height,
-        m_camera_info[SENSOR_FAKE].sensor.format);
+    camera2_shot_ext *shot_ext;
+    camera2_shot_ext *shot_ext2;
 
-    if (m_camera_info[SENSOR_FAKE].sensor.flagStart == false) {
-        Mutex::Autolock lock(m_sensorLockLpzsl);
+    Mutex::Autolock lock(m_sensorLockReprocessing);
 
-        m_camera_info[SENSOR_FAKE].sensor.width   = m_curCameraInfo[SENSOR_FAKE]->pictureW + 16;
-        m_camera_info[SENSOR_FAKE].sensor.height  = m_curCameraInfo[SENSOR_FAKE]->pictureH + 10;
-        m_camera_info[SENSOR_FAKE].sensor.format  = V4L2_PIX_FMT_SBGGR12;
-        m_camera_info[SENSOR_FAKE].sensor.planes  = 2;
-        m_camera_info[SENSOR_FAKE].sensor.buffers = NUM_BAYER_BUFFERS;
-        m_camera_info[SENSOR_FAKE].sensor.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[SENSOR_FAKE].sensor.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[SENSOR_FAKE].sensor.ionClient = m_ionCameraClient;
+    shot_ext = (struct camera2_shot_ext *)(m_camera_info[CAMERA_MODE_BACK].isp.buffer[buf->reserved.p].virt.extP[1]);
+    shot_ext2 = (struct camera2_shot_ext *)(m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[buf->reserved.p].virt.extP[1]);
 
-        ExynosBuffer nullBuf;
-        int planeSize;
+    memcpy(shot_ext2, shot_ext, sizeof(struct camera2_shot_ext));
 
-        planeSize = (m_curCameraInfo[m_camera_default]->pictureW + 16) * (m_curCameraInfo[m_camera_default]->pictureH + 10) * 2;
+    shot_ext2->request_scc = m_camera_info[CAMERA_MODE_REPROCESSING].dummy_shot.request_scc;
+    shot_ext2->request_scp = 0;
+    shot_ext2->request_dis = 0;
+    shot_ext2->shot.ctl.request.frameCount = buf->reserved.extP[FRAME_COUNT_INDEX];
 
-        for (int i = 0; i < m_camera_info[SENSOR_FAKE].sensor.buffers; i++) {
-            m_camera_info[SENSOR_FAKE].sensor.buffer[i] = nullBuf;
-            m_camera_info[SENSOR_FAKE].sensor.buffer[i].size.extS[0] = planeSize;
-            m_camera_info[SENSOR_FAKE].sensor.buffer[i].size.extS[1] = META_DATA_SIZE;
+    shot_ext2->dis_bypass = 1;
+    shot_ext2->dnr_bypass = 1;
+    shot_ext2->fd_bypass = 1;
 
-            if (allocMem(m_camera_info[SENSOR_FAKE].sensor.ionClient, &m_camera_info[SENSOR_FAKE].sensor.buffer[i], 1 << 1) == false) {
-                CLOGE("ERR(%s):allocMem() fail", __func__);
-                return false;
-            } else {
-                memset(m_camera_info[SENSOR_FAKE].sensor.buffer[i].virt.extP[1],
-                        0, m_camera_info[SENSOR_FAKE].sensor.buffer[i].size.extS[1]);
-            }
-        }
-
-        m_camera_info[SENSOR_FAKE].sensor.flagStart = true;
-    }
-
-    return true;
-}
-
-bool ExynosCamera::stopSensorLpzsl(void)
-{
-    if (m_flagCreate == false) {
-        CLOGW("WARN(%s):Not yet Created", __func__);
+    /* isp q */
+    if (cam_int_qbuf(&(m_camera_info[CAMERA_MODE_REPROCESSING].isp), buf->reserved.p) < 0) {
+        CLOGE("ERR(%s):cam_int_qbuf(%d) on isp fail", __func__, buf->reserved.p);
         return false;
     }
 
-    if (m_camera_info[SENSOR_FAKE].sensor.flagStart == true) {
-        Mutex::Autolock lock(m_sensorLockLpzsl);
-
-        m_isFirtstSensorStartLpzsl = true;
-
-        for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
-            freeMem(&m_camera_info[SENSOR_FAKE].sensor.buffer[i]);
-            CLOGV("ERR(%s):freeMem sensor (%d)", __func__, m_camera_info[SENSOR_FAKE].sensor.buffers);
-         }
-
-        for (int i = 0; i < VIDEO_MAX_FRAME; i++)
-            freeMemSinglePlane(&m_camera_info[SENSOR_FAKE].sensor.buffer[i], m_camera_info[SENSOR_FAKE].sensor.planes - 1);
-
-        m_camera_info[SENSOR_FAKE].sensor.flagStart = false;
+    /* isp dq */
+    int index_isp = 0;
+    index_isp = cam_int_dqbuf(&(m_camera_info[CAMERA_MODE_REPROCESSING].isp));
+    if (index_isp < 0) {
+        CLOGE("ERR(%s):cam_int_dqbuf() on isp fail", __func__);
+        return false;
     }
 
     return true;
 }
 
-bool ExynosCamera::flagStartSensorLpzsl(void)
+bool ExynosCamera::flagStartSensorReprocessing(void)
 {
-    return m_camera_info[SENSOR_FAKE].sensor.flagStart;
+    return m_camera_info[CAMERA_MODE_REPROCESSING].sensor.flagStart;
 }
 
-bool ExynosCamera::startPreviewLpzsl(void)
+bool ExynosCamera::startPreviewReprocessing(void)
 {
-    int index;
+    CLOGD("DEBUG(%s):in", __func__);
 
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
@@ -11673,76 +10866,62 @@ bool ExynosCamera::startPreviewLpzsl(void)
             CLOGE("ERR(%s):set3DNR() fail", __func__);
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[SENSOR_FAKE].preview.flagStart,
-        m_camera_info[SENSOR_FAKE].preview.width,
-        m_camera_info[SENSOR_FAKE].preview.height,
-        m_camera_info[SENSOR_FAKE].preview.format);
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[CAMERA_MODE_REPROCESSING].preview.flagStart,
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.width,
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.height,
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.format);
 
-    if (m_camera_info[SENSOR_FAKE].preview.flagStart == false) {
-        m_camera_info[SENSOR_FAKE].preview.width  = m_curCameraInfo[SENSOR_FAKE]->previewW;
-        m_camera_info[SENSOR_FAKE].preview.height = m_curCameraInfo[SENSOR_FAKE]->previewH;
-        m_camera_info[SENSOR_FAKE].preview.format = m_curCameraInfo[SENSOR_FAKE]->previewColorFormat;
-        m_camera_info[SENSOR_FAKE].preview.planes = m_curCameraInfo[m_camera_default]->previewBufPlane;
-        m_camera_info[SENSOR_FAKE].preview.memory = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[SENSOR_FAKE].preview.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[SENSOR_FAKE].preview.ionClient = m_ionCameraClient;
-        m_camera_info[SENSOR_FAKE].preview.buffers = NUM_PREVIEW_BUFFERS;
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].preview.flagStart == false) {
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.width  = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->previewW;
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.height = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->previewH;
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.format = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->previewColorFormat;
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.planes = m_curCameraInfo[m_cameraMode]->previewBufPlane;
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.memory = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.ionClient = m_ionCameraClient;
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.buffers = NUM_PREVIEW_BUFFERS;
 
-        int sensorId = m_getSensorId(m_cameraId);
-#ifdef USE_S5K3L2_CAMERA
-        sensorId = SENSOR_NAME_S5K3L2;
-#elif defined ( USE_S5K3H7_CAMERA)
-        sensorId = SENSOR_NAME_S5K3H7_SUNNY;
-#endif
-
+        int sensorId = m_getSensorId(m_cameraMode);
         sensorId = (1 << REPROCESSING_SHFIT) | ((FIMC_IS_VIDEO_SCP_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) | (sensorId << 0);
 
-        if (cam_int_s_input(&(m_camera_info[SENSOR_FAKE].preview), sensorId) < 0) {
+        if (cam_int_s_input(&(m_camera_info[CAMERA_MODE_REPROCESSING].preview), sensorId) < 0) {
             CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
             return false;
         }
 
-        if (cam_int_s_fmt(&m_camera_info[SENSOR_FAKE].preview) < 0) {
+        if (cam_int_s_fmt(&m_camera_info[CAMERA_MODE_REPROCESSING].preview) < 0) {
             CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
             return false;
         }
 
         /* This from startIsp */
-        if (cam_int_streamon(&(m_camera_info[SENSOR_FAKE].isp)) < 0) {
+        if (cam_int_streamon(&(m_camera_info[CAMERA_MODE_REPROCESSING].isp)) < 0) {
             CLOGE("ERR(%s):cam_int_streamon(isp) fail", __func__);
             return false;
         }
 
-        m_tryPreviewStopLpzsl= false;
-        m_camera_info[SENSOR_FAKE].preview.flagStart = true;
-
         bool toggle = getVideoStabilization();
         if (setVideoStabilization(toggle) == false)
             CLOGE("ERR(%s):setVideoStabilization() fail", __func__);
+
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.flagStart = true;
     }
 
     return true;
 }
 
-bool ExynosCamera::stopPreviewLpzsl(void)
+bool ExynosCamera::stopPreviewReprocessing(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     if (m_flagCreate == false) {
         CLOGW("WARN(%s):Not yet Created", __func__);
         return false;
     }
-    if (m_camera_info[SENSOR_FAKE].preview.flagStart == true) {
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].preview.flagStart == true) {
         if (setFlashMode(FLASH_MODE_OFF) == false)
             CLOGE("ERR(%s):setFlashMode() fail", __func__);
-
-        m_tryPreviewStopLpzsl = true;
-
-        /* skip stopPreview */
-        if ((m_camera_info[SENSOR_FAKE].preview.fd == m_camera_info[SENSOR_FAKE].video.fd && m_tryVideoStopLpzsl == false) ||
-            (m_camera_info[SENSOR_FAKE].preview.fd == m_camera_info[SENSOR_FAKE].picture.fd && m_tryPictureStopLpzsl == false)) {
-            CLOGD("DEBUG(%s):stopPreview is skipped...", __func__);
-            return true;
-        }
 
         if (getVideoStabilization() == true) {
             if (setVideoStabilization(false) == false)
@@ -11752,340 +10931,306 @@ bool ExynosCamera::stopPreviewLpzsl(void)
         if (set3DNR(false) == false)
             CLOGE("ERR(%s):set3DNR() fail", __func__);
 
-        m_camera_info[SENSOR_FAKE].preview.flagStart = false;
+        m_camera_info[CAMERA_MODE_REPROCESSING].preview.flagStart = false;
     }
 
     return true;
 }
 
-bool ExynosCamera::startIspLpzsl(void)
+bool ExynosCamera::startIspReprocessing(void)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[SENSOR_FAKE].isp.flagStart,
-        m_camera_info[SENSOR_FAKE].isp.width,
-        m_camera_info[SENSOR_FAKE].isp.height,
-        m_camera_info[SENSOR_FAKE].isp.format);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (m_camera_info[SENSOR_FAKE].isp.flagStart == false) {
-        m_camera_info[SENSOR_FAKE].isp.width   = m_curCameraInfo[SENSOR_FAKE]->ispW;
-        m_camera_info[SENSOR_FAKE].isp.height  = m_curCameraInfo[SENSOR_FAKE]->ispH;
-        m_camera_info[SENSOR_FAKE].isp.format  = V4L2_PIX_FMT_SBGGR12;
-        m_camera_info[SENSOR_FAKE].isp.planes  = 2;
-        m_camera_info[SENSOR_FAKE].isp.buffers = 1;
-        m_camera_info[SENSOR_FAKE].isp.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[SENSOR_FAKE].isp.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-        m_camera_info[SENSOR_FAKE].isp.ionClient = m_ionCameraClient;
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart,
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.width,
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.height,
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.format);
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart == false) {
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.width   = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispW;
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.height  = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispH;
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.format  = V4L2_PIX_FMT_SBGGR12;
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.planes  = 2;
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffers = 1;
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.ionClient = m_ionCameraClient;
 
         ExynosBuffer nullBuf;
 
-        for (int i = 0; i < m_camera_info[SENSOR_FAKE].isp.buffers; i++) {
-            m_camera_info[SENSOR_FAKE].isp.buffer[i] = nullBuf;
-            m_camera_info[SENSOR_FAKE].isp.buffer[i].size.extS[0] = m_curCameraInfo[SENSOR_FAKE]->ispW * m_curCameraInfo[SENSOR_FAKE]->ispH * 2;
-            m_camera_info[SENSOR_FAKE].isp.buffer[i].size.extS[1] = META_DATA_SIZE;
+        for (int i = 0; i < m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffers; i++) {
+            m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[i] = nullBuf;
+            m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[i].size.extS[0] = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispW * m_curCameraInfo[CAMERA_MODE_REPROCESSING]->ispH * 2;
+            m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[i].size.extS[1] = META_DATA_SIZE;
 
-            if (allocMem(m_camera_info[SENSOR_FAKE].isp.ionClient, &m_camera_info[SENSOR_FAKE].isp.buffer[i], 1 << 1) == false) {
+            if (allocMem(m_camera_info[CAMERA_MODE_REPROCESSING].isp.ionClient, &m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[i], 1 << 1) == false) {
                 CLOGE("ERR(%s):allocMem() fail", __func__);
                 goto err;
             } else {
-                memset(m_camera_info[SENSOR_FAKE].isp.buffer[i].virt.extP[1],
-                        0, m_camera_info[SENSOR_FAKE].isp.buffer[i].size.extS[1]);
+                memset(m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[i].virt.extP[1],
+                        0, m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[i].size.extS[1]);
             }
         }
 
-        if (startIspLpzslOn() == false) {
-            CLOGE("ERR(%s):startIspLpzslOn() fail", __func__);
+        if (m_startIspReprocessingOn() == false) {
+            CLOGE("ERR(%s):m_startIspReprocessingOn() fail", __func__);
             goto err;
         }
+
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart = true;
     }
 
     return true;
 
 err:
-    if (stopIspLpzsl() == false)
-        CLOGE("ERR(%s):stopIspLpzsl() fail", __func__);
+    if (stopIspReprocessing() == false)
+        CLOGE("ERR(%s):stopIspReprocessing() fail", __func__);
 
     return false;
 }
 
-bool ExynosCamera::startIspLpzslOn(void)
+bool ExynosCamera::m_startIspReprocessingOn(void)
 {
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
-    if (m_camera_info[SENSOR_FAKE].isp.flagStart == false) {
-        // Reset Dummy Shot's request
-        m_camera_info[SENSOR_FAKE].default_shot.request_3ax = 1;
-        m_camera_info[SENSOR_FAKE].default_shot.request_isp = 1;
-        m_camera_info[SENSOR_FAKE].default_shot.request_scp = 0;
-        m_camera_info[SENSOR_FAKE].default_shot.request_scc = 0;
-        m_camera_info[SENSOR_FAKE].default_shot.request_dis = 0;
+    // Reset Dummy Shot's request
+    m_camera_info[CAMERA_MODE_REPROCESSING].default_shot.request_3ax = 1;
+    m_camera_info[CAMERA_MODE_REPROCESSING].default_shot.request_isp = 1;
+    m_camera_info[CAMERA_MODE_REPROCESSING].default_shot.request_scp = 0;
+    m_camera_info[CAMERA_MODE_REPROCESSING].default_shot.request_scc = 0;
+    m_camera_info[CAMERA_MODE_REPROCESSING].default_shot.request_dis = 0;
 
-        if (m_isFirtstIspStartLpzsl == true) {
-            int sensorId = m_getSensorId(m_cameraId);
-#ifdef USE_S5K3L2_CAMERA
-            sensorId = SENSOR_NAME_S5K3L2;
-#elif defined ( USE_S5K3H7_CAMERA)
-            sensorId = SENSOR_NAME_S5K3H7_SUNNY;
-#endif
-					
-            sensorId = (1 << REPROCESSING_SHFIT) |
-                ((FIMC_IS_VIDEO_SEN0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << SENSOR_INDEX_SHFIT) |
-                ((FIMC_IS_VIDEO_3A0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) |
-                (sensorId << 0);
+    if (m_isFirtstIspStartReprocessing == true) {
+        int sensorId = m_getSensorId(m_cameraMode);
+        sensorId = (1 << REPROCESSING_SHFIT) |
+            ((FIMC_IS_VIDEO_SEN0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << SENSOR_INDEX_SHFIT) |
+            ((FIMC_IS_VIDEO_3A0_NUM - FIMC_IS_VIDEO_SEN0_NUM) << VIDEO_INDEX_SHFIT) |
+            (sensorId << 0);
 
-            if (cam_int_s_input(&(m_camera_info[SENSOR_FAKE].isp), sensorId) < 0) {
-                CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
-                return false;
-            }
-            m_isFirtstIspStartLpzsl= false;
-        }
-
-        if (cam_int_s_fmt(&(m_camera_info[SENSOR_FAKE].isp)) < 0) {
-            CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
+        if (cam_int_s_input(&(m_camera_info[CAMERA_MODE_REPROCESSING].isp), sensorId) < 0) {
+            CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
             return false;
         }
+        m_isFirtstIspStartReprocessing= false;
+    }
 
-        if (cam_int_reqbufs(&(m_camera_info[SENSOR_FAKE].isp)) < 0) {
-            CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
-            return false;
-        }
+    if (cam_int_s_fmt(&(m_camera_info[CAMERA_MODE_REPROCESSING].isp)) < 0) {
+        CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
+        return false;
+    }
 
-        m_camera_info[SENSOR_FAKE].isp.flagStart = true;
+    if (cam_int_reqbufs(&(m_camera_info[CAMERA_MODE_REPROCESSING].isp)) < 0) {
+        CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
+        return false;
     }
 
     return true;
 }
 
-bool ExynosCamera::stopIspLpzslOff(void)
+bool ExynosCamera::m_stopIspReprocessingOff(void)
 {
-    bool ret = true;
-
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (m_camera_info[SENSOR_FAKE].isp.flagStart == true) {
-#ifdef THREAD_PROFILE
-        timeUs = 0;
-        gettimeofday(&mTimeStart, NULL);
-#endif
-        if (cam_int_streamoff(&m_camera_info[SENSOR_FAKE].isp) < 0) {
-            CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
-            ret = false;
-        }
-#ifdef THREAD_PROFILE
-        gettimeofday(&mTimeStop, NULL);
-        timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
-#endif
-
-       if (0 < m_camera_info[SENSOR_FAKE].isp.buffers) {
-           if (cam_int_clrbufs(&m_camera_info[SENSOR_FAKE].isp) < 0) {
-                CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
-                ret = false;
-            }
-       }
-    }
-
-    return ret;
-}
-
-bool ExynosCamera::stopIspLpzsl(void)
-{
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    CLOGD("DEBUG(%s):in", __func__);
 
     bool ret = true;
 
-    if (stopIspLpzslOff() == false) {
-        CLOGE("ERR(%s):stopIspLpzslOff() fail", __func__);
+#ifdef THREAD_PROFILE
+    timeUs = 0;
+    gettimeofday(&mTimeStart, NULL);
+#endif
+    if (cam_int_streamoff(&m_camera_info[CAMERA_MODE_REPROCESSING].isp) < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
         ret = false;
     }
+#ifdef THREAD_PROFILE
+    gettimeofday(&mTimeStop, NULL);
+    timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
+    CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
+#endif
 
-    if (0 < m_camera_info[SENSOR_FAKE].isp.buffers) {
-        for(int i = 0; i < m_camera_info[SENSOR_FAKE].isp.buffers; i++)
-            freeMem(&m_camera_info[SENSOR_FAKE].isp.buffer[i]);
-
-        m_camera_info[SENSOR_FAKE].isp.buffers = 0;
+    if (0 < m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffers) {
+        if (cam_int_clrbufs(&m_camera_info[CAMERA_MODE_REPROCESSING].isp) < 0) {
+            CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
+            ret = false;
+        }
     }
-
-    m_camera_info[SENSOR_FAKE].isp.flagStart = false;
 
     return ret;
 }
 
-bool ExynosCamera::flagStartIspLpzsl(void)
+bool ExynosCamera::stopIspReprocessing(void)
 {
-    return m_camera_info[SENSOR_FAKE].isp.flagStart;
+    CLOGD("DEBUG(%s):in", __func__);
+
+    bool ret = true;
+
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart == true) {
+        if (m_stopIspReprocessingOff() == false) {
+            CLOGE("ERR(%s):m_stopIspReprocessingOff() fail", __func__);
+            ret = false;
+        }
+
+        if (0 < m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffers) {
+            for (int i = 0; i < m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffers; i++)
+                freeMem(&m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffer[i]);
+
+            m_camera_info[CAMERA_MODE_REPROCESSING].isp.buffers = 0;
+        }
+
+        m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart = false;
+    }
+
+    return ret;
 }
 
-bool ExynosCamera::startPictureLpzsl(void)
+bool ExynosCamera::flagStartIspReprocessing(void)
 {
+    return m_camera_info[CAMERA_MODE_REPROCESSING].isp.flagStart;
+}
+
+bool ExynosCamera::startPictureReprocessing(void)
+{
+    CLOGD("DEBUG(%s):in", __func__);
+
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[SENSOR_FAKE].picture.flagStart,
-        m_camera_info[SENSOR_FAKE].picture.width,
-        m_camera_info[SENSOR_FAKE].picture.height,
-        m_camera_info[SENSOR_FAKE].picture.format);
+    CLOGD("(flagStart %d), (%d x %d), format 0x%x", m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart,
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.width,
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.height,
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.format);
 
-    if (m_camera_info[SENSOR_FAKE].picture.flagStart == false) {
-        m_camera_info[SENSOR_FAKE].picture.width   = m_curCameraInfo[SENSOR_FAKE]->pictureW;
-        m_camera_info[SENSOR_FAKE].picture.height  = m_curCameraInfo[SENSOR_FAKE]->pictureH;
-        m_camera_info[SENSOR_FAKE].picture.format  = m_curCameraInfo[SENSOR_FAKE]->pictureColorFormat;
-        m_camera_info[SENSOR_FAKE].picture.planes  = NUM_CAPTURE_PLANE;
-        m_camera_info[SENSOR_FAKE].picture.buffers = NUM_PICTURE_BUFFERS;
-        m_camera_info[SENSOR_FAKE].picture.memory  = V4L2_CAMERA_MEMORY_TYPE;
-        m_camera_info[SENSOR_FAKE].picture.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        m_camera_info[SENSOR_FAKE].picture.ionClient = m_ionCameraClient;
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart == false) {
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.width   = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureW;
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.height  = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureH;
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.format  = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureColorFormat;
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.planes  = NUM_CAPTURE_PLANE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffers = NUM_PICTURE_BUFFERS;
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.memory  = V4L2_CAMERA_MEMORY_TYPE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.ionClient = m_ionCameraClient;
 
         /* for frame sync */
         for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-            if (m_camera_info[SENSOR_FAKE].picture.buffer[i].virt.p != NULL ||
-                m_camera_info[SENSOR_FAKE].picture.buffer[i].phys.p != 0) {
-                m_camera_info[SENSOR_FAKE].picture.buffer[i].size.extS[m_camera_info[SENSOR_FAKE].picture.planes - 1]
+            if (m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i].virt.p != NULL ||
+                m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i].phys.p != 0) {
+                m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i].size.extS[m_camera_info[CAMERA_MODE_REPROCESSING].picture.planes - 1]
                     = ALIGN(META_DATA_SIZE, PAGE_SIZE);
 
                 if (allocMemSinglePlane(m_ionCameraClient,
-                                        &m_camera_info[SENSOR_FAKE].picture.buffer[i],
-                                        m_camera_info[SENSOR_FAKE].picture.planes - 1,
+                                        &m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i],
+                                        m_camera_info[CAMERA_MODE_REPROCESSING].picture.planes - 1,
                                         true) == false) {
                     CLOGE("ERR(%s):m_allocCameraMemorySingle() fail", __func__);
                     goto err;
                 } else {
-                    memset(m_camera_info[SENSOR_FAKE].picture.buffer[i].virt.extP[m_camera_info[SENSOR_FAKE].picture.planes - 1],
-                            0, m_camera_info[SENSOR_FAKE].picture.buffer[i].size.extS[m_camera_info[SENSOR_FAKE].picture.planes - 1]);
+                    memset(m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i].virt.extP[m_camera_info[CAMERA_MODE_REPROCESSING].picture.planes - 1],
+                            0, m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i].size.extS[m_camera_info[CAMERA_MODE_REPROCESSING].picture.planes - 1]);
                 }
             }
         }
-        if (startPictureLpzslOn() == false) {
-            CLOGE("ERR(%s):startPictureLpzslOn() fail", __func__);
+        if (m_startPictureReprocessing() == false) {
+            CLOGE("ERR(%s):m_startPictureReprocessing() fail", __func__);
             goto err;
         }
+
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart = true;
     }
 
     return true;
 
 err:
-    if (stopPictureLpzsl() == false)
-        CLOGE("ERR(%s):stopPictureLpzsl() fail", __func__);
+    if (stopPictureReprocessing() == false)
+        CLOGE("ERR(%s):stopPictureReprocessing() fail", __func__);
 
     return false;
 }
 
-bool ExynosCamera::startPictureLpzslOn(void)
+bool ExynosCamera::m_startPictureReprocessing(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    int sensorId = m_getSensorId(m_cameraMode);
+    sensorId = (1 << REPROCESSING_SHFIT) | ((FIMC_IS_VIDEO_SCC_NUM - FIMC_IS_VIDEO_SEN0_NUM) << 16) | (sensorId << 0);
 
-    if (m_camera_info[SENSOR_FAKE].picture.flagStart == false) {
-        int sensorId = m_getSensorId(m_cameraId);
-#ifdef USE_S5K3L2_CAMERA
-        sensorId = SENSOR_NAME_S5K3L2;
-#elif defined ( USE_S5K3H7_CAMERA)
-        sensorId = SENSOR_NAME_S5K3H7_SUNNY;
-#endif
+    if (cam_int_s_input(&(m_camera_info[CAMERA_MODE_REPROCESSING].picture), sensorId) < 0) {
+        CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
+        return false;
+    }
 
-        sensorId = (1 << REPROCESSING_SHFIT) | ((FIMC_IS_VIDEO_SCC_NUM - FIMC_IS_VIDEO_SEN0_NUM) << 16) | (sensorId << 0);
+    if (cam_int_s_fmt(&(m_camera_info[CAMERA_MODE_REPROCESSING].picture)) < 0) {
+        CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
+        return false;
+    }
 
-        if (cam_int_s_input(&(m_camera_info[SENSOR_FAKE].picture), sensorId) < 0) {
-            CLOGE("ERR(%s):cam_int_s_input(%d) fail", __func__, sensorId);
-            return false;
-        }
+    if (cam_int_reqbufs(&(m_camera_info[CAMERA_MODE_REPROCESSING].picture)) < 0) {
+        CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
+        return false;
+    }
 
-        if (cam_int_s_fmt(&(m_camera_info[SENSOR_FAKE].picture)) < 0) {
-            CLOGE("ERR(%s):cam_int_s_fmt() fail", __func__);
-            return false;
-        }
-
-        if (cam_int_reqbufs(&(m_camera_info[SENSOR_FAKE].picture)) < 0) {
-            CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
-            return false;
-        }
-
-        for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-            if (m_camera_info[SENSOR_FAKE].picture.buffer[i].virt.p != NULL ||
-                m_camera_info[SENSOR_FAKE].picture.buffer[i].phys.p != 0) {
-                if (cam_int_qbuf(&m_camera_info[SENSOR_FAKE].picture, i) < 0) {
-                    CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
-                    return false;
-                }
+    for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
+        if (m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i].virt.p != NULL ||
+            m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i].phys.p != 0) {
+            if (cam_int_qbuf(&m_camera_info[CAMERA_MODE_REPROCESSING].picture, i) < 0) {
+                CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
+                return false;
             }
         }
+    }
 
-        if (cam_int_streamon(&(m_camera_info[SENSOR_FAKE].picture)) < 0) {
-            CLOGE("ERR(%s):cam_int_streamon() fail", __func__);
-            return false;
-        }
-
-        m_tryPictureStopLpzsl = false;
-        m_camera_info[SENSOR_FAKE].picture.flagStart = true;
+    if (cam_int_streamon(&(m_camera_info[CAMERA_MODE_REPROCESSING].picture)) < 0) {
+        CLOGE("ERR(%s):cam_int_streamon() fail", __func__);
+        return false;
     }
 
     return true;
 }
 
-bool ExynosCamera::stopPictureLpzslOff(void)
+bool ExynosCamera::m_stopPictureReprocessing(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     bool ret = true;
 
-    int index;
     camera2_shot_ext *shot_ext;
 
-    if (m_flagCreate == false) {
-        CLOGW("WARN(%s):Not yet Created", __func__);
-        return false;
-    }
-
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (m_camera_info[SENSOR_FAKE].picture.flagStart == true) {
-
-        m_tryPictureStopLpzsl = true;
-
-        /* skip stopPicture */
-        if ((m_camera_info[SENSOR_FAKE].picture.fd == m_camera_info[SENSOR_FAKE].preview.fd && m_tryPreviewStopLpzsl == false) ||
-            (m_camera_info[SENSOR_FAKE].picture.fd == m_camera_info[SENSOR_FAKE].video.fd && m_tryVideoStopLpzsl == false)) {
-            CLOGD("DEBUG(%s):stopPicture2 is skipped...", __func__);
-            goto done;
-        }
-
 #ifdef THREAD_PROFILE
-        timeUs = 0;
-        gettimeofday(&mTimeStart, NULL);
+    timeUs = 0;
+    gettimeofday(&mTimeStart, NULL);
 #endif
-        if (cam_int_streamoff(&m_camera_info[SENSOR_FAKE].picture) < 0) {
-            CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
+    if (cam_int_streamoff(&m_camera_info[CAMERA_MODE_REPROCESSING].picture) < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
+        ret = false;
+    }
+#ifdef THREAD_PROFILE
+    gettimeofday(&mTimeStop, NULL);
+    timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
+    CLOGD("DEBUG(%s):time_check elapsed time=(%ld)us", __func__, timeUs);
+#endif
+
+    m_camera_info[CAMERA_MODE_REPROCESSING].dummy_shot.request_scc = 0;
+
+    if (0 < m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffers) {
+        if (cam_int_clrbufs(&m_camera_info[CAMERA_MODE_REPROCESSING].picture) < 0) {
+            CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
             ret = false;
         }
-#ifdef THREAD_PROFILE
-        gettimeofday(&mTimeStop, NULL);
-        timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
-#endif
-
-        m_camera_info[SENSOR_FAKE].dummy_shot.request_scc = 0;
-
-        if (0 < m_camera_info[SENSOR_FAKE].picture.buffers) {
-            if (cam_int_clrbufs(&m_camera_info[SENSOR_FAKE].picture) < 0) {
-                CLOGE("ERR(%s):cam_int_clrbufs() fail", __func__);
-                ret = false;
-            }
-            m_camera_info[SENSOR_FAKE].picture.buffers = 0;
-        }
-        m_tryPictureStopLpzsl = true;
-        m_camera_info[SENSOR_FAKE].picture.flagStart = false;
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffers = 0;
     }
 
-done:
     return ret;
 }
 
-bool ExynosCamera::stopPictureLpzsl(void)
+bool ExynosCamera::stopPictureReprocessing(void)
 {
+    CLOGD("DEBUG(%s):in", __func__);
+
     bool ret = true;
 
     if (m_flagCreate == false) {
@@ -12093,32 +11238,34 @@ bool ExynosCamera::stopPictureLpzsl(void)
         return false;
     }
 
-    CLOGD("[%s] (%d)", __func__, __LINE__);
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart == true) {
+        if (m_stopPictureReprocessing() == false) {
+            CLOGE("ERR(%s):m_stopPictureReprocessing() fail", __func__);
+            ret = false;
+        }
 
-    if (stopPictureLpzslOff() == false) {
-        CLOGE("ERR(%s):stopPictureLpzslOff() fail", __func__);
-        ret = false;
-    }
+        /* for frame sync */
+        for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
+            freeMemSinglePlane(&m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[i],
+                    m_camera_info[CAMERA_MODE_REPROCESSING].picture.planes - 1);
+        }
 
-    /* for frame sync */
-    for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-        freeMemSinglePlane(&m_camera_info[SENSOR_FAKE].picture.buffer[i],
-                m_camera_info[SENSOR_FAKE].picture.planes - 1);
+        m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart = false;
     }
 
     return ret;
 }
 
-void ExynosCamera::pictureOnLpzsl(void)
+void ExynosCamera::pictureOnReprocessing(void)
 {
     CLOGV("[%s] (%d)", __func__, __LINE__);
 
-    m_camera_info[SENSOR_FAKE].dummy_shot.request_scc = 1;
+    m_camera_info[CAMERA_MODE_REPROCESSING].dummy_shot.request_scc = 1;
 
     return;
 }
 
-bool ExynosCamera::setPictureBufLpzsl(ExynosBuffer *buf)
+bool ExynosCamera::setPictureBufReprocessing(ExynosBuffer *buf)
 {
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet created fail", __func__);
@@ -12130,12 +11277,12 @@ bool ExynosCamera::setPictureBufLpzsl(ExynosBuffer *buf)
         return false;
     }
 
-    m_camera_info[SENSOR_FAKE].picture.buffer[buf->reserved.p] = *buf;
+    m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[buf->reserved.p] = *buf;
 
     return true;
 }
 
-bool ExynosCamera::getPictureBufLpzsl(ExynosBuffer *buf)
+bool ExynosCamera::getPictureBufReprocessing(ExynosBuffer *buf)
 {
     int index = 0;
 
@@ -12144,162 +11291,107 @@ bool ExynosCamera::getPictureBufLpzsl(ExynosBuffer *buf)
         return false;
     }
 
-    if (m_camera_info[SENSOR_FAKE].picture.flagStart == false) {
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart == false) {
         CLOGE("ERR(%s):Not yet picture started fail", __func__);
         return false;
     }
 
-    index = cam_int_dqbuf(&(m_camera_info[SENSOR_FAKE].picture));
+    index = cam_int_dqbuf(&(m_camera_info[CAMERA_MODE_REPROCESSING].picture));
     if (index < 0) {
         CLOGE("ERR(%s):cam_int_dqbuf() on picture fail", __func__);
         return false;
     }
 
-    *buf = m_camera_info[SENSOR_FAKE].picture.buffer[index];
+    *buf = m_camera_info[CAMERA_MODE_REPROCESSING].picture.buffer[index];
     buf->reserved.p = index;
 
     return true;
 }
 
-bool ExynosCamera::putPictureBufLpzsl(ExynosBuffer *buf)
+bool ExynosCamera::putPictureBufReprocessing(ExynosBuffer *buf)
 {
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet created fail", __func__);
         return false;
     }
 
-    if (m_camera_info[SENSOR_FAKE].picture.flagStart == false) {
+    if (m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart == false) {
         CLOGE("ERR(%s):Not yet picture started fail", __func__);
         return false;
     }
 
-    if (cam_int_qbuf(&(m_camera_info[SENSOR_FAKE].picture), buf->reserved.p) < 0) {
-        CLOGE("ERR(%s):cam_int_qbuf(%d) failed", __func__, buf->reserved.p);
+    if (cam_int_qbuf(&(m_camera_info[CAMERA_MODE_REPROCESSING].picture), buf->reserved.p) < 0) {
+        CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, buf->reserved.p);
         return false;
     }
 
     return true;
 }
 
-bool ExynosCamera::flagStartPictureLpzsl(void)
+bool ExynosCamera::flagStartPictureReprocessing(void)
 {
-    return m_camera_info[SENSOR_FAKE].picture.flagStart;
+    return m_camera_info[CAMERA_MODE_REPROCESSING].picture.flagStart;
 }
 
-bool ExynosCamera::getPictureSizeLpzsl(int *w, int *h)
+bool ExynosCamera::getPictureSizeReprocessing(int *w, int *h)
 {
-    *w = m_curCameraInfo[SENSOR_FAKE]->pictureW;
-    *h = m_curCameraInfo[SENSOR_FAKE]->pictureH;
+    *w = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureW;
+    *h = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureH;
     return true;
 }
 
-bool ExynosCamera::getPreviewSizeLpzsl(int *w, int *h)
+bool ExynosCamera::getPreviewSizeReprocessing(int *w, int *h)
 {
-    *w = m_curCameraInfo[SENSOR_FAKE]->pictureW;
-    *h = m_curCameraInfo[SENSOR_FAKE]->pictureH;
+    *w = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureW;
+    *h = m_curCameraInfo[CAMERA_MODE_REPROCESSING]->pictureH;
     return true;
 }
 
-bool ExynosCamera::flagStartPreviewLpzsl(void)
+bool ExynosCamera::flagStartPreviewReprocessing(void)
 {
-    return m_camera_info[SENSOR_FAKE].preview.flagStart;
+    return m_camera_info[CAMERA_MODE_REPROCESSING].preview.flagStart;
 }
 
-bool ExynosCamera::startVideoLpzsl(void)
+void ExynosCamera::StartStreamReprocessing()
 {
-    if (m_flagCreate == false) {
-        CLOGE("ERR(%s):Not yet Created", __func__);
-        return false;
-    }
-
-#ifdef USE_3DNR_DMAOUT
-    if (m_camera_info[SENSOR_FAKE].video.flagStart == false) {
-        for (int i = 0; i < VIDEO_MAX_FRAME; i++) {
-            if (m_camera_info[SENSOR_FAKE].video.buffer[i].virt.p != NULL ||
-                m_camera_info[SENSOR_FAKE].video.buffer[i].phys.p != 0) {
-                if (cam_int_qbuf(&m_camera_info[SENSOR_FAKE].video, i) < 0) {
-                    CLOGE("ERR(%s):cam_int_qbuf(%d) fail", __func__, i);
-                    return false;
-                }
-            }
-        }
-
-        if (exynos_v4l2_streamon(m_camera_info[SENSOR_FAKE].video.fd, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) < 0) {
-            CLOGE("ERR(%s):exynos_v4l2_streamon() fail", __func__);
-            return false;
-        }
-
-        m_tryVideoStopLpzsl= false;
-        m_camera_info[SENSOR_FAKE].video.flagStart = true;
-    }
-#endif
-
-    return true;
-}
-
-bool ExynosCamera::stopVideoLpzsl(void)
-{
-    if (m_flagCreate == false) {
-        CLOGW("WARN(%s):Not yet Created", __func__);
-        return false;
-    }
-
-    CLOGD("[%s] (%d)", __func__, __LINE__);
-
-    if (m_camera_info[SENSOR_FAKE].video.flagStart == true) {
-
-        m_tryVideoStopLpzsl= true;
-
-        /* skip stopVideo */
-        if (   (m_camera_info[SENSOR_FAKE].video.fd == m_camera_info[SENSOR_FAKE].preview.fd && m_tryPreviewStop == false)
-            || (m_camera_info[SENSOR_FAKE].video.fd == m_camera_info[SENSOR_FAKE].picture.fd && m_tryPictureStop == false)) {
-            CLOGD("DEBUG(%s):stopVideo is skipped...", __func__);
-            return true;
-        }
-
-#ifdef THREAD_PROFILE
-        timeUs = 0;
-        gettimeofday(&mTimeStart, NULL);
-#endif
-        if (exynos_v4l2_streamoff(m_camera_info[SENSOR_FAKE].video.fd, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) < 0) {
-            CLOGE("ERR(%s):exynos_v4l2_streamoff() fail", __func__);
-            return false;
-        }
-#ifdef THREAD_PROFILE
-        gettimeofday(&mTimeStop, NULL);
-        timeUs = (mTimeStop.tv_sec*1000000 + mTimeStop.tv_usec) - (mTimeStart.tv_sec*1000000 + mTimeStart.tv_usec);
-        CLOGD("[%s] time_check elapsed time=(%ld)us", __func__, timeUs);
-#endif
-
-        struct v4l2_requestbuffers req;
-        req.count  = 0;
-        req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        req.memory = V4L2_CAMERA_MEMORY_TYPE;
-
-        if (exynos_v4l2_reqbufs(m_camera_info[SENSOR_FAKE].video.fd, &req) < 0) {
-            CLOGE("ERR(%s):exynos_v4l2_reqbufs() fail", __func__);
-            return false;
-        }
-
-        m_camera_info[SENSOR_FAKE].video.flagStart = false;
-    }
-
-    return true;
-}
-
-void ExynosCamera::StartStreamLpzsl()
-{
-    if (exynos_v4l2_s_ctrl(m_camera_info[SENSOR_FAKE].sensor.fd, V4L2_CID_IS_S_STREAM, IS_ENABLE_STREAM) < 0)
+    if (exynos_v4l2_s_ctrl(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.fd, V4L2_CID_IS_S_STREAM, IS_ENABLE_STREAM) < 0)
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(IS_ENABLE_STREAM)", __func__);
-}
-
-int ExynosCamera::getCameraMode()
-{
-    return m_camera_mode;
 }
 
 bool ExynosCamera::allocMemSinglePlane(ion_client ionClient, ExynosBuffer *buf, int index, bool flagCache)
 {
+    if (ionClient == 0) {
+        CLOGE("ERR(%s):ionClient is zero (%d)", __func__, ionClient);
+        return false;
+    }
+
+    if (buf->size.extS[index] != 0) {
+        int flagIon = (flagCache == true) ? ION_FLAG_CACHED : 0;
+
+        /* HACK: For non-cacheable */
+        buf->fd.extFd[index] = ion_alloc(ionClient, buf->size.extS[index], 0, ION_HEAP_SYSTEM_MASK, 0);
+        if (buf->fd.extFd[index] <= 0) {
+            CLOGE("ERR(%s):ion_alloc(%d, %d) fail", __func__, index, buf->size.extS[index]);
+            buf->fd.extFd[index] = -1;
+            freeMemSinglePlane(buf, index);
+            return false;
+        }
+
+        buf->virt.extP[index] = (char *)ion_map(buf->fd.extFd[index], buf->size.extS[index], 0);
+        if ((buf->virt.extP[index] == (char *)MAP_FAILED) || (buf->virt.extP[index] == NULL)) {
+            CLOGE("ERR(%s):ion_map(%d) fail", __func__, buf->size.extS[index]);
+            buf->virt.extP[index] = NULL;
+            freeMemSinglePlane(buf, index);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ExynosCamera::allocMemSinglePlaneReserved(ion_client ionClient, ExynosBuffer *buf, int index, bool flagCache, unsigned int heap_mask, unsigned int flags)
+{
+    CLOGD("[%s] (%d) index=%d, size=%d", __func__, __LINE__,index, buf->size.extS[index]);
     if (ionClient == 0) {
         CLOGE("ERR(%s): ionClient is zero (%d)", __func__, ionClient);
         return false;
@@ -12309,7 +11401,7 @@ bool ExynosCamera::allocMemSinglePlane(ion_client ionClient, ExynosBuffer *buf, 
         int flagIon = (flagCache == true) ? ION_FLAG_CACHED : 0;
 
         /* HACK: For non-cacheable */
-        buf->fd.extFd[index] = ion_alloc(ionClient, buf->size.extS[index], 0, ION_HEAP_SYSTEM_MASK, 0);
+        buf->fd.extFd[index] = ion_alloc(ionClient, buf->size.extS[index], 0, heap_mask, flags);
         if (buf->fd.extFd[index] <= 0) {
             CLOGE("ERR(%s): ion_alloc(%d, %d) failed", __func__, index, buf->size.extS[index]);
             buf->fd.extFd[index] = -1;
@@ -12324,6 +11416,8 @@ bool ExynosCamera::allocMemSinglePlane(ion_client ionClient, ExynosBuffer *buf, 
             freeMemSinglePlane(buf, index);
             return false;
         }
+    } else {
+        CLOGD(" Do NOT allocate size is %d of index %d ", buf->size.extS[index], index);
     }
 
     return true;
@@ -12337,7 +11431,7 @@ void ExynosCamera::freeMemSinglePlane(ExynosBuffer *buf, int index)
         if (buf->virt.extP[index] != NULL) {
             ret = ion_unmap(buf->virt.extP[index], buf->size.extS[index]);
             if (ret < 0)
-                CLOGE("ERR(%s):ion_unmap(%p, %d) fail", __FUNCTION__, buf->virt.extP[index], buf->size.extS[index]);
+                CLOGE("ERR(%s):ion_unmap(%p, %d) fail", __func__, buf->virt.extP[index], buf->size.extS[index]);
         }
         ion_free(buf->fd.extFd[index]);
     }
@@ -12353,7 +11447,22 @@ bool ExynosCamera::allocMem(ion_client ionClient, ExynosBuffer *buf, int cacheIn
         bool flagCache = ((1 << i) & cacheIndex) ? true : false;
         if (allocMemSinglePlane(ionClient, buf, i, flagCache) == false) {
             freeMem(buf);
-            CLOGE("ERR(%s): allocMemSinglePlane(%d) fail", __func__, i);
+            CLOGE("ERR(%s):allocMemSinglePlane(%d) fail", __func__, i);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ExynosCamera::allocMemReserved(ion_client ionClient, ExynosBuffer *buf, int cacheIndex, unsigned int heap_mask, unsigned int flags)
+{
+    CLOGD("[%s] (%d)", __func__, __LINE__);
+    for (int i = 0; i < ExynosBuffer::BUFFER_PLANE_NUM_DEFAULT; i++) {
+        bool flagCache = ((1 << i) & cacheIndex) ? true : false;
+        if (allocMemSinglePlaneReserved(ionClient, buf, i, flagCache, heap_mask, flags) == false) {
+            freeMem(buf);
+            CLOGE("ERR(%s):allocMemSinglePlaneReserved(%d) fail", __func__, i);
             return false;
         }
     }
@@ -12364,7 +11473,7 @@ bool ExynosCamera::allocMem(ion_client ionClient, ExynosBuffer *buf, int cacheIn
 bool ExynosCamera::allocMemSinglePlaneCache(ion_client ionClient, ExynosBuffer *buf, int index, bool flagCache)
 {
     if (ionClient == 0) {
-        CLOGE("ERR(%s): ionClient is zero (%d)", __func__, ionClient);
+        CLOGE("ERR(%s):ionClient is zero (%d)", __func__, ionClient);
         return false;
     }
 
@@ -12375,7 +11484,7 @@ bool ExynosCamera::allocMemSinglePlaneCache(ion_client ionClient, ExynosBuffer *
             ION_FLAG_CACHED | ION_FLAG_CACHED_NEEDS_SYNC | ION_FLAG_PRESERVE_KMAP);
 
         if (buf->fd.extFd[index] <= 0) {
-            CLOGE("ERR(%s): ion_alloc(%d, %d) failed", __func__, index, buf->size.extS[index]);
+            CLOGE("ERR(%s):ion_alloc(%d, %d) fail", __func__, index, buf->size.extS[index]);
             buf->fd.extFd[index] = -1;
             freeMemSinglePlane(buf, index);
             return false;
@@ -12383,7 +11492,7 @@ bool ExynosCamera::allocMemSinglePlaneCache(ion_client ionClient, ExynosBuffer *
 
         buf->virt.extP[index] = (char *)ion_map(buf->fd.extFd[index], buf->size.extS[index], 0);
         if ((buf->virt.extP[index] == (char *)MAP_FAILED) || (buf->virt.extP[index] == NULL)) {
-            CLOGE("ERR(%s): ion_map(%d) failed", __func__, buf->size.extS[index]);
+            CLOGE("ERR(%s):ion_map(%d) fail", __func__, buf->size.extS[index]);
             buf->virt.extP[index] = NULL;
             freeMemSinglePlane(buf, index);
             return false;
@@ -12399,7 +11508,7 @@ bool ExynosCamera::allocMemCache(ion_client ionClient, ExynosBuffer *buf, int ca
         bool flagCache = ((1 << i) & cacheIndex) ? true : false;
         if (allocMemSinglePlaneCache(ionClient, buf, i, flagCache) == false) {
             freeMem(buf);
-            CLOGE("ERR(%s): allocMemSinglePlane(%d) fail", __func__, i);
+            CLOGE("ERR(%s):allocMemSinglePlane(%d) fail", __func__, i);
             return false;
         }
     }
@@ -12436,7 +11545,7 @@ ExynosBuffer *ExynosCamera::searchSensorBuffer(unsigned int fcount)
     CLOGV("[%s] (%d) fcount  %d", __func__, __LINE__, fcount);
 
     for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
-        targetBuffer = m_camera_info[SENSOR_FAKE].sensor.buffer[i];
+        targetBuffer = m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i];
         targetBuffer.reserved.p = i;
 
         shot_ext = (struct camera2_shot_ext *)(targetBuffer.virt.extP[1]);
@@ -12447,8 +11556,8 @@ ExynosBuffer *ExynosCamera::searchSensorBuffer(unsigned int fcount)
         }
 
         if (shot_ext->shot.dm.request.frameCount == fcount) {
-            CLOGD("[%s] (%d) HIT fcount  %d", __func__, __LINE__, fcount);
-            return &(m_camera_info[SENSOR_FAKE].sensor.buffer[i]);
+            CLOGD("DEBUG(%s):(%d) HIT fcount  %d", __func__, __LINE__, fcount);
+            return &(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i]);
         }
     }
 
@@ -12463,7 +11572,7 @@ ExynosBuffer *ExynosCamera::searchSensorBufferOnHal(unsigned int fcount)
     CLOGV("[%s] (%d) fcount  %d", __func__, __LINE__, fcount);
 
     for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
-        targetBuffer = m_camera_info[SENSOR_FAKE].sensor.buffer[i];
+        targetBuffer = m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i];
         targetBuffer.reserved.p = i;
 
         shot_ext = (struct camera2_shot_ext *)(targetBuffer.virt.extP[1]);
@@ -12475,31 +11584,34 @@ ExynosBuffer *ExynosCamera::searchSensorBufferOnHal(unsigned int fcount)
 
         if (shot_ext->shot.dm.request.frameCount == fcount) {
             if (checkCaptureBayerOnHAL(i)) {
-                CLOGD("[%s] (%d) HIT fcount  %d", __func__, __LINE__, fcount);
-                return &(m_camera_info[SENSOR_FAKE].sensor.buffer[i]);
+                CLOGD("DEBUG(%s):(%d) HIT fcount  %d", __func__, __LINE__, fcount);
+                return &(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i]);
             } else {
                 int findIndex = -1;
                 int findFrameCnt = -1;
                 ExynosBuffer tmpBuffer;
                 camera2_shot_ext *tmp_shot_ext = NULL;
+
                 for (int j = 0; j < NUM_BAYER_BUFFERS; j++) {
-                    if (captureBayerIndex[j] == 2) {
+                    if (m_captureBayerIndex[j] == 2) {
                         if (findIndex == -1) {
-                            tmpBuffer = m_camera_info[SENSOR_FAKE].sensor.buffer[j];
+                            tmpBuffer = m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[j];
                             tmp_shot_ext = (struct camera2_shot_ext *)(tmpBuffer.virt.extP[1]);
                             if (!tmp_shot_ext) {
                                 CLOGE("[%s] (%d) shot_ext is null and findIndex %d", __func__, __LINE__, findIndex);
                                 continue;
                             }
+
                             findIndex = j;
                             findFrameCnt = tmp_shot_ext->shot.dm.request.frameCount;
                         } else {
-                            tmpBuffer = m_camera_info[SENSOR_FAKE].sensor.buffer[j];
+                            tmpBuffer = m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[j];
                             tmp_shot_ext = (struct camera2_shot_ext *)(tmpBuffer.virt.extP[1]);
                             if (!tmp_shot_ext) {
                                 CLOGE("[%s] (%d) shot_ext is null and findIndex %d", __func__, __LINE__, findIndex);
                                 continue;
                             }
+
                             if (findFrameCnt < tmp_shot_ext->shot.dm.request.frameCount) {
                                 findIndex = j;
                                 findFrameCnt = tmp_shot_ext->shot.dm.request.frameCount;
@@ -12507,9 +11619,12 @@ ExynosBuffer *ExynosCamera::searchSensorBufferOnHal(unsigned int fcount)
                         }
                     }
                 }
-                CLOGW("[%s] buffer(fcount %d) is not DQed. select buffer(fcount %d)", __func__, fcount, findFrameCnt);
+                if (findIndex == -1)
+                    findIndex = i;
+
+                CLOGW("WARN(%s):buffer(fcount %d) is not DQed. select buffer(fcount %d)", __func__, fcount, findFrameCnt);
                 printBayerLockStatus();
-                return &(m_camera_info[SENSOR_FAKE].sensor.buffer[findIndex]);
+                return &(m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[findIndex]);
             }
         }
     }
@@ -12522,7 +11637,7 @@ bool ExynosCamera::setBayerLockIndex(int index, bool setLock)
 {
     CLOGD("[%s], (%d) index %d setLock %d", __func__, __LINE__, index, setLock);
 
-    captureBayerLock[index] = setLock;
+    m_captureBayerLock[index] = setLock;
 
     return true;
 }
@@ -12535,7 +11650,7 @@ bool ExynosCamera::setBayerLock(unsigned int fcount, bool setLock)
     CLOGV("[%s] (%d) fcount  %d", __func__, __LINE__, fcount);
 
     for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
-        targetBuffer = m_camera_info[SENSOR_FAKE].sensor.buffer[i];
+        targetBuffer = m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i];
 
         shot_ext = (struct camera2_shot_ext *)(targetBuffer.virt.extP[1]);
         if (shot_ext->shot.dm.request.frameCount == fcount) {
@@ -12554,7 +11669,7 @@ void ExynosCamera::printBayerLockStatus()
     camera2_shot_ext *shot_ext = NULL;
 
     for (int i = 0; i < NUM_BAYER_BUFFERS; i++) {
-        targetBuffer = m_camera_info[SENSOR_FAKE].sensor.buffer[i];
+        targetBuffer = m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffer[i];
         shot_ext = (struct camera2_shot_ext *)(targetBuffer.virt.extP[1]);
 
         if (!shot_ext) {
@@ -12563,8 +11678,8 @@ void ExynosCamera::printBayerLockStatus()
             continue;
         }
 
-        CLOGD("[%s] (%d) [%d] [lock %d] [bayer %d] [fcount %d] [fd %d %d]", __func__, __LINE__,
-            i, captureBayerLock[i], captureBayerIndex[i], shot_ext->shot.dm.request.frameCount, targetBuffer.fd.extFd[0], targetBuffer.fd.extFd[1]);
+        CLOGD("DEBUG(%s):(%d) [%d] [lock %d] [bayer %d] [fcount %d] [fd %d %d]", __func__, __LINE__,
+            i, m_captureBayerLock[i], m_captureBayerIndex[i], shot_ext->shot.dm.request.frameCount, targetBuffer.fd.extFd[0], targetBuffer.fd.extFd[1]);
     }
 
     return;
@@ -12572,12 +11687,12 @@ void ExynosCamera::printBayerLockStatus()
 
 bool ExynosCamera::checkCaptureBayerOnHAL(int index)
 {
-    if (captureBayerIndex[index] == 2)
+    if (m_captureBayerIndex[index] == 2)
         return true;
-    else if (captureBayerIndex[index] == 1)
-        CLOGW("WRN(%s): capture buffer is not DQed", __FUNCTION__);
+    else if (m_captureBayerIndex[index] == 1)
+        CLOGW("WRN(%s): capture buffer is not DQed", __func__);
     else
-        CLOGE("ERR(%s): captuer buffer is not yet Qbuf", __FUNCTION__);
+        CLOGE("ERR(%s):captuer buffer is not yet Qbuf", __func__);
 
     return false;
 }
@@ -12592,7 +11707,7 @@ bool ExynosCamera::fileDump(char *filename, char *srcBuf, unsigned int size)
     yuvFd = fopen(filename, "w+");
 
     if (yuvFd == NULL) {
-        CLOGE("ERR(%s): open(%s) fail",
+        CLOGE("ERR(%s):open(%s) fail",
             __func__, filename);
         return false;
     }
@@ -12624,25 +11739,26 @@ bool ExynosCamera::fileDump(char *filename, char *srcBuf, unsigned int size)
     return true;
 }
 
-bool ExynosCamera::setSensorStreamOff(enum CAMERA_SENSOR sensor_enum)
+bool ExynosCamera::setSensorStreamOff(enum CAMERA_MODE cameraMode)
 {
     /* sensor stream off */
     CLOGV("DEBUG(%s): sensor stream off", __func__);
-    if (exynos_v4l2_s_ctrl(m_camera_info[sensor_enum].sensor.fd, V4L2_CID_IS_S_STREAM, IS_DISABLE_STREAM) < 0) {
+
+    if (exynos_v4l2_s_ctrl(m_camera_info[cameraMode].sensor.fd, V4L2_CID_IS_S_STREAM, IS_DISABLE_STREAM) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(IS_ENABLE_STREAM)", __func__);
         return false;
     }
     return true;
 }
 
-bool ExynosCamera::setSensorStreamOn(enum CAMERA_SENSOR sensor_enum,  int width, int height, bool isSetFps)
+bool ExynosCamera::setSensorStreamOn(enum CAMERA_MODE cameraMode,  int width, int height, bool isSetFps)
 {
     /* sensor */
-    m_camera_info[sensor_enum].sensor.width   = width + 16;
-    m_camera_info[sensor_enum].sensor.height  = height + 10;
+    m_camera_info[cameraMode].sensor.width   = width + 16;
+    m_camera_info[cameraMode].sensor.height  = height + 10;
 
     if (isSetFps) {
-        int fps = m_camera_info[m_camera_default].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1];
+        int fps = m_camera_info[m_cameraMode].dummy_shot.shot.ctl.aa.aeTargetFpsRange[1];
         CLOGD("DEBUG(%s):fps(%d)", __func__, fps);
         if (setFPSParam(fps) < 0) {
             CLOGE("ERR(%s):setFPSParam(%d) fail", __func__, fps);
@@ -12656,14 +11772,14 @@ bool ExynosCamera::setSensorStreamOn(enum CAMERA_SENSOR sensor_enum,  int width,
     crop.c.width  = width + 16;
     crop.c.height = height + 10;
     crop.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    if (exynos_v4l2_s_crop(m_camera_info[sensor_enum].sensor.fd, &crop) < 0) {
-        CLOGE("ERR(%s): sensor s_crop fail",  __func__);
+    if (exynos_v4l2_s_crop(m_camera_info[cameraMode].sensor.fd, &crop) < 0) {
+        CLOGE("ERR(%s):sensor s_crop fail",  __func__);
         return false;
     }
 
-    m_camera_info[m_camera_default].dummy_shot.request_isp = 1;
-    m_camera_info[m_camera_default].dummy_shot.request_scp = 1;
-    m_camera_info[m_camera_default].dummy_shot.request_scc = 0;
+    m_camera_info[m_cameraMode].dummy_shot.request_isp = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_scp = 1;
+    m_camera_info[m_cameraMode].dummy_shot.request_scc = 0;
     return true;
 }
 
@@ -12678,7 +11794,7 @@ int ExynosCamera::setFPSParam(int fps)
 
     CLOGV("DEBUG(%s):d/n(%d/%d)", __func__,
         stream_parm.parm.capture.timeperframe.numerator, stream_parm.parm.capture.timeperframe.denominator);
-    if (exynos_v4l2_s_parm(m_camera_info[m_camera_default].sensor.fd, &stream_parm) < 0) {
+    if (exynos_v4l2_s_parm(m_camera_info[m_cameraMode].sensor.fd, &stream_parm) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_parm() fail", __func__);
         return -1;
     }
@@ -12699,6 +11815,7 @@ void ExynosCamera::setFrontCaptureCmd(int captureCmd)
 bool ExynosCamera::setScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeMode)
 {
     CLOGD("DEBUG(%s):start", __func__);
+
     if (m_flagCreate == false) {
         CLOGE("ERR(%s):Not yet Created", __func__);
         return false;
@@ -12706,49 +11823,54 @@ bool ExynosCamera::setScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeMode)
 
 #ifdef SCALABLE_SENSOR_FORCE_DONE
     /* 1. Force Done */
-    CLOGD("DEBUG(%s): SCALABLE_SENSOR_FORCE_DONE_3A1", __func__);
-    if (exynos_v4l2_s_ctrl(m_camera_info[SENSOR_BACK].is3a1Output.fd, V4L2_CID_IS_FORCE_DONE, 1) < 0) {
-        CLOGE("ERR(%s):exynos_v4l2_s_ctrl force_done fail(is3a1Output)", __func__);
+    CLOGD("DEBUG(%s):SCALABLE_SENSOR_FORCE_DONE_3A1", __func__);
+    if (exynos_v4l2_s_ctrl(m_camera_info[CAMERA_MODE_BACK].is3a1Src.fd, V4L2_CID_IS_FORCE_DONE, 1) < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_s_ctrl force_done fail(is3a1Src)", __func__);
         return false;
     }
-    if (exynos_v4l2_s_ctrl(m_camera_info[SENSOR_BACK].is3a1Capture.fd, V4L2_CID_IS_FORCE_DONE, 1) < 0) {
-        CLOGE("ERR(%s):exynos_v4l2_s_ctrl force_done fail(is3a1Capture)", __func__);
+
+    if (exynos_v4l2_s_ctrl(m_camera_info[CAMERA_MODE_BACK].is3a1Dst.fd, V4L2_CID_IS_FORCE_DONE, 1) < 0) {
+        CLOGE("ERR(%s):exynos_v4l2_s_ctrl force_done fail(is3a1Dst)", __func__);
         return false;
     }
 #ifdef SCALABLE_SENSOR_CTRL_ISP
-    CLOGD("DEBUG(%s): SCALABLE_SENSOR_FORCE_DONE_ISP", __func__);
-    if (exynos_v4l2_s_ctrl(m_camera_info[SENSOR_BACK].isp.fd, V4L2_CID_IS_FORCE_DONE, 1) < 0) {
+    CLOGD("DEBUG(%s):SCALABLE_SENSOR_FORCE_DONE_ISP", __func__);
+    if (exynos_v4l2_s_ctrl(m_camera_info[CAMERA_MODE_BACK].isp.fd, V4L2_CID_IS_FORCE_DONE, 1) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl force_done fail(isp)", __func__);
         return false;
     }
 #endif
 #endif
+
     /* 2. 3A1, ISP stream off */
-    CLOGD("DEBUG(%s): 3A1 STREAM OFF", __func__);
-    if (cam_int_streamoff(&(m_camera_info[SENSOR_BACK].is3a1Output)) < 0) {
+    CLOGD("DEBUG(%s):3A1 STREAM OFF", __func__);
+    if (cam_int_streamoff(&(m_camera_info[CAMERA_MODE_BACK].is3a1Src)) < 0) {
         CLOGE("ERR(%s):cam_int_streamoff(3a1 output) fail", __func__);
         return false;
     }
-    if (cam_int_streamoff(&(m_camera_info[SENSOR_BACK].is3a1Capture)) < 0) {
+
+    if (cam_int_streamoff(&(m_camera_info[CAMERA_MODE_BACK].is3a1Dst)) < 0) {
         CLOGE("ERR(%s):cam_int_streamoff(3a1 capture) fail", __func__);
         return false;
     }
+
 #ifdef SCALABLE_SENSOR_CTRL_ISP
-    CLOGD("DEBUG(%s): ISP STREAM OFF", __func__);
-    if (cam_int_streamoff(&(m_camera_info[SENSOR_BACK].isp)) < 0) {
+    CLOGD("DEBUG(%s):ISP STREAM OFF", __func__);
+    if (cam_int_streamoff(&(m_camera_info[CAMERA_MODE_BACK].isp)) < 0) {
         CLOGE("ERR(%s):cam_int_streamoff(isp) fail", __func__);
         return false;
     }
 #endif
-    CLOGD("DEBUG(%s): SENSOR STREAM OFF", __func__);
-    if (cam_int_streamoff(&(m_camera_info[SENSOR_BACK].sensor)) < 0) {
+
+    CLOGD("DEBUG(%s):SENSOR STREAM OFF", __func__);
+    if (cam_int_streamoff(&(m_camera_info[CAMERA_MODE_BACK].sensor)) < 0) {
         CLOGE("ERR(%s):cam_int_streamoff(sensor) fail", __func__);
         return false;
     }
 
     /* 3. s_ctrl stream off */
-    CLOGD("DEBUG(%s): S_CTRL STREAM OFF", __func__);
-    if (setSensorStreamOff(SENSOR_FAKE) == false){
+    CLOGD("DEBUG(%s):S_CTRL STREAM OFF", __func__);
+    if (setSensorStreamOff(CAMERA_MODE_REPROCESSING) == false) {
         CLOGE("ERR(%s):setSensorStreamOff() fail", __func__);
         return false;
     }
@@ -12756,21 +11878,21 @@ bool ExynosCamera::setScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeMode)
     /* 4. init var and setting zoom */
     m_numOfShotedFrame = 0;
     m_numOfShotedIspFrame = 0;
-    beforeBufCap = -1;
-    beforeBufOut = -1;
+    m_is3a1DstLastBufIndex = -1;
+    m_is3a1SrcLastBufIndex = -1;
 
     int zoom, srcW, srcH, dstW, dstH;
-    zoom = m_curCameraInfo[m_camera_default]->zoom;
-    srcW = m_curCameraInfo[m_camera_default]->pictureW;
-    srcH = m_curCameraInfo[m_camera_default]->pictureH;
-    dstW = m_curCameraInfo[m_camera_default]->ispW;
-    dstH = m_curCameraInfo[m_camera_default]->ispH;
+    zoom = m_curCameraInfo[m_cameraMode]->zoom;
+    srcW = m_curCameraInfo[m_cameraMode]->pictureW;
+    srcH = m_curCameraInfo[m_cameraMode]->pictureH;
+    dstW = m_curCameraInfo[m_cameraMode]->ispW;
+    dstH = m_curCameraInfo[m_cameraMode]->ispH;
 
     int width, height;
     switch (sizeMode) {
     case SCALABLE_SENSOR_SIZE_13M:
-        width  = m_curCameraInfo[m_camera_default]->pictureW;
-        height = m_curCameraInfo[m_camera_default]->pictureH;
+        width  = m_curCameraInfo[m_cameraMode]->pictureW;
+        height = m_curCameraInfo[m_cameraMode]->pictureH;
         break;
     case SCALABLE_SENSOR_SIZE_FHD:
         getScalableSensorSizeOnPreview(&width, &height);
@@ -12782,157 +11904,166 @@ bool ExynosCamera::setScalableSensorSize(enum SCALABLE_SENSOR_SIZE sizeMode)
         return -1;
         break;
     }
-    CLOGD("DEBUG(%s): realSW(%d), realSH(%d)", __func__, width, height);
+
+    CLOGD("DEBUG(%s):realSW(%d), realSH(%d)", __func__, width, height);
+
     if (m_setZoom(zoom, srcW, srcH, dstW, dstH,
-                  (void *)&m_camera_info[m_camera_default].dummy_shot) == false) {
+                  (void *)&m_camera_info[m_cameraMode].dummy_shot) == false) {
         CLOGE("ERR(%s):m_setZoom() fail", __func__);
     }
 
     /* 5. sensor size change(s_crop) */
-    CLOGD("DEBUG(%s): SENSOR S_CROP", __func__);
-    if (!setSensorStreamOn(SENSOR_FAKE, width, height, false)) {
+    CLOGD("DEBUG(%s):SENSOR S_CROP", __func__);
+    if (!setSensorStreamOn(CAMERA_MODE_REPROCESSING, width, height, false)) {
         CLOGE("ERR(%s):setSensorStreamOn() fail", __func__);
         return false;
     }
 
     /* 6. sensor req_buf */
-    CLOGD("DEBUG(%s): SENSOR REQ_BUF", __func__);
-    m_camera_info[SENSOR_FAKE].sensor.buffers = 0;
-    if (cam_int_reqbufs(&m_camera_info[SENSOR_FAKE].sensor) < 0) {
+    CLOGD("DEBUG(%s):SENSOR REQ_BUF", __func__);
+    m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffers = 0;
+    if (cam_int_reqbufs(&m_camera_info[CAMERA_MODE_REPROCESSING].sensor) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
         return false;
     }
-    m_camera_info[SENSOR_FAKE].sensor.buffers = NUM_BAYER_BUFFERS;
-    if (cam_int_reqbufs(&(m_camera_info[SENSOR_FAKE].sensor)) < 0) {
+
+    m_camera_info[CAMERA_MODE_REPROCESSING].sensor.buffers = NUM_BAYER_BUFFERS;
+    if (cam_int_reqbufs(&(m_camera_info[CAMERA_MODE_REPROCESSING].sensor)) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs() fail", __func__);
         return false;
     }
 
     /* 8. sensor stream on */
-    CLOGD("DEBUG(%s): SENSOR STREAM ON", __func__);
-    if (cam_int_streamon(&(m_camera_info[SENSOR_FAKE].sensor)) < 0) {
+    CLOGD("DEBUG(%s):SENSOR STREAM ON", __func__);
+    if (cam_int_streamon(&(m_camera_info[CAMERA_MODE_REPROCESSING].sensor)) < 0) {
         CLOGE("ERR(%s):cam_int_streamon(sensor) fail", __func__);
         return false;
     }
 
     switch (sizeMode) {
     case SCALABLE_SENSOR_SIZE_13M:
-        m_camera_info[m_camera_default].dummy_shot.request_scp = 0;
+        m_camera_info[m_cameraMode].dummy_shot.request_scp = 0;
         break;
     case SCALABLE_SENSOR_SIZE_FHD:
-        m_camera_info[m_camera_default].dummy_shot.request_scp = 1;
+        m_camera_info[m_cameraMode].dummy_shot.request_scp = 1;
         break;
     }
-    /* 9. is3a1Output change size */
-    CLOGD("DEBUG(%s): SENSOR SET_CROP", __func__);
+
+    /* 9. is3a1Src change size */
+    CLOGD("DEBUG(%s):SENSOR SET_CROP", __func__);
     struct v4l2_crop crop;
     width  = SIZE_OTF_WIDTH;
     height = SIZE_OTF_HEIGHT;
-    m_camera_info[SENSOR_BACK].is3a1Output.width   = width;
-    m_camera_info[SENSOR_BACK].is3a1Output.height  = height;
+    m_camera_info[CAMERA_MODE_BACK].is3a1Src.width   = width;
+    m_camera_info[CAMERA_MODE_BACK].is3a1Src.height  = height;
     crop.c.top    = 0;
     crop.c.left   = 0;
     crop.c.width  = width;
     crop.c.height = height;
     crop.type    = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-    if (exynos_v4l2_s_crop(m_camera_info[SENSOR_BACK].is3a1Output.fd, &crop) < 0) {
-        ALOGE("ERR(%s): is3a1Output s_crop fail",  __func__);
+    if (exynos_v4l2_s_crop(m_camera_info[CAMERA_MODE_BACK].is3a1Src.fd, &crop) < 0) {
+        ALOGE("ERR(%s): is3a1Src s_crop fail",  __func__);
         return false;
     }
+
 #ifdef SCALABLE_SENSOR_CTRL_ISP
     /* 10. ISP req_buf */
-    CLOGD("DEBUG(%s): ISP REQ_BUF", __func__);
-    m_camera_info[SENSOR_BACK].isp.buffers = 0;
-    if (cam_int_reqbufs(&m_camera_info[SENSOR_BACK].isp) < 0) {
+    CLOGD("DEBUG(%s):ISP REQ_BUF", __func__);
+    m_camera_info[CAMERA_MODE_BACK].isp.buffers = 0;
+    if (cam_int_reqbufs(&m_camera_info[CAMERA_MODE_BACK].isp) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs(isp) fail", __func__);
         return false;
     }
-    m_camera_info[SENSOR_BACK].isp.buffers = NUM_BAYER_BUFFERS;
-    if (cam_int_reqbufs(&(m_camera_info[SENSOR_BACK].isp)) < 0) {
+
+    m_camera_info[CAMERA_MODE_BACK].isp.buffers = NUM_BAYER_BUFFERS;
+    if (cam_int_reqbufs(&(m_camera_info[CAMERA_MODE_BACK].isp)) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs(isp) fail", __func__);
         return false;
     }
 
     /* 11. ISP stream on */
-    CLOGD("DEBUG(%s): ISP STREAM ON", __func__);
-    if (cam_int_streamon(&(m_camera_info[SENSOR_BACK].isp)) < 0) {
+    CLOGD("DEBUG(%s):ISP STREAM ON", __func__);
+    if (cam_int_streamon(&(m_camera_info[CAMERA_MODE_BACK].isp)) < 0) {
         CLOGE("ERR(%s):cam_int_streamon(isp) fail", __func__);
         return false;
     }
 #endif
+
     /* 12. 3a1 output req_buf */
-    CLOGD("DEBUG(%s): 3A1 output REQ_BUF", __func__);
-    m_camera_info[SENSOR_BACK].is3a1Output.buffers = 0;
-    if (cam_int_reqbufs(&m_camera_info[SENSOR_BACK].is3a1Output) < 0) {
+    CLOGD("DEBUG(%s):3A1 output REQ_BUF", __func__);
+    m_camera_info[CAMERA_MODE_BACK].is3a1Src.buffers = 0;
+    if (cam_int_reqbufs(&m_camera_info[CAMERA_MODE_BACK].is3a1Src) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs(3a1 output) fail", __func__);
         return false;
     }
-    m_camera_info[SENSOR_BACK].is3a1Output.buffers = NUM_BAYER_BUFFERS;
-    if (cam_int_reqbufs(&(m_camera_info[SENSOR_BACK].is3a1Output)) < 0) {
+
+    m_camera_info[CAMERA_MODE_BACK].is3a1Src.buffers = NUM_BAYER_BUFFERS;
+    if (cam_int_reqbufs(&(m_camera_info[CAMERA_MODE_BACK].is3a1Src)) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs(3a1 output) fail", __func__);
         return false;
     }
 
     /* 13. 3a1 output stream on */
-    CLOGD("DEBUG(%s): 3A1 output STREAM ON", __func__);
-    if (cam_int_streamon(&(m_camera_info[SENSOR_BACK].is3a1Output)) < 0) {
+    CLOGD("DEBUG(%s):3A1 output STREAM ON", __func__);
+    if (cam_int_streamon(&(m_camera_info[CAMERA_MODE_BACK].is3a1Src)) < 0) {
         CLOGE("ERR(%s):cam_int_streamon(3a1 output) fail", __func__);
         return false;
     }
 
     /* 14. 3a1 capture req_buf */
-    CLOGD("DEBUG(%s): 3A1 output REQ_BUF", __func__);
-    m_camera_info[SENSOR_BACK].is3a1Capture.buffers = 0;
-    if (cam_int_reqbufs(&(m_camera_info[SENSOR_BACK].is3a1Capture)) < 0) {
+    CLOGD("DEBUG(%s):3A1 output REQ_BUF", __func__);
+    m_camera_info[CAMERA_MODE_BACK].is3a1Dst.buffers = 0;
+    if (cam_int_reqbufs(&(m_camera_info[CAMERA_MODE_BACK].is3a1Dst)) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs(3a1 capture) fail", __func__);
         return false;
     }
-    m_camera_info[SENSOR_BACK].is3a1Capture.buffers = NUM_BAYER_BUFFERS;
-    if (cam_int_reqbufs(&(m_camera_info[SENSOR_BACK].is3a1Capture)) < 0) {
+
+    m_camera_info[CAMERA_MODE_BACK].is3a1Dst.buffers = NUM_BAYER_BUFFERS;
+    if (cam_int_reqbufs(&(m_camera_info[CAMERA_MODE_BACK].is3a1Dst)) < 0) {
         CLOGE("ERR(%s):cam_int_reqbufs(3a1 capture) fail", __func__);
         return false;
     }
 
     /* 15. 3a1 capture stream on */
-    CLOGD("DEBUG(%s): 3A1 capture STREAM ON", __func__);
-    if (cam_int_streamon(&(m_camera_info[SENSOR_BACK].is3a1Capture)) < 0) {
+    CLOGD("DEBUG(%s):3A1 capture STREAM ON", __func__);
+    if (cam_int_streamon(&(m_camera_info[CAMERA_MODE_BACK].is3a1Dst)) < 0) {
         CLOGE("ERR(%s):cam_int_streamon(3a1 capture) fail", __func__);
         return false;
     }
 
     /* 16. 3a1 capture Q(6) */
-    CLOGD("DEBUG(%s): 3A1 Q(%d)", __func__, NUM_BAYER_BUFFERS);
+    CLOGD("DEBUG(%s):3A1 Q(%d)", __func__, NUM_BAYER_BUFFERS);
     if (qAll3a1Buf() == false) {
         CLOGE("ERR(%s):qAll3a1Buf fail", __func__);
         return false;
     }
 
     /* 17. s_ctrl stream on */
-    CLOGD("DEBUG(%s): S_CTRL STREAM ON", __func__);
-    if (exynos_v4l2_s_ctrl(m_camera_info[SENSOR_BACK].sensor.fd, V4L2_CID_IS_S_STREAM, IS_ENABLE_STREAM) < 0) {
+    CLOGD("DEBUG(%s):S_CTRL STREAM ON", __func__);
+    if (exynos_v4l2_s_ctrl(m_camera_info[CAMERA_MODE_BACK].sensor.fd, V4L2_CID_IS_S_STREAM, IS_ENABLE_STREAM) < 0) {
         CLOGE("ERR(%s):exynos_v4l2_s_ctrl fail(IS_ENABLE_STREAM)", __func__);
         return false;
     }
 
-    CLOGD("DEBUG(%s): All done", __func__);
+    CLOGD("DEBUG(%s):All done", __func__);
     return true;
 }
 
 bool ExynosCamera::getScalableSensorStart(void)
 {
-    return m_curCameraInfo[m_camera_default]->scalableSensorStart;
+    return m_curCameraInfo[m_cameraMode]->scalableSensorStart;
 }
 
 bool ExynosCamera::setScalableSensorStart(bool toggle)
 {
-    m_curCameraInfo[m_camera_default]->scalableSensorStart = toggle;
+    m_curCameraInfo[m_cameraMode]->scalableSensorStart = toggle;
     return true;
 }
 
 void ExynosCamera::getScalableSensorSizeOnPreview(int *w, int *h)
 {
-    int width  = m_curCameraInfo[m_camera_default]->previewW;
-    int height = m_curCameraInfo[m_camera_default]->previewH;
+    int width  = m_curCameraInfo[m_cameraMode]->previewW;
+    int height = m_curCameraInfo[m_cameraMode]->previewH;
 
     /* when preview size is 1440x1080(4:3), return sensor size(1920x1440) */
     if (width == 1440 && height == 1080) {
@@ -12947,6 +12078,27 @@ void ExynosCamera::getScalableSensorSizeOnPreview(int *w, int *h)
 
     *w = width;
     *h = height;
-    CLOGI("INFO(%s): preview size (%d/%d)", __func__, *w, *h);
+    CLOGD("DEBUG(%s): preview size (%d/%d)", __func__, *w, *h);
 }
+
+int ExynosCamera::getPlaneSizePackedFLiteOutput(int width, int height)
+{
+    /*
+    1. The sensor output is 10bit per pixel but Flite output is 12bit added zero padding
+        because there is not 10bit output mode in Flite.
+    2. Flite write 5pixel in 64bit.
+    3. The pixel should be aligned by 10's multiple.
+    */
+    int PlaneSize;
+    int Alligned_Width;
+    int Bytes;
+
+    Alligned_Width = (width + 9) / 10 * 10;
+    Bytes = Alligned_Width * 8 / 5 ; /* 5:64 = x:width */
+
+    PlaneSize = Bytes * height;
+
+    return PlaneSize;
+}
+
 #endif

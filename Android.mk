@@ -18,9 +18,7 @@ ifeq ($(TARGET_SOC), exynos5420)
 exynos5420_dirs := \
 	gralloc \
 	mobicore \
-	libhwjpeg \
-	libcamera \
-	libextcamera
+	libhwjpeg 
 
 include $(call all-named-subdir-makefiles,$(exynos5420_dirs))
 
