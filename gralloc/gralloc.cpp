@@ -122,9 +122,11 @@ static unsigned int _select_heap(int usage)
     unsigned int heap_mask;
 
     if (usage & GRALLOC_USAGE_PROTECTED) {
+#ifdef USE_NORMAL_DRM
         if (usage & GRALLOC_USAGE_PRIVATE_NONSECURE)
             heap_mask = ION_HEAP_SYSTEM_MASK;
         else
+#endif
             heap_mask = ION_HEAP_EXYNOS_CONTIG_MASK;
     }
     else
@@ -179,9 +181,11 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
     }
 
     if (usage & GRALLOC_USAGE_PROTECTED) {
+#ifdef USE_NORMAL_DRM
         if (usage & GRALLOC_USAGE_PRIVATE_NONSECURE)
             alignment = 0;
         else
+#endif
             alignment = MB_1;
         ion_flags |= ION_EXYNOS_FIMD_VIDEO_MASK;
     }
