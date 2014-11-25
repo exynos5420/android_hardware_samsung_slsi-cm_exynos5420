@@ -17,6 +17,7 @@
 #ifndef ANDROID_EXYNOS_HWC_MODULE_H_
 #define ANDROID_EXYNOS_HWC_MODULE_H_
 #include <hardware/hwcomposer.h>
+#include <linux/s3c-fb.h>
 const size_t GSC_DST_W_ALIGNMENT_RGB888 = 16;
 const size_t GSC_DST_CROP_W_ALIGNMENT_RGB888 = 1;
 #define VSYNC_DEV_NAME  "/sys/devices/platform/exynos-sysmmu.11/exynos5-fb.1/vsync"
