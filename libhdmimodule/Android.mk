@@ -17,7 +17,6 @@ ifeq ($(filter-out exynos5,$(TARGET_BOARD_PLATFORM)),)
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
-LOCAL_PRELINK_MODULE := false
 LOCAL_SHARED_LIBRARIES := liblog libutils libcutils libexynosutils libexynosv4l2 libsync libhdmi libdisplay
 
 LOCAL_C_INCLUDES := \
