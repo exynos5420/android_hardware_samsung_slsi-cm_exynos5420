@@ -20,7 +20,7 @@
 #include <stdint.h>
 
 #include <hardware/hardware.h>
-#include <hardware/keymaster.h>
+#include <hardware/keymaster0.h>
 
 #include <openssl/evp.h>
 #include <openssl/bio.h>
@@ -66,7 +66,7 @@ struct RSA_Delete {
 };
 typedef UniquePtr<RSA, RSA_Delete> Unique_RSA;
 
-typedef UniquePtr<keymaster_device_t> Unique_keymaster_device_t;
+typedef UniquePtr<keymaster0_device_t> Unique_keymaster_device_t;
 
 /**
  * Many OpenSSL APIs take ownership of an argument on success but don't free the argument
@@ -92,7 +92,7 @@ static void logOpenSSLError(const char* location) {
     ERR_remove_state(0);
 }
 
-static int exynos_km_generate_keypair(const keymaster_device_t* dev,
+static int exynos_km_generate_keypair(const keymaster0_device_t* dev,
         const keymaster_keypair_t key_type, const void* key_params,
         uint8_t** keyBlob, size_t* keyBlobLength) {
     teeResult_t ret = TEE_ERR_NONE;
@@ -133,7 +133,7 @@ static int exynos_km_generate_keypair(const keymaster_device_t* dev,
     return 0;
 }
 
-static int exynos_km_import_keypair(const keymaster_device_t* dev,
+static int exynos_km_import_keypair(const keymaster0_device_t* dev,
         const uint8_t* key, const size_t key_length,
         uint8_t** key_blob, size_t* key_blob_length) {
     uint8_t kbuf[RSA_KEY_BUFFER_SIZE];
@@ -233,7 +233,7 @@ static int exynos_km_import_keypair(const keymaster_device_t* dev,
     return 0;
 }
 
-static int exynos_km_get_keypair_public(const struct keymaster_device* dev,
+static int exynos_km_get_keypair_public(const keymaster0_device_t* dev,
         const uint8_t* key_blob, const size_t key_blob_length,
         uint8_t** x509_data, size_t* x509_data_length) {
     uint32_t bin_mod_len;
@@ -332,7 +332,7 @@ static int exynos_km_get_keypair_public(const struct keymaster_device* dev,
     return 0;
 }
 
-static int exynos_km_sign_data(const keymaster_device_t* dev,
+static int exynos_km_sign_data(const keymaster0_device_t* dev,
         const void* params,
         const uint8_t* keyBlob, const size_t keyBlobLength,
         const uint8_t* data, const size_t dataLength,
@@ -380,7 +380,7 @@ static int exynos_km_sign_data(const keymaster_device_t* dev,
     return 0;
 }
 
-static int exynos_km_verify_data(const keymaster_device_t* dev,
+static int exynos_km_verify_data(const keymaster0_device_t* dev,
         const void* params,
         const uint8_t* keyBlob, const size_t keyBlobLength,
         const uint8_t* signedData, const size_t signedDataLength,
@@ -435,7 +435,7 @@ static int exynos_km_open(const hw_module_t* module, const char* name,
     if (strcmp(name, KEYSTORE_KEYMASTER) != 0)
         return -EINVAL;
 
-    Unique_keymaster_device_t dev(new keymaster_device_t);
+    Unique_keymaster_device_t dev(new keymaster0_device_t);
     if (dev.get() == NULL)
         return -ENOMEM;
 
