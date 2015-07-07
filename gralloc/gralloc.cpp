@@ -189,13 +189,17 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
     }
 
     if (usage & GRALLOC_USAGE_PROTECTED) {
+#ifdef GRALLOC_USAGE_PRIVATE_NONSECURE
         if (usage & GRALLOC_USAGE_PRIVATE_NONSECURE)
             alignment = 0;
         else
+#endif
             alignment = MB_1;
+#ifdef GRALLOC_USAGE_PRIVATE_NONSECURE
         if ((usage & GRALLOC_USAGE_PRIVATE_NONSECURE) && (usage & GRALLOC_USAGE_PHYSICALLY_LINEAR))
             ion_flags |= ION_EXYNOS_G2D_WFD_MASK;
         else
+#endif
             ion_flags |= ION_EXYNOS_FIMD_VIDEO_MASK;
     }
 
