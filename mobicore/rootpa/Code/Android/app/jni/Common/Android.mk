@@ -66,7 +66,7 @@ LOCAL_C_INCLUDES +=  $(MOBICOREDRIVER_DIR_INC)
 LOCAL_C_INCLUDES +=  $(MOBICOREDRIVER_DIR_INC2)
 LOCAL_C_INCLUDES +=  external/curl/include
 LOCAL_C_INCLUDES +=  external/libxml2/include
-LOCAL_C_INCLUDES +=  external/icu4c/common
+LOCAL_C_INCLUDES +=  external/icu/icu4c/source/common
 LOCAL_C_INCLUDES +=  $(LOCAL_PATH)/../../../../Common
 LOCAL_C_INCLUDES +=  $(LOCAL_PATH)/../../../../Common/include
 
