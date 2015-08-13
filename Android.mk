@@ -21,6 +21,7 @@ exynos5420_dirs := \
 	libhwcutilsmodule \
 	gralloc \
 	mobicore \
+	libsecurepath \
 	libhwjpeg 
 
 include $(call all-named-subdir-makefiles,$(exynos5420_dirs))
