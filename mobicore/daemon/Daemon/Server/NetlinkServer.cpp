@@ -78,7 +78,7 @@ void NetlinkServer::run(
         src_addr.nl_family = AF_NETLINK;
         src_addr.nl_pid = MC_DAEMON_PID;  /* daemon pid */
         src_addr.nl_groups = 0;  /* not in mcast groups */
-        if (bind(serverSock, (struct sockaddr *)&src_addr, sizeof(src_addr)) < 0) {
+        if (::bind(serverSock, (struct sockaddr *)&src_addr, sizeof(src_addr)) < 0) {
             LOG_ERRNO("Binding to server socket failed, because bind");
             close(serverSock);
             break;
