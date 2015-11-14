@@ -119,7 +119,7 @@
             do \
             { \
                 _LOG_E("  *****************************"); \
-                _LOG_E("  *** ERROR: "__VA_ARGS__); \
+                _LOG_E("  *** ERROR: ", __VA_ARGS__); \
                 _LOG_E("  *** Detected in %s/%u()", __FUNCTION__, __LINE__); \
                 _LOG_E("  *****************************"); \
             } while(1!=1)
