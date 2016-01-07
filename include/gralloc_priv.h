@@ -159,7 +159,11 @@ struct private_handle_t {
             hnd->numInts + hnd->numFds != sNumInts + sNumFds ||
             hnd->magic != sMagic)
         {
-            ALOGE("invalid gralloc handle (at %p)", reinterpret_cast<void *>(const_cast<native_handle *>(h)));
+            void *handle = reinterpret_cast<void *>(const_cast<native_handle *>(h));
+            if(handle != 0)
+            {
+                ALOGE("invalid gralloc handle (at %p)", handle);
+            }
             return -EINVAL;
         }
         return 0;
