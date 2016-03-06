@@ -164,6 +164,7 @@ struct private_handle_t {
             if(handle != 0)
             {
                 ALOGE("invalid gralloc handle (at %p)", handle);
+                ALOGE("gralloc handle validation failed (numInts: %d, numFds: %d, sNumInts: %d, snumFds: %d, magic: %d, sMagic: %d)", hnd->numInts, hnd->numFds, sNumInts, sNumFds, hnd->magic, sMagic);
             }
             return -EINVAL;
         }
