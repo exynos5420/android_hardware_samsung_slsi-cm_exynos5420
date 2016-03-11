@@ -1224,28 +1224,29 @@ static void checkMobiCoreVersion(
         // Check MobiCore version info.
         char *msg;
         if (!checkVersionOkMCI(versionPayload.versionInfo.versionMci, &msg)) {
-            LOG_E("%s", msg);
+            LOG_E("checkVersionOkMCI failed - %s", msg);
             failed = true;
         }
-        LOG_I_RELEASE("%s", msg);
+        LOG_I_RELEASE("versionMci - %s", msg);
         if (!checkVersionOkSO(versionPayload.versionInfo.versionSo, &msg)) {
-            LOG_E("%s", msg);
+            LOG_E("checkVersionOkSO failed - %s", msg);
             failed = true;
         }
-        LOG_I_RELEASE("%s", msg);
+        LOG_I_RELEASE("versionSo - %s", msg);
         if (!checkVersionOkMCLF(versionPayload.versionInfo.versionMclf, &msg)) {
-            LOG_E("%s", msg);
+            LOG_E("checkVersionOkMCLF failed - %s", msg);
             failed = true;
         }
-        LOG_I_RELEASE("%s", msg);
+        LOG_I_RELEASE("versionInfo - %s", msg);
         if (!checkVersionOkCONTAINER(versionPayload.versionInfo.versionContainer, &msg)) {
-            LOG_E("%s", msg);
+            LOG_E("checkVersionOkCONTAINER failed - %s", msg);
             failed = true;
         }
-        LOG_I_RELEASE("%s", msg);
+        LOG_I_RELEASE("versionContainer - %s", msg);
     }
 
     if (failed) {
+        LOG_E("Failed to check mobiCore version");
         exit(1);
     }
 }
