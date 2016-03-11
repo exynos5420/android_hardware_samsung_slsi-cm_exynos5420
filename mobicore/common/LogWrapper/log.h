@@ -69,11 +69,10 @@
     #define LOG_W(fmt, args...) DUMMY_FUNCTION()
 #else
     // add LINE
-    #define LOG_I(fmt, args...) LOG_i(fmt";%d", ## args, __LINE__)
-    #define LOG_W(fmt, args...) LOG_w(fmt";%d", ## args, __LINE__)
+    #define LOG_I(fmt, args...) LOG_i(fmt , ## args)
+    #define LOG_W(fmt, args...) LOG_w(fmt , ## args)
 #endif
-    // LOG_E is always defined
-    #define _LOG_E(fmt, args...) LOG_e(fmt, ## args)
+    #define LOG_E(fmt, args...) LOG_e("ERROR - %s():\n***** " fmt, __FUNCTION__, ## args)
 
     // actually mapping to log system, adding level and tag.
     #define LOG_i(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
@@ -112,6 +111,7 @@
 #define LOG_V(...) DUMMY_FUNCTION()
 #endif
 
+#if 0
 /** LOG_E() needs to be more prominent:
  * Display "*********** ERROR ***********" before actual error message.
  */
@@ -123,9 +123,10 @@
                 _LOG_E("  *** Detected in %s/%u()", __FUNCTION__, __LINE__); \
                 _LOG_E("  *****************************"); \
             } while(1!=1)
+#endif
 
 #define LOG_ERRNO(MESSAGE) \
-    LOG_E("%s failed with \"%s\"(errno %i)", MESSAGE, strerror(errno), errno);
+    LOG_E("%s -- %s (errno %d)", MESSAGE, strerror(errno), errno);
 
 #define LOG_I_BUF   LOG_I_Buf
 
