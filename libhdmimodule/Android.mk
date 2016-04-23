@@ -22,25 +22,25 @@ LOCAL_SHARED_LIBRARIES := liblog libutils libcutils libexynosutils libexynosv4l2
 
 LOCAL_C_INCLUDES := \
 	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-	$(LOCAL_PATH)/../../exynos5-insignal/include \
-	$(TOP)/hardware/samsung_slsi/exynos/include \
-	$(TOP)/hardware/samsung_slsi/exynos/libexynosutils \
-	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/include \
-	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/libhwcmodule \
-	$(TOP)/hardware/samsung_slsi/exynos/libhwc \
-	$(TOP)/hardware/samsung_slsi/exynos/libhwcutils \
-	$(TOP)/hardware/samsung_slsi/exynos/libdisplay
+	$(LOCAL_PATH)/../../exynos5/include \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/include \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libexynosutils \
+	$(TOP)/hardware/samsung_slsi-cm/$(TARGET_SOC)/include \
+	$(TOP)/hardware/samsung_slsi-cm/$(TARGET_SOC)/libhwcmodule \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libhwc \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libhwcutils \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libdisplay
 
 LOCAL_ADDITIONAL_DEPENDENCIES += \
 	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 
 ifeq ($(BOARD_HDMI_INCAPABLE), true)
-LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi/exynos/libhdmi_dummy
+LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi-cm/exynos/libhdmi_dummy
 else
 ifeq ($(BOARD_USES_NEW_HDMI), true)
-LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi/exynos/libhdmi
+LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi-cm/exynos/libhdmi
 else
-LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi/exynos/libhdmi_legacy
+LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi-cm/exynos/libhdmi_legacy
 endif
 endif
 
