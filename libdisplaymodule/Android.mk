@@ -22,15 +22,15 @@ LOCAL_SHARED_LIBRARIES := liblog libutils libcutils libexynosutils libexynosv4l2
 
 LOCAL_C_INCLUDES := \
 	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-	$(LOCAL_PATH)/../../exynos5-insignal/include \
-	$(TOP)/hardware/samsung_slsi/exynos/include \
-	$(TOP)/hardware/samsung_slsi/exynos/libexynosutils \
-	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/include \
-	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/libhwcmodule \
-	$(TOP)/hardware/samsung_slsi/exynos/libhwc \
-	$(TOP)/hardware/samsung_slsi/exynos/libhwcUtils \
-	$(TOP)/hardware/samsung_slsi/exynos/libdisplay \
-	$(TOP)/hardware/samsung_slsi/exynos/libmpp
+	$(LOCAL_PATH)/../../exynos5/include \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/include \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libexynosutils \
+	$(TOP)/hardware/samsung_slsi-cm/$(TARGET_SOC)/include \
+	$(TOP)/hardware/samsung_slsi-cm/$(TARGET_SOC)/libhwcmodule \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libhwc \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libhwcUtils \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libdisplay \
+	$(TOP)/hardware/samsung_slsi-cm/exynos/libmpp
 
 LOCAL_ADDITIONAL_DEPENDENCIES += \
 	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr

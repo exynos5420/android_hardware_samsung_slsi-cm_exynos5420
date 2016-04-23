@@ -15,6 +15,8 @@
 #
 
 ifeq ($(TARGET_SOC), exynos5420)
+ifeq ($(TARGET_SLSI_VARIANT),cm)
+
 exynos5420_dirs := \
 	libdisplaymodule \
 	libhdmimodule \
