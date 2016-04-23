@@ -61,6 +61,7 @@ static int gralloc_map(gralloc_module_t const* module, buffer_handle_t handle)
         chroma_size = (hnd->vstride / 2) * ALIGN(hnd->stride / 2, 16) + ext_size;
         break;
     default:
+        ALOGV("%s: unknown format: 0x%x", __func__, hnd->format);
         break;
     }
 
@@ -110,6 +111,7 @@ static int gralloc_unmap(gralloc_module_t const* module, buffer_handle_t handle)
         chroma_size = (hnd->vstride / 2) * ALIGN(hnd->stride / 2, 16) + ext_size;
         break;
     default:
+        ALOGV("%s: unknown format: 0x%x", __func__, hnd->format);
         break;
     }
 
