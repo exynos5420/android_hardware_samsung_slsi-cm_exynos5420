@@ -24,7 +24,7 @@
 #define VSYNC_DEV_NAME  "exynos5-fb.1/vsync"
 
 #define FIMD_WORD_SIZE_BYTES   16
-#define FIMD_BURSTLEN   8
+#define FIMD_BURSTLEN   16
 #define FIMD_ADDED_BURSTLEN_BYTES     4
 #define FIMD_BW_OVERLAP_CHECK
 
