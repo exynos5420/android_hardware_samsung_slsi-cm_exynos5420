@@ -218,7 +218,7 @@ int ExynosJpegBase::t_v4l2Querybuf(int iFd, struct BUF_INFO *pstBufInfo, struct 
         return iRet;
     }
 
-    for (int i= 0; i < v4l2_buf.length; i++) {
+    for (unsigned int i= 0; i < v4l2_buf.length; i++) {
         pstBuf->size[i] = v4l2_buf.m.planes[i].length;
         pstBuf->c_addr[i] = (char *)mmap(0, pstBuf->size[i],
                         PROT_READ | PROT_WRITE, MAP_SHARED, iFd,
@@ -294,6 +294,9 @@ int ExynosJpegBase::t_v4l2Dqbuf(int iFd, enum v4l2_buf_type eType, enum v4l2_mem
         JPEG_ERROR_LOG("[%s:%d] VIDIOC_DQBUF failed\n", __func__, iRet);
         return iRet;
     }
+
+    if (buf.flags & V4L2_BUF_FLAG_ERROR)
+        JPEG_ERROR_LOG("[%s:%d] Buffer status is error\n", __func__, buf.flags);
 
     if ((eType == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) && (t_stJpegConfig.mode == MODE_ENCODE))
         t_stJpegConfig.sizeJpeg = buf.m.planes[0].bytesused;
@@ -616,7 +619,7 @@ int ExynosJpegBase::setBuf(struct BUFFER *pstBuf, int *piBuf, int *iSize, int iP
         return ERROR_BUFFER_TOO_SMALL;
 
     for (int i = 0; i < iPlaneNum; i++) {
-        if (piBuf[i] == NULL) {
+        if (piBuf[i] == 0) {
             memset(pstBuf, 0, sizeof(struct BUFFER));
             return ERROR_BUFFR_IS_NULL;
         }
@@ -713,7 +716,7 @@ int ExynosJpegBase::setColorBufSize(int iFormat, int *piBufSize, int iSize, int 
     case V4L2_PIX_FMT_NV12:
     case V4L2_PIX_FMT_YUV420:
     case V4L2_PIX_FMT_YVU420:
-        pBufSize[0] = (width * height * 3) / 2;
+        pBufSize[0] = (width * height * 3) >> 1;
         pBufSize[1] = 0;
         pBufSize[2] = 0;
         break;
