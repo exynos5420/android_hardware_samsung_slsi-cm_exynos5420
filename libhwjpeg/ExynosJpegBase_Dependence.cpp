@@ -197,7 +197,7 @@ int ExynosJpegBase::setColorFormat(enum MODE eMode, int iV4l2ColorFormat)
 int ExynosJpegBase::checkBufType(struct BUFFER *pstBuf)
 {
     int ret =0;
-    if (pstBuf->c_addr[0] > 0)
+    if ((int)pstBuf->c_addr[0] != 0 && (int)pstBuf->c_addr[0] != -1)
         ret = ret|JPEG_BUF_TYPE_USER_PTR;
 
     if (pstBuf->i_addr[0] > 0)

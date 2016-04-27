@@ -153,7 +153,7 @@ int ExynosJpegDecoder::getSize(int *piW, int *piH)
 
     int iRet = t_v4l2GetFmt(t_iJpegFd, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE, &t_stJpegConfig);
     if (iRet < 0) {
-        JPEG_ERROR_LOG("[%s,%d]: get image size failed\n", __func__,iRet);
+        JPEG_ERROR_LOG("[%s,%d]: get image size failed\n", __func__, iRet);
         return ERROR_GET_SIZE_FAIL;
     }
 
@@ -215,7 +215,7 @@ int ExynosJpegDecoder::setJpegSize(int iJpegSize)
     if (t_bFlagCreate == false)
         return ERROR_JPEG_DEVICE_NOT_CREATE_YET;
 
-    if (iJpegSize<=0)
+    if (iJpegSize <= 0)
         return ERROR_JPEG_SIZE_TOO_SMALL;
 
     t_stJpegConfig.sizeJpeg = iJpegSize;
