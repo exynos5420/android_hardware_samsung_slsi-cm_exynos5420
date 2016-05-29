@@ -152,7 +152,7 @@ void Session::addBulkBuf(BulkBufferDescriptor *blkBuf)
 //------------------------------------------------------------------------------
 uint32_t Session::getBufHandle(addr_t sVirtAddr)
 {
-    LOG_V("getBufHandle(): Virtual Address = 0x%X", (unsigned int) virtAddr);
+    LOG_V("getBufHandle(): Secure Virtual Address = 0x%X", (unsigned int) sVirtAddr);
 
     // Search and remove bulk buffer descriptor
     for ( bulkBufferDescrIterator_t iterator = bulkBufferDescriptors.begin();
