@@ -164,7 +164,7 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
         case HAL_PIXEL_FORMAT_RGB_565:
         case HAL_PIXEL_FORMAT_RGBA_5551:
         case HAL_PIXEL_FORMAT_RGBA_4444:
-        case HAL_PIXEL_FORMAT_RAW16:
+        case HAL_PIXEL_FORMAT_RAW_SENSOR:
             bpp = 2;
             break;
         case HAL_PIXEL_FORMAT_BLOB:
