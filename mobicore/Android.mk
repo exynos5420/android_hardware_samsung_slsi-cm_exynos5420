@@ -12,11 +12,12 @@ COMP_PATH_MobiCoreDriverMod := $(MOBICORE_PROJECT_PATH)/include
 
 # Application wide Cflags
 GLOBAL_INCLUDES := bionic \
+	external/stlport/stlport \
 	$(COMP_PATH_MobiCore)/inc \
 	$(COMP_PATH_MobiCoreDriverMod)/Public \
 	$(COMP_PATH_MobiCore)/inc/TlCm
 
-LOCAL_CXX_STL := libstlport
+GLOBAL_LIBRARIES := libstlport
 
 # Include the Daemon
 include $(MOBICORE_PROJECT_PATH)/daemon/Android.mk
