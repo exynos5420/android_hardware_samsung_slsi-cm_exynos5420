@@ -281,7 +281,6 @@ static int gralloc_alloc_yuv(int ionfd, int w, int h, int format,
                                                ion_flags, hnd, stride);
         case HAL_PIXEL_FORMAT_YCrCb_420_SP:
         case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP:
-        case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_FULL:
         case HAL_PIXEL_FORMAT_YCbCr_420_SP:
             {
                 luma_vstride = ALIGN(h, 16);

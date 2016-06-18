@@ -52,7 +52,6 @@ static int gralloc_map(gralloc_module_t const* module, buffer_handle_t handle)
         chroma_size = chroma_vstride * hnd->stride + ext_size;
         break;
     case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP:
-    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_FULL:
     case HAL_PIXEL_FORMAT_YCbCr_420_SP:
         chroma_size = hnd->stride * ALIGN(hnd->vstride / 2, 8) + ext_size;
         break;
@@ -100,7 +99,6 @@ static int gralloc_unmap(gralloc_module_t const* module, buffer_handle_t handle)
         chroma_size = chroma_vstride * hnd->stride + ext_size;
         break;
     case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP:
-    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_FULL:
     case HAL_PIXEL_FORMAT_YCbCr_420_SP:
         chroma_size = hnd->stride * ALIGN(hnd->vstride / 2, 8) + ext_size;
         break;
