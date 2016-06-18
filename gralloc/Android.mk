@@ -24,8 +24,8 @@ LOCAL_SHARED_LIBRARIES := liblog libcutils libion libutils
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include \
-	$(TOP)/hardware/samsung_slsi-cm/exynos/include \
-	$(TOP)/hardware/samsung_slsi-cm/exynos5/include
+	$(TOP)/hardware/samsung_slsi/exynos/include \
+	$(TOP)/hardware/samsung_slsi/exynos5/include
 
 LOCAL_SRC_FILES := 	\
 	gralloc.cpp 	\

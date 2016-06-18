@@ -47,17 +47,16 @@ static int gralloc_map(gralloc_module_t const* module, buffer_handle_t handle)
     private_handle_t *hnd = (private_handle_t*)handle;
 
     switch (hnd->format) {
-    case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_SP_M_TILED:
+    case HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED:
         chroma_vstride = ALIGN(hnd->height / 2, 32);
         chroma_size = chroma_vstride * hnd->stride + ext_size;
         break;
-    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_M:
-    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_M_FULL:
-    case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_SP_M:
+    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP:
+    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_FULL:
+    case HAL_PIXEL_FORMAT_YCbCr_420_SP:
         chroma_size = hnd->stride * ALIGN(hnd->vstride / 2, 8) + ext_size;
         break;
-    case HAL_PIXEL_FORMAT_EXYNOS_YV12_M:
-    case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_P_M:
+    case HAL_PIXEL_FORMAT_EXYNOS_YV12:
         chroma_size = (hnd->vstride / 2) * ALIGN(hnd->stride / 2, 16) + ext_size;
         break;
     default:
@@ -96,17 +95,16 @@ static int gralloc_unmap(gralloc_module_t const* module, buffer_handle_t handle)
     size_t ext_size = 256;
 
     switch (hnd->format) {
-    case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_SP_M_TILED:
+    case HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED:
         chroma_vstride = ALIGN(hnd->height / 2, 32);
         chroma_size = chroma_vstride * hnd->stride + ext_size;
         break;
-    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_M:
-    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_M_FULL:
-    case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_SP_M:
+    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP:
+    case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_FULL:
+    case HAL_PIXEL_FORMAT_YCbCr_420_SP:
         chroma_size = hnd->stride * ALIGN(hnd->vstride / 2, 8) + ext_size;
         break;
-    case HAL_PIXEL_FORMAT_EXYNOS_YV12_M:
-    case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_P_M:
+    case HAL_PIXEL_FORMAT_EXYNOS_YV12:
         chroma_size = (hnd->vstride / 2) * ALIGN(hnd->stride / 2, 16) + ext_size;
         break;
     default:
@@ -246,10 +244,6 @@ int gralloc_unlock(gralloc_module_t const* module,
         return -EINVAL;
 
     private_handle_t* hnd = (private_handle_t*)handle;
-
-    if (!((hnd->flags & GRALLOC_USAGE_SW_READ_MASK) == GRALLOC_USAGE_SW_READ_OFTEN))
-        return 0;
-
     ion_sync_fd(getIonFd(module), hnd->fd);
     if (hnd->fd1 >= 0)
         ion_sync_fd(getIonFd(module), hnd->fd1);

@@ -42,7 +42,6 @@
 #define ION_EXYNOS_FIMD_VIDEO_MASK  (1 << 28)
 #define ION_EXYNOS_MFC_OUTPUT_MASK  (1 << 26)
 #define ION_EXYNOS_MFC_INPUT_MASK   (1 << 25)
-#define ION_EXYNOS_G2D_WFD_MASK     (1 << 22)
 #define MB_1 (1024*1024)
 
 #define ION_FLAG_PRESERVE_KMAP 4
@@ -116,13 +115,17 @@ ionfd: -1,
 static unsigned int _select_heap(int usage)
 {
     unsigned int heap_mask;
-    if (usage & GRALLOC_USAGE_PROTECTED)
-        heap_mask = ION_HEAP_EXYNOS_CONTIG_MASK;
+
+    if (usage & GRALLOC_USAGE_PROTECTED) {
+#ifdef USE_NORMAL_DRM
+        if (usage & GRALLOC_USAGE_PRIVATE_NONSECURE)
+            heap_mask = ION_HEAP_SYSTEM_MASK;
+        else
+#endif
+            heap_mask = ION_HEAP_EXYNOS_CONTIG_MASK;
+    }
     else
         heap_mask = ION_HEAP_SYSTEM_MASK;
-
-    if (usage & GRALLOC_USAGE_GPU_BUFFER)
-        heap_mask = ION_HEAP_EXYNOS_CONTIG_MASK;
 
     return heap_mask;
 }
@@ -150,7 +153,6 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
     }
 
     switch (format) {
-        case HAL_PIXEL_FORMAT_EXYNOS_ARGB_8888:
         case HAL_PIXEL_FORMAT_RGBA_8888:
         case HAL_PIXEL_FORMAT_RGBX_8888:
         case HAL_PIXEL_FORMAT_BGRA_8888:
@@ -160,6 +162,8 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
             bpp = 3;
             break;
         case HAL_PIXEL_FORMAT_RGB_565:
+        case HAL_PIXEL_FORMAT_RGBA_5551:
+        case HAL_PIXEL_FORMAT_RGBA_4444:
         case HAL_PIXEL_FORMAT_RAW16:
             bpp = 2;
             break;
@@ -173,13 +177,11 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
     }
 
     if (format != HAL_PIXEL_FORMAT_BLOB) {
-        if ((usage & GRALLOC_USAGE_HW_VIDEO_ENCODER) || (format == HAL_PIXEL_FORMAT_BGRA_8888)) {
-            bpr = ALIGN(w, 16)* bpp;
+        bpr = ALIGN(w*bpp, 64);
+        if (usage & GRALLOC_USAGE_HW_VIDEO_ENCODER)
             vstride = ALIGN(h, 16);
-        } else {
-            bpr = ALIGN(w*bpp, 16);
+        else
             vstride = h;
-        }
         if (vstride < h + 2)
             size = bpr * (h + 2);
         else
@@ -189,30 +191,17 @@ static int gralloc_alloc_rgb(int ionfd, int w, int h, int format, int usage,
     }
 
     if (usage & GRALLOC_USAGE_PROTECTED) {
+#ifdef USE_NORMAL_DRM
         if (usage & GRALLOC_USAGE_PRIVATE_NONSECURE)
             alignment = 0;
         else
+#endif
             alignment = MB_1;
-        if ((usage & GRALLOC_USAGE_PRIVATE_NONSECURE) && (usage & GRALLOC_USAGE_PHYSICALLY_LINEAR))
-            ion_flags |= ION_EXYNOS_G2D_WFD_MASK;
-        else
-            ion_flags |= ION_EXYNOS_FIMD_VIDEO_MASK;
+        ion_flags |= ION_EXYNOS_FIMD_VIDEO_MASK;
     }
 
     err = ion_alloc_fd(ionfd, size, alignment, heap_mask, ion_flags,
                        &fd);
-    if (err) {
-        if (usage & GRALLOC_USAGE_GPU_BUFFER) {
-            usage &= ~GRALLOC_USAGE_GPU_BUFFER;
-            heap_mask = _select_heap(usage);
-            err = ion_alloc_fd(ionfd, size, alignment, heap_mask, ion_flags,
-                                &fd);
-            if (err)
-                return err;
-        }
-        else
-            return err;
-    }
     *hnd = new private_handle_t(fd, size, usage, w, h, format, *stride,
                                 vstride);
 
@@ -225,24 +214,20 @@ static int gralloc_alloc_framework_yuv(int ionfd, int w, int h, int format,
 {
     size_t size=0, ext_size=256;
     int err, fd;
-    unsigned int heap_mask = _select_heap(usage);
 
     switch (format) {
         case HAL_PIXEL_FORMAT_YV12:
-        case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_P:
+        case HAL_PIXEL_FORMAT_YCbCr_420_P:
             *stride = ALIGN(w, 16);
             size = (*stride * h) + (ALIGN(*stride / 2, 16) * h) + ext_size;
-            break;
-        case HAL_PIXEL_FORMAT_YCrCb_420_SP:
-            *stride = w;
-            size = *stride * ALIGN(h, 16) * 3 / 2 + ext_size;
             break;
         default:
             ALOGE("invalid yuv format %d\n", format);
             return -EINVAL;
     }
 
-    err = ion_alloc_fd(ionfd, size, 0, heap_mask, ion_flags, &fd);
+    err = ion_alloc_fd(ionfd, size, 0, 1 << ION_HEAP_TYPE_SYSTEM,
+                       ion_flags, &fd);
     if (err)
         return err;
 
@@ -255,7 +240,7 @@ static int gralloc_alloc_yuv(int ionfd, int w, int h, int format,
                              private_handle_t **hnd, int *stride)
 {
     size_t luma_size=0, chroma_size=0, ext_size=256;
-    int err, planes, fd = -1, fd1 = -1, fd2 = -1;
+    int err, planes, fd, fd1, fd2 = 0;
     size_t luma_vstride;
     unsigned int heap_mask = _select_heap(usage);
 
@@ -266,17 +251,13 @@ static int gralloc_alloc_yuv(int ionfd, int w, int h, int format,
         if ((usage & GRALLOC_USAGE_HW_CAMERA_ZSL) == GRALLOC_USAGE_HW_CAMERA_ZSL) {
             format = HAL_PIXEL_FORMAT_YCbCr_422_I; // YUYV
         } else if (usage & GRALLOC_USAGE_HW_TEXTURE) {
-            format = HAL_PIXEL_FORMAT_EXYNOS_YV12_M;
+            format = HAL_PIXEL_FORMAT_EXYNOS_YV12;
         } else if (usage & GRALLOC_USAGE_HW_VIDEO_ENCODER) {
-            format = HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_SP_M; // NV12M
+            format = HAL_PIXEL_FORMAT_YCbCr_420_SP; // NV12M
         }
     }
-    if (usage & GRALLOC_USAGE_PROTECTED)
-        ion_flags |= ION_EXYNOS_MFC_OUTPUT_MASK;
-
     switch (format) {
-        case HAL_PIXEL_FORMAT_EXYNOS_YV12_M:
-        case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_P_M:
+        case HAL_PIXEL_FORMAT_EXYNOS_YV12:
             {
                 *stride = ALIGN(w, 32);
                 luma_vstride = ALIGN(h, 16);
@@ -285,7 +266,7 @@ static int gralloc_alloc_yuv(int ionfd, int w, int h, int format,
                 planes = 3;
                 break;
             }
-        case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_SP_M_TILED:
+        case HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED:
             {
                 size_t chroma_vstride = ALIGN(h / 2, 32);
                 luma_vstride = ALIGN(h, 32);
@@ -295,17 +276,18 @@ static int gralloc_alloc_yuv(int ionfd, int w, int h, int format,
                 break;
             }
         case HAL_PIXEL_FORMAT_YV12:
-        case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_P:
-        case HAL_PIXEL_FORMAT_YCrCb_420_SP:
+        case HAL_PIXEL_FORMAT_YCbCr_420_P:
             return gralloc_alloc_framework_yuv(ionfd, w, h, format, usage,
                                                ion_flags, hnd, stride);
-        case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_M:
-        case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_M_FULL:
-        case HAL_PIXEL_FORMAT_EXYNOS_YCbCr_420_SP_M:
+        case HAL_PIXEL_FORMAT_YCrCb_420_SP:
+        case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP:
+        case HAL_PIXEL_FORMAT_EXYNOS_YCrCb_420_SP_FULL:
+        case HAL_PIXEL_FORMAT_YCbCr_420_SP:
             {
                 luma_vstride = ALIGN(h, 16);
                 luma_size = *stride * luma_vstride+ext_size;
                 chroma_size = *stride * ALIGN(luma_vstride / 2, 8)+ext_size;
+                heap_mask = 1 << ION_HEAP_TYPE_SYSTEM;
                 planes = 2;
                 break;
             }
@@ -321,6 +303,9 @@ static int gralloc_alloc_yuv(int ionfd, int w, int h, int format,
             ALOGE("invalid yuv format %d\n", format);
             return -EINVAL;
     }
+
+    if (usage & GRALLOC_USAGE_PROTECTED)
+	ion_flags |= ION_EXYNOS_MFC_OUTPUT_MASK;
 
     err = ion_alloc_fd(ionfd, luma_size, 0, heap_mask, ion_flags, &fd);
     if (err)
@@ -372,9 +357,6 @@ static int gralloc_alloc(alloc_device_t* dev,
         (dev->common.module);
     gralloc_module_t* module = reinterpret_cast<gralloc_module_t*>
         (dev->common.module);
-
-    if ((usage & GRALLOC_USAGE_GPU_BUFFER) && (w*h != (m->xres)*(m->yres)))
-        usage &= ~GRALLOC_USAGE_GPU_BUFFER;
 
     err = gralloc_alloc_rgb(m->ionfd, w, h, format, usage, ion_flags, &hnd,
                             &stride);
