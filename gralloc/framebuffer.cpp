@@ -52,7 +52,11 @@ inline size_t roundUpToPageSize(size_t x) {
 
 // numbers of buffers for page flipping
 #define NUM_BUFFERS 2
-#define HWC_EXIST 1
+
+// Can we use the HWC for page flipping?
+// Most modern devices should be able to use this and you will face
+// performance degradation without it.
+static bool page_flip_allowed = true;
 
 struct hwc_callback_entry
 {
@@ -68,6 +72,30 @@ struct fb_context_t {
 
 /*****************************************************************************/
 
+/*
+ * Copy buffer to the front if page flip is not available/allowed because of
+ * size constraints.
+ */
+
+inline void memcpy_buffer(private_module_t* m, private_handle_t const* hnd,
+                           buffer_handle_t &buffer) {
+    void* fb_vaddr;
+    void* buffer_vaddr;
+
+    m->base.lock(&m->base, m->framebuffer, GRALLOC_USAGE_SW_WRITE_RARELY,
+                 0, 0, m->info.xres, m->info.yres, &fb_vaddr);
+
+    m->base.lock(&m->base, buffer, GRALLOC_USAGE_SW_READ_RARELY,
+                 0, 0, m->info.xres, m->info.yres, &buffer_vaddr);
+
+    // Do a direct copy.
+    // TODO: Implement a copybit HAL for this
+    memcpy(fb_vaddr, buffer_vaddr, m->finfo.line_length * m->info.yres);
+    m->base.unlock(&m->base, buffer);
+    m->base.unlock(&m->base, m->framebuffer);
+}
+
+/*****************************************************************************/
 
 /*
  * Keep track of the vsync state to avoid making excessive ioctl calls.
