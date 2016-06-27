@@ -76,9 +76,7 @@ struct fb_context_t {
  * Copy buffer to the front if page flip is not available/allowed because of
  * size constraints.
  */
-
-inline void memcpy_buffer(private_module_t* m, private_handle_t const* hnd,
-                           buffer_handle_t &buffer) {
+inline void memcpy_buffer(private_module_t* m, buffer_handle_t &buffer) {
     void* fb_vaddr;
     void* buffer_vaddr;
 
@@ -135,39 +133,27 @@ static int fb_post(struct framebuffer_device_t* dev, buffer_handle_t buffer)
 
     private_handle_t const* hnd = reinterpret_cast<private_handle_t const*>(buffer);
     private_module_t* m = reinterpret_cast<private_module_t*>(dev->common.module);
-#if HWC_EXIST
-    hwc_callback_queue_t *queue = reinterpret_cast<hwc_callback_queue_t *>(m->queue);
-    pthread_mutex_lock(&m->queue_lock);
-    if(queue->isEmpty())
-        pthread_mutex_unlock(&m->queue_lock);
-    else {
-        private_handle_t *hnd = private_handle_t::dynamicCast(buffer);
-        struct hwc_callback_entry entry = queue->top();
-        queue->pop();
-        pthread_mutex_unlock(&m->queue_lock);
-        entry.callback(entry.data, hnd);
+
+    ALOGW("%s: page flipping %s", page_flip_allowed ? " allowed" : " not allowed");
+
+    if (page_flip_allowed) {
+        hwc_callback_queue_t *queue = reinterpret_cast<hwc_callback_queue_t *>(m->queue);
+        pthread_mutex_lock(&m->queue_lock);
+        if(queue->isEmpty())
+            pthread_mutex_unlock(&m->queue_lock);
+        else {
+            private_handle_t *hnd = private_handle_t::dynamicCast(buffer);
+            struct hwc_callback_entry entry = queue->top();
+            queue->pop();
+            pthread_mutex_unlock(&m->queue_lock);
+            entry.callback(entry.data, hnd);
+        }
+    } else {
+        // If we can't do the page_flip, just copy the buffer to the front
+        // FIXME: use copybit HAL instead of memcpy
+        memcpy_buffer(m, buffer);
     }
-#else
-    // If we can't do the page_flip, just copy the buffer to the front
-    // FIXME: use copybit HAL instead of memcpy
-    void* fb_vaddr;
-    void* buffer_vaddr;
 
-    m->base.lock(&m->base, m->framebuffer,
-            GRALLOC_USAGE_SW_WRITE_RARELY,
-            0, 0, m->info.xres, m->info.yres,
-            &fb_vaddr);
-
-    m->base.lock(&m->base, buffer,
-            GRALLOC_USAGE_SW_READ_RARELY,
-            0, 0, m->info.xres, m->info.yres,
-            &buffer_vaddr);
-
-    memcpy(fb_vaddr, buffer_vaddr, m->finfo.line_length * m->info.yres);
-
-    m->base.unlock(&m->base, buffer);
-    m->base.unlock(&m->base, m->framebuffer);
-#endif
     return 0;
 }
 
@@ -211,6 +197,27 @@ int init_fb(struct private_module_t* module)
         ALOGE("First, Fail to get FB VScreen Info");
         close(fd);
         return -errno;
+    }
+
+    /*
+     * Request NUM_BUFFERS screens (at lest 2 for page flipping)
+     */
+    info.yres_virtual = info.yres * NUM_BUFFERS;
+
+    if (ioctl(fd, FBIOPUT_VSCREENINFO, &info) == -1)
+    {
+        info.yres_virtual = info.yres;
+        page_flip_allowed = false;
+        ALOGW("FBIOPUT_VSCREENINFO failed, page flipping not supported fd: %d", fd );
+    }
+
+    if (info.yres_virtual < info.yres * 2)
+    {
+        // we need at least 2 for page-flipping
+        info.yres_virtual = info.yres;
+        page_flip_allowed = false;
+        ALOGW("page flipping not supported (yres_virtual=%d, requested=%d)",
+              info.yres_virtual, info.yres*2 );
     }
 
     int refreshRate = 1000000000000000LLU /
