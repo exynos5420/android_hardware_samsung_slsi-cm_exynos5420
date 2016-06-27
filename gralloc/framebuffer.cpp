@@ -218,7 +218,11 @@ int fb_device_open(hw_module_t const* module, const char* name,
     int format = HAL_PIXEL_FORMAT_RGB_565;
 #else
     int bits_per_pixel = 32;
+#ifdef USE_BGRA_8888
+    int format = HAL_PIXEL_FORMAT_BGRA_8888;
+#else
     int format = HAL_PIXEL_FORMAT_RGBA_8888;
+#endif
 #endif
 
     alloc_device_t* gralloc_device;

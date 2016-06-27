@@ -32,8 +32,13 @@ LOCAL_SRC_FILES := 	\
 	framebuffer.cpp \
 	mapper.cpp
 
+LOCAL_CFLAGS := -DLOG_TAG=\"gralloc\"
+
+ifeq ($(BOARD_USE_BGRA_8888),true)
+LOCAL_CFLAGS += -DUSE_BGRA_8888
+endif
+
 LOCAL_MODULE := gralloc.exynos5
-LOCAL_CFLAGS:= -DLOG_TAG=\"gralloc\"
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_OWNER := samsung_arm
 
