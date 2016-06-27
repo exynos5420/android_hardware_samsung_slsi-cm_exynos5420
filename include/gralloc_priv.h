@@ -55,6 +55,7 @@ struct private_module_t {
     float xdpi;
     float ydpi;
     float fps;
+    int swapInterval;
     void *queue;
     pthread_mutex_t queue_lock;
 
