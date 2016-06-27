@@ -29,6 +29,7 @@ LOCAL_C_INCLUDES := \
 
 LOCAL_SRC_FILES := 	\
 	gralloc.cpp 	\
+	gralloc_vsync.cpp \
 	framebuffer.cpp \
 	mapper.cpp
 
