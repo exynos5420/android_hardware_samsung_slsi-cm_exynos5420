@@ -24,6 +24,8 @@
 #include <hardware/hardware.h>
 #include <hardware/gralloc.h>
 
+#include <GLES/gl.h>
+
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/ioctl.h>
@@ -232,6 +234,25 @@ int init_fb(struct private_module_t* module)
     return 0;
 }
 
+int compositionComplete(struct framebuffer_device_t* dev)
+{
+    /* By doing a finish here we force the GL driver to start rendering
+     all the drawcalls up to this point, and to wait for the rendering to be complete.*/
+    glFinish();
+    /* The rendering of the backbuffer is now completed.
+     When SurfaceFlinger later does a call to eglSwapBuffer(), the swap will be done
+     synchronously in the same thread, and not asynchronoulsy in a background thread later.
+     The SurfaceFlinger requires this behaviour since it releases the lock on all the
+     SourceBuffers (Layers) after the compositionComplete() function returns.
+     However this "bad" behaviour by SurfaceFlinger should not affect performance,
+     since the Applications that render the SourceBuffers (Layers) still get the
+     full renderpipeline using asynchronous rendering. So they perform at maximum speed,
+     and because of their complexity compared to the Surface flinger jobs, the Surface flinger
+     is normally faster even if it does everyhing synchronous and serial.
+     */
+    return 0;
+}
+
 int fb_device_open(hw_module_t const* module, const char* name,
                    hw_device_t** device)
 {
@@ -282,7 +303,7 @@ int fb_device_open(hw_module_t const* module, const char* name,
     dev->setSwapInterval = fb_setSwapInterval;
     dev->post = fb_post;
     dev->setUpdateRect = 0;
-    dev->compositionComplete = 0;
+    dev->compositionComplete = &compositionComplete;
     m->queue = new hwc_callback_queue_t;
     pthread_mutex_init(&m->queue_lock, NULL);
 
