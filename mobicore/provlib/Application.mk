@@ -13,7 +13,7 @@ APP_OPTIM := debug
 # Show all warnings
 #APP_CFLAGS := -Wall
 
-MC_INCLUDE_DIR := $(COMP_PATH_MobiCore)/inc \
+MC_INCLUDE_DIR := \
     $(COMP_PATH_TlCm)/Public \
     $(COMP_PATH_TlCm)/Public/TlCm \
     $(COMP_PATH_TlCm)/Public/TlCm/2.0 \
