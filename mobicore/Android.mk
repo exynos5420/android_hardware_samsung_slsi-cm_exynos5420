@@ -5,7 +5,6 @@
 # =============================================================================
 MOBICORE_PROJECT_PATH := $(call my-dir)
 # Setup common variables
-LOG_WRAPPER := $(MOBICORE_PROJECT_PATH)/common/LogWrapper
 COMP_PATH_MobiCore := $(MOBICORE_PROJECT_PATH)/common/MobiCore
 COMP_PATH_MobiCoreDriverMod := $(MOBICORE_PROJECT_PATH)/include
 

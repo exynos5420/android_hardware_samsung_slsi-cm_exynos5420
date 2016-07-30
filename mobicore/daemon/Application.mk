@@ -16,7 +16,6 @@ APP_OPTIM := debug
 # Application wide Cflags
 GLOBAL_INCLUDES := \
     $(COMP_PATH_MobiCoreDriverMod)/Public \
-    $(COMP_PATH_TlSdk)/Public/MobiCore/inc \
     $(COMP_PATH_MobiCore)/inc \
     $(COMP_PATH_TlCm)/Public \
     $(COMP_PATH_TlCm)/Public/TlCm
@@ -24,4 +23,4 @@ GLOBAL_INCLUDES := \
 # Show all warnings
 APP_CFLAGS += -Wall
 
-LOG_WRAPPER := $(COMP_PATH_Logwrapper)
+APP_PLATFORM := android-9
