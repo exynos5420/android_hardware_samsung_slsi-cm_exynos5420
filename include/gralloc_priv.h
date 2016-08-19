@@ -101,7 +101,7 @@ struct private_handle_t {
 
 #ifdef __cplusplus
     static const int sNumFds = 3;
-    static const int sNumInts = 20;
+    static const int sNumInts = 28;
     static const int sMagic = 0x3141592;
 
     private_handle_t(int fd, int size, int flags) :
