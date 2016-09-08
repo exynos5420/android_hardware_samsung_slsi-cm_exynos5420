@@ -35,6 +35,14 @@ LOCAL_SRC_FILES := 	\
 
 LOCAL_CFLAGS := -DLOG_TAG=\"gralloc\"
 
+# Error when BOARD_CAMERA_SNUMINTS is not set
+ifeq ($(BOARD_CAMERA_SNUMINTS),)
+$(error BOARD_CAMERA_SNUMINTS undefined, please define it!)
+endif
+
+# We always need to set sNumInts
+LOCAL_CFLAGS += -DBOARD_CAMERA_SNUMINTS=$(BOARD_CAMERA_SNUMINTS)
+
 ifeq ($(BOARD_USE_BGRA_8888),true)
 LOCAL_CFLAGS += -DUSE_BGRA_8888
 endif
