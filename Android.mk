@@ -24,7 +24,9 @@ exynos5420_dirs := \
 	libdisplaymodule \
 	libhwcutilsmodule \
 	libhdmimodule \
-    libhwjpeg \
+	libhwjpeg \
+	libexynoscamera \
+	libcamera \
 	libsecurepath
 
 ifeq ($(BOARD_USES_VIRTUAL_DISPLAY), true)
@@ -36,7 +38,7 @@ ifeq ($(BOARD_USES_TRUST_KEYMASTER), true)
 exynos5420_dirs += \
 	libkeymaster
 endif
-    
+
 include $(call all-named-subdir-makefiles,$(exynos5420_dirs))
 
 endif
