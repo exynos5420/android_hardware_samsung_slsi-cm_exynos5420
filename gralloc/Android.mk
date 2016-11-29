@@ -35,7 +35,7 @@ LOCAL_SRC_FILES := 	\
 
 LOCAL_CFLAGS := -DLOG_TAG=\"gralloc\"
 
-ifeq ($(BOARD_USE_BGRA_8888),true)
+ifeq ($(BOARD_USE_BGRA_8888_FB),true)
 LOCAL_CFLAGS += -DUSE_BGRA_8888
 endif
 
