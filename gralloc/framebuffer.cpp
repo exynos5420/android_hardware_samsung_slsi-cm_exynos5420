@@ -262,7 +262,7 @@ int init_fb(struct private_module_t* module)
     return 0;
 }
 
-int compositionComplete(struct framebuffer_device_t* dev)
+static int fb_compositionComplete(struct framebuffer_device_t* dev)
 {
     /* By doing a finish here we force the GL driver to start rendering
      all the drawcalls up to this point, and to wait for the rendering to be complete.*/
@@ -331,7 +331,7 @@ int fb_device_open(hw_module_t const* module, const char* name,
     dev->setSwapInterval = fb_setSwapInterval;
     dev->post = fb_post;
     dev->setUpdateRect = 0;
-    dev->compositionComplete = &compositionComplete;
+    dev->compositionComplete = fb_compositionComplete;
     m->queue = new hwc_callback_queue_t;
     pthread_mutex_init(&m->queue_lock, NULL);
 
