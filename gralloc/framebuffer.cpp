@@ -50,13 +50,7 @@ inline size_t roundUpToPageSize(size_t x) {
 
 /*****************************************************************************/
 
-// numbers of buffers for page flipping
-#define NUM_BUFFERS 2
-
-// Can we use the HWC for page flipping?
-// Most modern devices should be able to use this and you will face
-// performance degradation without it.
-static bool page_flip_allowed = true;
+#define PAGE_FLIP 0x00000001
 
 struct hwc_callback_entry
 {
@@ -192,6 +186,7 @@ int init_fb(struct private_module_t* module)
 
     int fd = -1;
     int i = 0;
+    uint32_t flags = PAGE_FLIP;
 
     fd = open("/dev/graphics/fb0", O_RDWR);
     if (fd < 0) {
@@ -211,6 +206,31 @@ int init_fb(struct private_module_t* module)
         ALOGE("First, Fail to get FB VScreen Info");
         close(fd);
         return -errno;
+    }
+
+    /*
+     * Request NUM_BUFFERS screens (at lest 2 for page flipping)
+     */
+    int buf_size = roundUpToPageSize(info.yres * info.xres * (info.bits_per_pixel / 8));
+    int numberOfBuffers = (int)(finfo.smem_len / buf_size);
+    ALOGV("Number of supported framebuffers in kernel: %d", numberOfBuffers);
+
+    info.yres_virtual = info.yres * numberOfBuffers;
+
+    if (ioctl(fd, FBIOPUT_VSCREENINFO, &info) == -1)
+    {
+        info.yres_virtual = info.yres;
+        flags &= ~PAGE_FLIP;
+        ALOGW("FBIOPUT_VSCREENINFO failed, page flipping not supported fd: %d", fd );
+    }
+
+    if (info.yres_virtual < info.yres * 2)
+    {
+        // we need at least 2 for page-flipping
+        info.yres_virtual = info.yres;
+        flags &= ~PAGE_FLIP;
+        ALOGW("page flipping not supported (yres_virtual=%d, requested=%d)",
+              info.yres_virtual, info.yres*2 );
     }
 
     int refreshRate = 1000000000000000LLU /
@@ -244,6 +264,7 @@ int init_fb(struct private_module_t* module)
     module->fps = fps;
     module->info = info;
     module->finfo = finfo;
+    module->flags = flags;
 
     size_t fbSize = roundUpToPageSize(finfo.line_length * info.yres_virtual);
     module->framebuffer = new private_handle_t(dup(fd), fbSize, 0);
