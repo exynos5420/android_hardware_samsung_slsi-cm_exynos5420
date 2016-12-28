@@ -344,7 +344,7 @@ int fb_device_open(hw_module_t const* module, const char* name,
     const_cast<float&>(dev->xdpi) = m->xdpi;
     const_cast<float&>(dev->ydpi) = m->ydpi;
     const_cast<float&>(dev->fps) = m->fps;
-    const_cast<int&>(dev->minSwapInterval) = 1;
+    const_cast<int&>(dev->minSwapInterval) = 0;
     const_cast<int&>(dev->maxSwapInterval) = 1;
     *device = &dev->common;
     status = 0;
