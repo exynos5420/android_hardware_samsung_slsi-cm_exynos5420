@@ -267,7 +267,7 @@ int init_fb(struct private_module_t* module)
     return 0;
 }
 
-static int fb_compositionComplete(struct framebuffer_device_t* dev)
+static int fb_compositionComplete(struct framebuffer_device_t* dev __unused)
 {
     /* By doing a finish here we force the GL driver to start rendering
      all the drawcalls up to this point, and to wait for the rendering to be complete.*/
@@ -286,7 +286,7 @@ static int fb_compositionComplete(struct framebuffer_device_t* dev)
     return 0;
 }
 
-int fb_device_open(hw_module_t const* module, const char* name,
+int fb_device_open(hw_module_t const* module, const char* name __unused,
                    hw_device_t** device)
 {
     int status = -EINVAL;
