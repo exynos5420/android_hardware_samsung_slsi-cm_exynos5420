@@ -29,15 +29,9 @@ LOCAL_C_INCLUDES := \
 
 LOCAL_SRC_FILES := 	\
 	gralloc.cpp 	\
-	gralloc_vsync.cpp \
-	framebuffer.cpp \
 	mapper.cpp
 
 LOCAL_CFLAGS := -DLOG_TAG=\"gralloc\"
-
-ifeq ($(BOARD_USE_BGRA_8888_FB),true)
-LOCAL_CFLAGS += -DUSE_BGRA_8888
-endif
 
 LOCAL_MODULE := gralloc.exynos5
 LOCAL_MODULE_TAGS := optional
