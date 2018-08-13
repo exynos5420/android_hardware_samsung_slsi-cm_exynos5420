@@ -319,7 +319,7 @@ rootpaerror_t  getSpContainerStructure(mcSpid_t spid, SpContainerStructure* spCo
     return ret;
 }
 
-void dummyCallback(ProvisioningState state, rootpaerror_t error, tltInfo_t* tltInfoP)
+void dummyCallback(ProvisioningState state __unused, rootpaerror_t error __unused, tltInfo_t* tltInfoP __unused)
 {
     LOGD("dummy callback %d %d %ld", state, error, (long int) tltInfoP);
 }

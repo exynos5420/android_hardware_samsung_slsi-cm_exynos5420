@@ -46,7 +46,7 @@ JavaVM* jvmP_ = NULL;
 const jint VERSION=JNI_VERSION_1_2;
 
 
-JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved)
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved __unused)
 {
 // remember JVM pointer:
 	jvmP_ = jvm;
@@ -65,7 +65,7 @@ JNIEXPORT void JNICALL Java_com_gd_mobicore_pa_jni_CommonPAWrapper_closeSession(
 }
 
 JNIEXPORT jint JNICALL Java_com_gd_mobicore_pa_jni_CommonPAWrapper_executeCmpCommands
-  (JNIEnv* env, jobject, jint uid, jobject inCommands, jobject outResults)
+  (JNIEnv* env, jobject, jint uid __unused, jobject inCommands, jobject outResults)
 {
     LOGD(">>Java_com_gd_mobicore_pa_jni_CommonPAWrapper_executeCmpCommands\n");
     int ret=ROOTPA_OK;
@@ -244,14 +244,13 @@ JNIEXPORT jint JNICALL Java_com_gd_mobicore_pa_jni_CommonPAWrapper_getSPContaine
 
 const int CONTAINER_STATE_IDX=0;
 const int NUMBER_OF_TLTS_IDX=1;
-const int NUMBER_OF_ELEMENTS=2;
+//const int NUMBER_OF_ELEMENTS=2;
 
 JNIEXPORT jint JNICALL Java_com_gd_mobicore_pa_jni_CommonPAWrapper_getSPContainerStructure
   (JNIEnv* envP, jobject, jint spid, jintArray ints, jobjectArray uuidArray, jintArray trustletStates)
 {
     LOGD(">>Java_com_gd_mobicore_pa_jni_CommonPAWrapper_getSPContainerStructure\n");
     int ret=ROOTPA_OK;
-    int state;
 
     SpContainerStructure spContainerStructure;
 
@@ -503,7 +502,7 @@ rootpaerror_t getSystemInfoCallback(osInfo_t* osSpecificInfoP)
 }
 
 JNIEXPORT jint JNICALL Java_com_gd_mobicore_pa_jni_CommonPAWrapper_doProvisioning
-  (JNIEnv* envP, jobject obj, jint uid, jint spid, jbyteArray seAddress)
+  (JNIEnv* envP, jobject obj, jint uid __unused, jint spid, jbyteArray seAddress)
 {
     LOGD(">>Java_com_gd_mobicore_pa_jni_CommonPAWrapper_doProvisioning %ld %ld\n", (long int) stateUpdateCallback, (long int) getSystemInfoCallback);
     setFilesPath(envP, obj);
@@ -608,7 +607,7 @@ char* addTrailingZero(uint8_t* vP, uint32_t length)
     return newVP;
 }
 
-JNIEXPORT void JNICALL Java_com_gd_mobicore_pa_jni_CommonPAWrapper_setEnvironmentVariable(JNIEnv* envP, jobject obj, jbyteArray variable_name, jbyteArray value)
+JNIEXPORT void JNICALL Java_com_gd_mobicore_pa_jni_CommonPAWrapper_setEnvironmentVariable(JNIEnv* envP, jobject obj __unused, jbyteArray variable_name, jbyteArray value)
 {
     LOGD(">>Java_com_gd_mobicore_pa_jni_CommonPAWrapper_setEnvironmentVariable");
     JniHelpers jniHelp(envP);

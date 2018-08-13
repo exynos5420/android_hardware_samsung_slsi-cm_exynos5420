@@ -37,7 +37,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <android/log.h>
-#include <errno.h>
+#endif
+#include <inttypes.h>
 #include <string.h>
 
 /** LOG_I(fmt, args...)
@@ -161,13 +162,13 @@ static void LOG_I_Buf(
 		{
 			index += sprintf(&buffer[index], "memory dump");
 		}
-		index += sprintf(&buffer[index], " (0x%08x, %d bytes)", (uint32_t)blob,sizeOfBlob);
+		index += sprintf(&buffer[index], " (0x%" PRIxPTR ", %zu bytes)", (uintptr_t)blob,sizeOfBlob);
 		LOG_I("%s", buffer);
 		index = 0;
 	}
 	else if (NULL == szDescriptor)
 	{
-		index += sprintf(&buffer[index], "Data at 0x%08x: ", (uint32_t)blob);
+		index += sprintf(&buffer[index], "Data at 0x%" PRIxPTR ": ", (uintptr_t)blob);
 	}
 
 	if(sizeOfBlob == 0) {
