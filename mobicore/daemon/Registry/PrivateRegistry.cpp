@@ -481,8 +481,8 @@ mcResult_t mcRegistryStoreData(void *so, uint32_t size)
 
 
 //------------------------------------------------------------------------------
-mcResult_t mcRegistryReadData(uint32_t context, const mcCid_t *cid, mcPid_t pid,
-    mcSoDataCont_t *so, uint32_t maxLen)
+mcResult_t mcRegistryReadData(uint32_t context, const mcCid_t *cid, mcPid_t pid __unused,
+                              mcSoDataCont_t *so, uint32_t maxLen)
 {
     if ((NULL == cid) || (NULL == so)) {
         LOG_E("mcRegistry read So.Data failed: %d", MC_DRV_ERR_INVALID_PARAMETER);

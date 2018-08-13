@@ -39,11 +39,11 @@ Public methods
 */
 
 CmpBase::CmpBase(JNIEnv* env, jobject msgs): env_(env),
-                                             msgs_(msgs), 
-                                             cls_(NULL), 
-                                             broken_(false), 
+                                             msgs_(msgs),
+                                             cls_(NULL),
                                              objectCls_(NULL),
-                                             numberOfElements_(0)
+                                             numberOfElements_(0),
+                                             broken_(false)
 {
     if((env_ != NULL) && (msgs_ != NULL))
     {

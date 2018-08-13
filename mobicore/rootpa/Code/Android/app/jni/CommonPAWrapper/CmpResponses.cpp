@@ -123,10 +123,10 @@ jobject CmpResponses::createCmpResponseObject(CmpMessage msg)
                     newObject = env_->NewObject(objectCls_, constructor);
                 }
 
-                if(NULL==newObject)
+                /*if(NULL==newObject)
                 {
                     LOGE("CmpResponses::createCmpResponseObject creating new object failed %d %d", objectCls_, constructor);
-                }
+                }*/
 
             }
             else

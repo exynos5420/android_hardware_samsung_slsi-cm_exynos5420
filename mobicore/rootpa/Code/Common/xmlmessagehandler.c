@@ -601,7 +601,7 @@ rootpaerror_t handleCommandAndFillResponse(xmlDocPtr xmlCommandP, xmlDocPtr xmlR
     return ret;
 }
 
-void handleError(void* ctx, const char *format, ...)
+void handleError(void* ctx __unused, const char *format, ...)
 {
     char *errMsg;
     va_list args;
@@ -831,7 +831,7 @@ rootpaerror_t fillSystemInfo(xmlNodePtr systemInfoNode, const osInfo_t* osSpecif
     return ROOTPA_OK;
 }
 
-rootpaerror_t fillMcVersion(xmlNodePtr mcVersionNode, int mcVersionTag, const mcVersionInfo_t* mcVersionP)
+rootpaerror_t fillMcVersion(xmlNodePtr mcVersionNode, int mcVersionTag __unused, const mcVersionInfo_t* mcVersionP)
 {
     LOGD(">>fillMcVersion");
     char intBuffer[11];

@@ -160,10 +160,10 @@ mcResult_t CMcKMod::mapMCI(
 
 //------------------------------------------------------------------------------
 mcResult_t CMcKMod::mapPersistent(
-    uint32_t    len,
-    uint32_t    *pHandle,
-    addr_t      *pVirtAddr,
-    addr_t      *pPhysAddr)
+    uint32_t    len __unused,
+    uint32_t    *pHandle __unused,
+    addr_t      *pVirtAddr __unused,
+    addr_t      *pPhysAddr __unused)
 {
     // Not currently supported by the driver
     LOG_E("MobiCore Driver does't support persistent buffers");
@@ -466,18 +466,20 @@ mcResult_t CMcKMod::findContiguousWsm(uint32_t handle, int fd, addr_t *phys, uin
     struct mc_ioctl_resolv_cont_wsm wsm;
 
     wsm.handle = handle;
+    wsm.phys = 0;
+    wsm.length = 0;
     wsm.fd = fd;
 
     LOG_I(" Resolving the contiguous WSM l2 for handle=%u", handle);
 
     if (!isOpen()) {
         LOG_E("no connection to kmod");
-        return NULL;
+        return MC_DRV_ERR_KMOD_NOT_OPEN;
     }
 
     ret = ioctl(fdKMod, MC_IO_RESOLVE_CONT_WSM, &wsm);
     if (ret != 0) {
-        LOG_ERRNO("ioctl MC_IO_RESOLVE_CONT_WSM");
+        LOG_W("ioctl MC_IO_RESOLVE_CONT_WSM failed with \"%s\"(errno %i)", strerror(errno), errno);
     } else {
         *phys = (addr_t)wsm.phys;
         *len = wsm.length;

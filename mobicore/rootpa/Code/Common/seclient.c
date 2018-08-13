@@ -485,7 +485,7 @@ bool setPostOpt(CURL* curl_handle, const char* inputP)
     return true;
 }
 
-bool setDeleteOpt(CURL* curl_handle, const char* inputP)
+bool setDeleteOpt(CURL* curl_handle, const char* inputP __unused)
 {
     LOGD(">>setDeleteOpt %s", inputP);
     if (curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, "DELETE")!=CURLE_OK)

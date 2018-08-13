@@ -360,6 +360,55 @@ mcResult_t MobiCoreDevice::openSession(
     return MC_DRV_OK;
 }
 
+mcResult_t MobiCoreDevice::checkLoad(
+    loadDataOpenSession_ptr         pLoadDataOpenSession,
+    mcDrvRspOpenSessionPayload_ptr  pRspOpenSessionPayload __unused)
+{
+    do {
+        // Write MCP open message to buffer
+        mcpMessage->cmdCheckLoad.cmdHeader.cmdId = MC_MCP_CMD_CHECK_LOAD_TA;
+        mcpMessage->cmdCheckLoad.uuid = pLoadDataOpenSession->tlHeader->mclfHeaderV2.uuid;
+
+        // check if load data is provided
+        mcpMessage->cmdCheckLoad.wsmTypeLoadData = WSM_L2;
+        mcpMessage->cmdCheckLoad.adrLoadData = pLoadDataOpenSession->baseAddr;
+        mcpMessage->cmdCheckLoad.ofsLoadData = pLoadDataOpenSession->offs;
+        mcpMessage->cmdCheckLoad.lenLoadData = pLoadDataOpenSession->len;
+        memcpy(&mcpMessage->cmdCheckLoad.tlHeader, pLoadDataOpenSession->tlHeader, sizeof(*pLoadDataOpenSession->tlHeader));
+
+        // Clear the notifications queue. We asume the race condition we have
+        // seen in openSession never happens elsewhere
+        notifications = std::queue<notification_t>();
+
+        mcResult_t mcRet = mshNotifyAndWait();
+        if (mcRet != MC_MCP_RET_OK)
+        {
+            LOG_E("mshNotifyAndWait failed for CHECK_LOAD_TA, code %d.", mcRet);
+            // Here Mobicore can be considered dead.
+            return mcRet;
+        }
+
+        // Check if the command response ID is correct
+        if ((MC_MCP_CMD_CHECK_LOAD_TA | FLAG_RESPONSE) != mcpMessage->rspHeader.rspId) {
+            LOG_E("CMD_OPEN_SESSION got invalid MCP command response(0x%X)", mcpMessage->rspHeader.rspId);
+            // Something is messing with our MCI memory, we cannot know if the Trustlet was loaded.
+            // Had in been loaded, we are loosing track of it here.
+
+            return MC_DRV_ERR_DAEMON_MCI_ERROR;
+        }
+
+        mcRet = mcpMessage->rspCheckLoad.rspHeader.result;
+
+        if (mcRet != MC_MCP_RET_OK) {
+            LOG_E("MCP CHECK_LOAD returned code %d.", mcRet);
+            return MAKE_MC_DRV_MCP_ERROR(mcRet);
+        }
+        return MC_DRV_OK;
+
+    } while (0);
+    return MC_DRV_ERR_UNKNOWN;
+}
+
 
 //------------------------------------------------------------------------------
 TrustletSession *MobiCoreDevice::registerTrustletConnection(
@@ -621,9 +670,14 @@ void MobiCoreDevice::donateRam(const uint32_t donationSize)
 }
 
 //------------------------------------------------------------------------------
+<<<<<<< HEAD
 mcResult_t MobiCoreDevice::getMobiCoreVersion(
     mcDrvRspGetMobiCoreVersionPayload_ptr pRspGetMobiCoreVersionPayload
 )
+=======
+mcResult_t MobiCoreDevice::loadToken(Connection        *deviceConnection __unused,
+                                     loadTokenData_ptr pLoadTokenData)
+>>>>>>> c03af53... exynos7580: resolve compiling warnings/errors
 {
     // If MobiCore version info already fetched.
     if (mcVersionInfo != NULL) {
