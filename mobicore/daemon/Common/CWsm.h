@@ -50,7 +50,7 @@ public:
          uint32_t  len,
          uint32_t  handle,
          // this may be unknown, so is can be omitted.
-         addr_t    physAddr = NULL) :
+         uint64_t    physAddr = 0) :
         virtAddr(virtAddr),
         len(len),
         handle(handle),

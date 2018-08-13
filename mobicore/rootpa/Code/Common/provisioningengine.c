@@ -51,7 +51,7 @@ static const char* const RELATION_SELF  =      "relation/self";
 static const char* const RELATION_SYSTEMINFO = "relation/system_info";
 static const char* const RELATION_RESULT   =   "relation/command_result";
 static const char* const RELATION_NEXT    =    "relation/next";
-static const uint8_t* const SLASH="/";
+//static const uint8_t* const SLASH= (uint8_t*)"/";
 
 static const char* const RELATION_INITIAL_POST="initial_post"; // this will make us to send HTTP GET, which
                                       // is the right thing to do since we do not
@@ -77,7 +77,7 @@ void addBytesToUri(char* uriP, uint8_t* bytes, uint32_t length, bool uuid )
     int uriidx=strlen(uriP);
     int i;
     uint8_t singleNumber=0;
-    for(i=0; i<length; i++)
+    for(i=0; i<(int)length; i++)
     {
         singleNumber=(bytes[i]>>4);
         singleNumber=((singleNumber<0xA)?(singleNumber+0x30):(singleNumber+0x57));

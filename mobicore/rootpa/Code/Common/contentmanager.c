@@ -219,7 +219,7 @@ rootpaerror_t executeOneCmpCommand(CMTHANDLE handle, CmpMessage* commandP, CmpMe
             break;
         }
 
-        if(-1==neededBytes)
+        if(-1==(int)neededBytes)
         {
             ret=ROOTPA_ERROR_MOBICORE_CONNECTION; 
             break;

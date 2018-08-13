@@ -115,8 +115,8 @@ size_t base64DecodeStringRemoveEndZero(const char* toBeDecoded, char** resultP)
 	*in = (unsigned char) 0;
 	*out = (unsigned char) 0;
     
-    int inIndex=0;
-    int outIndex=0;
+    size_t inIndex=0;
+    size_t outIndex=0;
     while( inIndex < inSize ) 
     {
         for( len = 0, i = 0; i < ENCODEDSIZE && inIndex < inSize; i++ ) 
@@ -201,8 +201,8 @@ char* base64EncodeAddEndZero(const char* toBeEncoded, size_t length)
 	*in = (unsigned char) 0;
 	*out = (unsigned char) 0;
 
-    int inIndex=0;
-    int outIndex=0;
+    size_t inIndex=0;
+    size_t outIndex=0;
     while( inIndex < length ) 
     {
         len = 0;

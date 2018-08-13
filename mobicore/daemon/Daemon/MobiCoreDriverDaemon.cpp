@@ -170,7 +170,7 @@ void MobiCoreDriverDaemon::run(
 }
 
 //------------------------------------------------------------------------------
-bool MobiCoreDriverDaemon::checkPermission(Connection *connection)
+bool MobiCoreDriverDaemon::checkPermission(Connection *connection __unused)
 {
 #ifdef REGISTRY_CHECK_PERMISSIONS
     struct ucred cred;
@@ -338,7 +338,7 @@ bool MobiCoreDriverDaemon::loadDeviceDriver(
         writeResult(CONNECTION, MC_DRV_ERR_DAEMON_SOCKET); \
         return; \
     } \
-    if (rlen != payload_len) {\
+    if (rlen != (int32_t)payload_len) {\
         LOG_E("wrong buffer length %i received from Client", rlen); \
         writeResult(CONNECTION, MC_DRV_ERR_DAEMON_SOCKET); \
         return; \
@@ -793,8 +793,10 @@ void MobiCoreDriverDaemon::processGetMobiCoreVersion(
 //------------------------------------------------------------------------------
 void MobiCoreDriverDaemon::processRegistryReadData(uint32_t commandId, Connection  *connection)
 {
-    #define MAX_DATA_SIZE 512
-    mcDrvResponseHeader_t rspRegistry = { responseId : MC_DRV_ERR_INVALID_OPERATION };
+#define MAX_DATA_SIZE 512
+mcDrvResponseHeader_t rspRegistry = { .responseId =
+                                          MC_DRV_ERR_INVALID_OPERATION
+                                        };
     void *buf = alloca(MAX_DATA_SIZE);
     uint32_t len = MAX_DATA_SIZE;
     mcSoAuthTokenCont_t auth;
@@ -838,7 +840,9 @@ void MobiCoreDriverDaemon::processRegistryReadData(uint32_t commandId, Connectio
 //------------------------------------------------------------------------------
 void MobiCoreDriverDaemon::processRegistryWriteData(uint32_t commandId, Connection *connection)
 {
-    mcDrvResponseHeader_t rspRegistry = { responseId : MC_DRV_ERR_INVALID_OPERATION };
+mcDrvResponseHeader_t rspRegistry = { .responseId =
+                                          MC_DRV_ERR_INVALID_OPERATION
+                                        };
     uint32_t soSize;
     void *so;
 
@@ -905,7 +909,9 @@ void MobiCoreDriverDaemon::processRegistryWriteData(uint32_t commandId, Connecti
 //------------------------------------------------------------------------------
 void MobiCoreDriverDaemon::processRegistryDeleteData(uint32_t commandId, Connection *connection)
 {
-    mcDrvResponseHeader_t rspRegistry = { responseId : MC_DRV_ERR_INVALID_OPERATION };
+mcDrvResponseHeader_t rspRegistry = { .responseId =
+                                          MC_DRV_ERR_INVALID_OPERATION
+                                        };
     mcSpid_t spid;
 
     if (!checkPermission(connection)) {
@@ -1070,7 +1076,7 @@ bool MobiCoreDriverDaemon::handleConnection(
  */
 
 void printUsage(
-    int argc,
+    int argc __unused,
     char *args[]
 )
 {
@@ -1207,7 +1213,7 @@ int main(int argc, char *args[])
 }
 
 //------------------------------------------------------------------------------
-static void checkMobiCoreVersion(
+static void __unused checkMobiCoreVersion(
     MobiCoreDevice *mobiCoreDevice
 )
 {
