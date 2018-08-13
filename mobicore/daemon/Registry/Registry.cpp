@@ -60,7 +60,9 @@ using namespace std;
 static mcResult_t writeBlobData(void *buff, uint32_t len)
 {
     Connection con;
-    mcDrvResponseHeader_t rsp = { responseId : MC_DRV_ERR_INVALID_PARAMETER };
+mcDrvResponseHeader_t rsp = { .responseId =
+                                  MC_DRV_ERR_INVALID_PARAMETER
+                                };
     if (!con.connect(SOCK_PATH)) {
         LOG_E("Failed to connect to daemon!");
         return MC_DRV_ERR_DAEMON_SOCKET;
@@ -83,7 +85,9 @@ static mcResult_t readBlobData(void *buff, uint32_t len, void *rbuff, uint32_t *
 {
     Connection con;
     int32_t size;
-    mcDrvResponseHeader_t rsp = { responseId : MC_DRV_ERR_INVALID_PARAMETER };
+mcDrvResponseHeader_t rsp = { .responseId =
+                                  MC_DRV_ERR_INVALID_PARAMETER
+                                };
     if (*rlen == 0) {
         LOG_E("Invalid buffer length!");
         return MC_DRV_ERR_DAEMON_SOCKET;
@@ -141,7 +145,9 @@ mcResult_t mcRegistryStoreAuthToken(void *so, uint32_t size)
 //------------------------------------------------------------------------------
 mcResult_t mcRegistryReadAuthToken(void *so, uint32_t *size)
 {
-    mcDrvCommandHeader_t cmd = { commandId : MC_DRV_REG_READ_AUTH_TOKEN };
+mcDrvCommandHeader_t cmd = { .commandId =
+                                 MC_DRV_REG_READ_AUTH_TOKEN
+                               };
     uint32_t rsize;
     mcResult_t ret;
     // we expect to max read what the user has allocated
@@ -155,7 +161,9 @@ mcResult_t mcRegistryReadAuthToken(void *so, uint32_t *size)
 //------------------------------------------------------------------------------
 mcResult_t mcRegistryDeleteAuthToken(void)
 {
-    mcDrvCommandHeader_t cmd = { commandId : MC_DRV_REG_DELETE_AUTH_TOKEN };
+mcDrvCommandHeader_t cmd = { .commandId =
+                                 MC_DRV_REG_DELETE_AUTH_TOKEN
+                               };
     return writeBlobData(&cmd, sizeof(cmd));
 }
 
@@ -183,7 +191,9 @@ mcResult_t mcRegistryStoreRoot(void *so, uint32_t size)
 //------------------------------------------------------------------------------
 mcResult_t mcRegistryReadRoot(void *so, uint32_t *size)
 {
-    mcDrvCommandHeader_t cmd = { commandId : MC_DRV_REG_READ_ROOT_CONT };
+mcDrvCommandHeader_t cmd = { .commandId =
+                                 MC_DRV_REG_READ_ROOT_CONT
+                               };
     uint32_t rsize;
     mcResult_t ret;
 
@@ -196,7 +206,9 @@ mcResult_t mcRegistryReadRoot(void *so, uint32_t *size)
 //------------------------------------------------------------------------------
 mcResult_t mcRegistryCleanupRoot(void)
 {
-    mcDrvCommandHeader_t cmd = { commandId : MC_DRV_REG_DELETE_ROOT_CONT };
+mcDrvCommandHeader_t cmd = { .commandId =
+                                 MC_DRV_REG_DELETE_ROOT_CONT
+                               };
     return writeBlobData(&cmd, sizeof(cmd));
 }
 
@@ -320,15 +332,15 @@ mcResult_t mcRegistryCleanupTrustlet(const mcUuid_t *uuid, const mcSpid_t spid)
 }
 
 //------------------------------------------------------------------------------
-mcResult_t mcRegistryStoreData(void *so, uint32_t size)
+mcResult_t mcRegistryStoreData(void *so __unused, uint32_t size __unused)
 {
     return MC_DRV_ERR_INVALID_PARAMETER;
 }
 
 
 //------------------------------------------------------------------------------
-mcResult_t mcRegistryReadData(uint32_t context, const mcCid_t *cid, mcPid_t pid,
-    mcSoDataCont_t *so, uint32_t maxLen)
+mcResult_t mcRegistryReadData(uint32_t context __unused, const mcCid_t *cid __unused, mcPid_t pid __unused,
+                              mcSoDataCont_t *so __unused, uint32_t maxLen __unused)
 {
     return MC_DRV_ERR_INVALID_PARAMETER;
 }

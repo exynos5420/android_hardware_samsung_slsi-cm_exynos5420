@@ -113,7 +113,7 @@ NetlinkConnection::~NetlinkConnection(
 
 //------------------------------------------------------------------------------
 bool NetlinkConnection::connect(
-    const char *dest
+    const char *dest __unused
 )
 {
     struct sockaddr_nl addr;
