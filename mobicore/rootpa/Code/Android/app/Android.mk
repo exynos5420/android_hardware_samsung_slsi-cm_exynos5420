@@ -10,7 +10,7 @@ LOCAL_STATIC_JAVA_LIBRARIES := rootpa_interface
 LOCAL_JNI_SHARED_LIBRARIES := libcommonpawrapper
 
 LOCAL_PACKAGE_NAME := RootPA
-LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_TAGS := eng optional
 LOCAL_CERTIFICATE := platform
 
 include $(BUILD_PACKAGE)

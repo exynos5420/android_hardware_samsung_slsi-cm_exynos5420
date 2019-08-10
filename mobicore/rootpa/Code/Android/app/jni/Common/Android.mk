@@ -77,6 +77,6 @@ else
     LOCAL_MODULE    := provisioningagent
 endif
 
-LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_TAGS := eng optional
 
 include $(BUILD_STATIC_LIBRARY)
