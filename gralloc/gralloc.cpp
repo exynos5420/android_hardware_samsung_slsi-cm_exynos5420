@@ -62,8 +62,6 @@ struct gralloc_context_t {
     /* our private data here */
 };
 
-static int gralloc_alloc_buffer(alloc_device_t* dev,
-                                size_t size, int usage, buffer_handle_t* pHandle);
 
 /*****************************************************************************/
 
@@ -384,7 +382,7 @@ static int gralloc_alloc(alloc_device_t* dev,
 
     private_module_t* m = reinterpret_cast<private_module_t*>
         (dev->common.module);
-    gralloc_module_t* module = reinterpret_cast<gralloc_module_t*>
+    gralloc_module_t* module __unused = reinterpret_cast<gralloc_module_t*>
         (dev->common.module);
 
     if ((usage & GRALLOC_USAGE_GPU_BUFFER) && (w*h != (m->xres)*(m->yres)))

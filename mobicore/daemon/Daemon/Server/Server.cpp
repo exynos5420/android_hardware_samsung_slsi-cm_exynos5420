@@ -73,7 +73,7 @@ void Server::run(
         uint32_t len = strlen(serverAddr.sun_path) + sizeof(serverAddr.sun_family);
         // Make the socket in the Abstract Domain(no path but everyone can connect)
         serverAddr.sun_path[0] = 0;
-        if (bind(serverSock, (struct sockaddr *) &serverAddr, len) < 0) {
+        if (::bind(serverSock, (struct sockaddr *) &serverAddr, len) < 0) {
             LOG_ERRNO("Binding to server socket failed, because bind");
         }
 

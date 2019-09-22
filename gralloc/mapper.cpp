@@ -38,7 +38,7 @@
 
 /*****************************************************************************/
 
-static int gralloc_map(gralloc_module_t const* module, buffer_handle_t handle)
+static int gralloc_map(gralloc_module_t const* module __unused, buffer_handle_t handle)
 {
     size_t chroma_vstride = 0;
     size_t chroma_size = 0;
@@ -89,7 +89,7 @@ static int gralloc_map(gralloc_module_t const* module, buffer_handle_t handle)
     return 0;
 }
 
-static int gralloc_unmap(gralloc_module_t const* module, buffer_handle_t handle)
+static int gralloc_unmap(gralloc_module_t const* module __unused, buffer_handle_t handle)
 {
     private_handle_t* hnd = (private_handle_t*)handle;
     size_t chroma_vstride = 0;
@@ -156,7 +156,7 @@ int getIonFd(gralloc_module_t const *module)
     return m->ionfd;
 }
 
-static pthread_mutex_t sMapLock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t sMapLock __unused = PTHREAD_MUTEX_INITIALIZER;
 
 /*****************************************************************************/
 
@@ -211,8 +211,8 @@ int gralloc_unregister_buffer(gralloc_module_t const* module,
 }
 
 int gralloc_lock(gralloc_module_t const* module,
-                 buffer_handle_t handle, int usage,
-                 int l, int t, int w, int h,
+                 buffer_handle_t handle, int usage __unused,
+                 int l __unused, int t __unused, int w __unused, int h __unused,
                  void** vaddr)
 {
     // this is called when a buffer is being locked for software
