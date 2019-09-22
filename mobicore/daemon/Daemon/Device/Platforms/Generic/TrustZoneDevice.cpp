@@ -57,9 +57,6 @@
 #define MCI_BUFFER_SIZE   (NQ_BUFFER_SIZE + MCP_BUFFER_SIZE)
 
 //------------------------------------------------------------------------------
-MC_CHECK_VERSION(MCI, 0, 2);
-
-//------------------------------------------------------------------------------
 __attribute__ ((weak)) MobiCoreDevice *getDeviceInstance(
     void
 )
@@ -289,7 +286,7 @@ bool TrustZoneDevice::checkMciVersion(void)
 {
     uint32_t version = 0;
     int ret;
-    char *errmsg;
+    char *errmsg __unused;
 
     ret = pMcKMod->fcInfo(MC_EXT_INFO_ID_MCI_VERSION, NULL, &version);
     if (ret != 0) {
