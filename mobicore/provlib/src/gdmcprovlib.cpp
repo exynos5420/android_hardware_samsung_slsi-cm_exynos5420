@@ -78,10 +78,10 @@ authtok_readcb          g_authtok_readcb  = NULL;
 
 // this API function is not available on ARM
 static gderror GDPROVAPI _GDMCProvFormatErrorMessage (
-                              gdhandle provhandle,
-                              gderror  errorcode,
-                              char    *msgbuf,
-                              _u32    *size )
+                              gdhandle provhandle __unused,
+                              gderror  errorcode __unused,
+                              char    *msgbuf __unused,
+                              _u32    *size __unused )
 {
   LOG_d("++++ ENTERED GDMCProvFormatErrorMessage: NOT IMPLEMENTED.");
   return GDERROR_NOT_IMPLEMENTED;
@@ -312,17 +312,17 @@ extern "C" gderror GDPROVAPI GDMCProvExecuteProvisioningStep (
 }
 
 extern "C" gderror GDPROVAPI GDMCProvFormatReceipt (
-                  const _u8  *receipt,
-                  _u32        receipt_size,
-                  _u8        *fmt_receipt,
-                  _u32       *fmt_receipt_size )
+                  const _u8  *receipt __unused,
+                  _u32        receipt_size __unused,
+                  _u8        *fmt_receipt __unused,
+                  _u32       *fmt_receipt_size __unused )
 {
   return GDERROR_NOT_IMPLEMENTED;
 }
 
 extern "C"  gderror GDPROVAPI GDMCProvGetSUID (
-                  gdhandle    provhandle,
-                  _u8        *suid )
+                  gdhandle    provhandle __unused,
+                  _u8        *suid __unused )
 {
   return GDERROR_NOT_IMPLEMENTED;
 }
@@ -338,7 +338,7 @@ extern "C" gderror GDPROVAPI GDMCProvSetAuthTokenCallbacks (
 }
 
 extern "C" gderror GDPROVAPI GDMCProvSetConfigurationString (
-                  const char *config_string )
+                  const char *config_string __unused )
 {
 #ifdef ARM
 
