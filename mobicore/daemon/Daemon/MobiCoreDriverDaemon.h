@@ -49,12 +49,10 @@ class MobicoreDriverResources
 public:
     Connection *conn;
     CWsm *pTciWsm;
-    uint8_t *tci;
     uint32_t sessionId;
 
     MobicoreDriverResources(
         Connection *conn,
-        uint8_t *tci,
         CWsm *pTciWsm,
         uint32_t sessionId
     ) {
