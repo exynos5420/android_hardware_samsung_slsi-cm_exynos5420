@@ -481,7 +481,7 @@ mcResult_t mcRegistryStoreData(void *so, uint32_t size)
 
 
 //------------------------------------------------------------------------------
-mcResult_t mcRegistryReadData(uint32_t context, const mcCid_t *cid, mcPid_t pid,
+mcResult_t mcRegistryReadData(uint32_t context, const mcCid_t *cid, mcPid_t pid __unused,
     mcSoDataCont_t *so, uint32_t maxLen)
 {
     if ((NULL == cid) || (NULL == so)) {

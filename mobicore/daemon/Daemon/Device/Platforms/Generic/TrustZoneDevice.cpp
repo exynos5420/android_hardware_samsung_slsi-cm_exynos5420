@@ -39,10 +39,13 @@
 #include "mc_linux.h"
 #include "McTypes.h"
 #include "Mci/mci.h"
+#include "mcVersion.h"
 #include "mcVersionHelper.h"
 
 #include "CSemaphore.h"
 #include "CMcKMod.h"
+
+#include "log.h"
 
 #include "MobiCoreDevice.h"
 #include "TrustZoneDevice.h"
@@ -289,22 +292,19 @@ bool TrustZoneDevice::checkMciVersion(void)
 {
     uint32_t version = 0;
     int ret;
-    char *errmsg;
+    char *msg;
 
     ret = pMcKMod->fcInfo(MC_EXT_INFO_ID_MCI_VERSION, NULL, &version);
     if (ret != 0) {
         LOG_E("pMcKMod->fcInfo() failed with %d", ret);
         return false;
     }
+  
+        if (!checkVersionOkMCI(versionPayload.versionInfo.versionMci, &msg)) {
+            LOG_E("checkVersionOkMCI failed - %s", msg);
+            return false;
+        }
 
-    /* FIXME
-    // Run-time check.
-    if (!checkVersionOkMCI(version, &errmsg)) {
-        LOG_E("%s", errmsg);
-        return false;
-    }
-    LOG_I("%s", errmsg);
-    */
     return true;
 }
 
