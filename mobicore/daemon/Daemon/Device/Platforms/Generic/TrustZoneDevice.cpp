@@ -297,14 +297,6 @@ bool TrustZoneDevice::checkMciVersion(void)
         return false;
     }
 
-    /* FIXME
-    // Run-time check.
-    if (!checkVersionOkMCI(version, &errmsg)) {
-        LOG_E("%s", errmsg);
-        return false;
-    }
-    LOG_I("%s", errmsg);
-    */
     return true;
 }
 

@@ -160,10 +160,10 @@ mcResult_t CMcKMod::mapMCI(
 
 //------------------------------------------------------------------------------
 mcResult_t CMcKMod::mapPersistent(
-    uint32_t    len,
-    uint32_t    *pHandle,
-    addr_t      *pVirtAddr,
-    addr_t      *pPhysAddr)
+    uint32_t    len __unused,
+    uint32_t    *pHandle __unused,
+    addr_t      *pVirtAdd __unusedr,
+    addr_t      *pPhysAddr __unused)
 {
     // Not currently supported by the driver
     LOG_E("MobiCore Driver does't support persistent buffers");
@@ -446,7 +446,7 @@ addr_t CMcKMod::findWsmL2(uint32_t handle, int fd)
 
     if (!isOpen()) {
         LOG_E("no connection to kmod");
-        return NULL;
+        return MC_DRV_ERR_KMOD_NOT_OPEN;
     }
 
     ret = ioctl(fdKMod, MC_IO_RESOLVE_WSM, &wsm);
