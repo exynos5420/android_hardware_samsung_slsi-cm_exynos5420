@@ -39,10 +39,13 @@
 #include "mc_linux.h"
 #include "McTypes.h"
 #include "Mci/mci.h"
+#include "mcVersion.h"
 #include "mcVersionHelper.h"
 
 #include "CSemaphore.h"
 #include "CMcKMod.h"
+
+#include "log.h"
 
 #include "MobiCoreDevice.h"
 #include "TrustZoneDevice.h"
@@ -56,8 +59,7 @@
 #define MCP_BUFFER_SIZE   (sizeof(mcpBuffer_t))
 #define MCI_BUFFER_SIZE   (NQ_BUFFER_SIZE + MCP_BUFFER_SIZE)
 
-//------------------------------------------------------------------------------
-MC_CHECK_VERSION(MCI, 0, 2);
+
 
 //------------------------------------------------------------------------------
 __attribute__ ((weak)) MobiCoreDevice *getDeviceInstance(
@@ -284,29 +286,6 @@ uint32_t TrustZoneDevice::getMobicoreStatus(void)
     return status;
 }
 
-//------------------------------------------------------------------------------
-bool TrustZoneDevice::checkMciVersion(void)
-{
-    uint32_t version = 0;
-    int ret;
-    char *errmsg;
-
-    ret = pMcKMod->fcInfo(MC_EXT_INFO_ID_MCI_VERSION, NULL, &version);
-    if (ret != 0) {
-        LOG_E("pMcKMod->fcInfo() failed with %d", ret);
-        return false;
-    }
-
-    /* FIXME
-    // Run-time check.
-    if (!checkVersionOkMCI(version, &errmsg)) {
-        LOG_E("%s", errmsg);
-        return false;
-    }
-    LOG_I("%s", errmsg);
-    */
-    return true;
-}
 
 //------------------------------------------------------------------------------
 void TrustZoneDevice::dumpMobicoreStatus(
