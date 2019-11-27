@@ -706,8 +706,7 @@ __MC_CLIENT_LIB_API mcResult_t mcCloseSession(mcSessionHandle_t *session)
             break;
         }
 
-        bool r = device->removeSession(session->sessionId);
-        assert(r == true);
+        assert((device-> removeSession(session->sessionId)) == true);
 
     } while (false);
 
@@ -847,10 +846,10 @@ __MC_CLIENT_LIB_API mcResult_t mcWaitNotification(
 //------------------------------------------------------------------------------
 __MC_CLIENT_LIB_API mcResult_t mcMallocWsm(
     uint32_t    deviceId,
-    uint32_t    align,
+    uint32_t    align __unused,
     uint32_t    len,
     uint8_t     **wsm,
-    uint32_t    wsmFlags)
+    uint32_t    wsmFlags __unused)
 {
     mcResult_t mcResult = MC_DRV_ERR_UNKNOWN;
 
@@ -1143,9 +1142,9 @@ __MC_CLIENT_LIB_API mcResult_t mcGetSessionErrorCode(
 
 //------------------------------------------------------------------------------
 __MC_CLIENT_LIB_API mcResult_t mcDriverCtrl(
-    mcDriverCtrl_t  param,
-    uint8_t         *data,
-    uint32_t        len
+    mcDriverCtrl_t  param __unused,
+    uint8_t         *data __unused,
+    uint32_t        len __unused
 )
 {
     LOG_W("mcDriverCtrl(): not implemented");
